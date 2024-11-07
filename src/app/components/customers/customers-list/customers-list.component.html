@@ -96,17 +96,20 @@
                                 <tr *ngFor="let customer of customerList; let i = index">
                                     <td>{{ i + 1 }}</td>
                                     <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2">
+                                        <div class="main-container" style="display: flex; align-items: center;">
+                                            <!-- Image Container -->
+                                            <div class="avatar-container" style="margin-right: 15px;">
                                                 <img class="avatar-img rounded-circle"
                                                     [src]="customer.profile_photo || 'assets/img/profiles/avatar-14.jpg'"
-                                                    alt="User Image">
-                                            </a>
-                                            <a href="profile.html">
-                                                {{ customer.name }}
-                                                <span><span class="__cf_email__">{{ customer.email }}</span></span>
-                                            </a>
-                                        </h2>
+                                                    alt="User Image" style="width: 50px; height: 50px;">
+                                            </div>
+
+                                            <!-- Name and Phone Container -->
+                                            <div class="info-container" style="display: flex; flex-direction: column;">
+                                                <span class="customer-name">{{ customer.name }}</span>
+                                                <span class="customer-phone">{{ customer.email }}</span>
+                                            </div>
+                                        </div>
                                     </td>
                                     <td>{{ customer.phone }}</td>
                                     <td>{{ customer.currency }}0.00</td>
