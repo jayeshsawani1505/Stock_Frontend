@@ -6,235 +6,221 @@
                     <h5>Add Invoice</h5>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group-item border-0 mb-0">
-                        <div class="row align-item-center">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Invoice Number</label>
-                                    <input type="text" class="form-control" placeholder="Enter Invoice Number">
+            <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group-item border-0 mb-0">
+                            <div class="row align-item-center">
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Invoice Number</label>
+                                        <input type="text" formControlName="invoice_number" class="form-control"
+                                            placeholder="Enter Invoice Number">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label for="customerSelect">Customer Name</label>
-                                    <div class="form-group">
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label for="customerSelect">Customer Name</label>
+                                        <div class="form-group">
+                                            <div class="d-flex align-items-center">
+                                                <select id="customerSelect" formControlName="customer_id"
+                                                    class="form-control me-2">
+                                                    <option value="" disabled selected>Select Customer</option>
+                                                    <!-- Loop through customerList to dynamically populate the options -->
+                                                    <option *ngFor="let customer of customerList"
+                                                        [value]="customer.customer_id">
+                                                        {{ customer.name }}
+                                                    </option>
+                                                </select>
+                                                <a class="btn btn-primary" href="add-customer.html"
+                                                    title="Add Customer">
+                                                    <i class="fas fa-plus-circle"></i>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Invoice Date</label>
+                                        <div class="cal-icon cal-icon-info">
+                                            <input type="text" formControlName="invoice_date"
+                                                class="datetimepicker form-control" placeholder="Select Date">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Due Date</label>
+                                        <div class="cal-icon cal-icon-info">
+                                            <input type="text" formControlName="due_date"
+                                                class="datetimepicker form-control" placeholder="Select Date">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label for="statusSelect">Status</label>
+                                        <select id="statusSelect" formControlName="status" class="form-control">
+                                            <option value="" disabled selected>Select Status</option>
+                                            <option value="unpaid">Unpaid</option>
+                                            <option value="partially_paid">Partially Paid</option>
+                                            <option value="paid">Paid</option>
+                                            <option value="overdue">Overdue</option>
+                                            <option value="cancelled">Cancelled</option>
+                                            <option value="refunded">Refunded</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Reference Number</label>
+                                        <input type="text" formControlName="reference_number" class="form-control"
+                                            placeholder="Enter Reference Number">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="d-flex justify-content-between flex-wrap">
+                                        <div class="input-block mb-3 recurring-tab">
+                                            <label>Recurring</label>
+                                            <ul class="nav nav-pills d-flex" id="pills-tab" role="tablist">
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link active yes" id="pills-home-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-home" type="button"
+                                                        role="tab" aria-controls="pills-home"
+                                                        aria-selected="true">Yes</button>
+                                                </li>
+                                                <li class="nav-item" role="presentation">
+                                                    <button class="nav-link no" id="pills-profile-tab"
+                                                        data-bs-toggle="pill" data-bs-target="#pills-profile"
+                                                        type="button" role="tab" aria-controls="pills-profile"
+                                                        aria-selected="false">No</button>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="tab-content pt-0" id="pills-tabContent">
+                                            <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                                                aria-labelledby="pills-home-tab">
+                                                <div class="input-block mb-3">
+                                                    <label>Recurring cycle</label>
+                                                    <input type="text" formControlName="recurring_cycle"
+                                                        class="form-control" placeholder="Enter Month">
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="pills-profile" role="tabpanel"
+                                                aria-labelledby="pills-profile-tab"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="input-block mb-3">
+                                        <label for="productSelect">Products</label>
                                         <div class="d-flex align-items-center">
-                                            <select id="customerSelect" class="form-control me-2">
-                                                <option value="" disabled selected>Select Customer</option>
-                                                <option>Customer 1</option>
-                                                <option>Customer 2</option>
-                                                <option>Customer 3</option>
+                                            <select id="productSelect" formControlName="product_id"
+                                                class="form-control me-2" (change)="onProductChange($event)">
+                                                <option value="" disabled selected>Select Product</option>
+                                                <!-- Loop through productList to dynamically populate the options -->
+                                                <option *ngFor="let product of productList"
+                                                    [value]="product.product_id">
+                                                    {{ product.product_name }}
+                                                </option>
                                             </select>
-                                            <a class="btn btn-primary" href="add-customer.html" title="Add Customer">
+
+                                            <a class="btn btn-primary" href="add-products.html" title="Add Product">
                                                 <i class="fas fa-plus-circle"></i>
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Invoice Date</label>
-                                    <div class="cal-icon cal-icon-info">
-                                        <input type="text" class="datetimepicker form-control"
-                                            placeholder="Select Date">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Due Date</label>
-                                    <div class="cal-icon cal-icon-info">
-                                        <input type="text" class="datetimepicker form-control"
-                                            placeholder="Select Date">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label for="statusSelect">Status</label>
-                                    <select id="statusSelect" class="form-control">
-                                        <option value="" disabled selected>Select Status</option>
-                                        <option value="unpaid">Unpaid</option>
-                                        <option value="partially_paid">Partially Paid</option>
-                                        <option value="paid">Paid</option>
-                                        <option value="overdue">Overdue</option>
-                                        <option value="cancelled">Cancelled</option>
-                                        <option value="refunded">Refunded</option>
-                                        <option value="draft">Draft</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Reference Number</label>
-                                    <input type="text" class="form-control" placeholder="Enter Reference Number">
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="d-flex justify-content-between flex-wrap">
-                                    <div class="input-block mb-3 recurring-tab">
-                                        <label>Recurring</label>
-                                        <ul class="nav nav-pills d-flex" id="pills-tab" role="tablist">
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link active yes" id="pills-home-tab"
-                                                    data-bs-toggle="pill" data-bs-target="#pills-home" type="button"
-                                                    role="tab" aria-controls="pills-home"
-                                                    aria-selected="true">Yes</button>
-                                            </li>
-                                            <li class="nav-item" role="presentation">
-                                                <button class="nav-link no" id="pills-profile-tab" data-bs-toggle="pill"
-                                                    data-bs-target="#pills-profile" type="button" role="tab"
-                                                    aria-controls="pills-profile" aria-selected="false">No</button>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="tab-content pt-0" id="pills-tabContent">
-                                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
-                                            aria-labelledby="pills-home-tab">
-                                            <div class="input-block mb-3">
-                                                <label>Recurring cycle</label>
-                                                <input type="text" class="form-control" placeholder="Enter Month">
-                                            </div>
-                                        </div>
-                                        <div class="tab-pane fade" id="pills-profile" role="tabpanel"
-                                            aria-labelledby="pills-profile-tab"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <div class="input-block mb-3">
-                                    <label for="productSelect">Products</label>
-                                    <div class="d-flex align-items-center">
-                                        <select id="productSelect" class="form-control me-2">
-                                            <option value="" disabled selected>Select Product</option>
-                                            <option value="product1">Product 1</option>
-                                            <option value="product2">Product 2</option>
-                                            <option value="product3">Product 3</option>
-                                        </select>
-                                        <a class="btn btn-primary" href="add-products.html" title="Add Product">
-                                            <i class="fas fa-plus-circle"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
-                    </div>
-                    <div class="form-group-item">
-                        <div class="card-table">
-                            <div class="card-body">
-                                <div class="table-responsive no-pagination">
-                                    <table class="table table-center table-hover datatable">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>Product / Service</th>
-                                                <th>Quantity</th>
-                                                <th>Unit</th>
-                                                <th>Rate</th>
-                                                <th>Discount</th>
-                                                <th>Tax</th>
-                                                <th>Amount</th>
-                                                <th class="no-sort">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Nike Jordan</td>
-                                                <td><input type="number" class="form-control" value="0"></td>
-                                                <td>Pcs</td>
-                                                <td><input type="number" class="form-control" value="120"></td>
-                                                <td>0</td>
-                                                <td>0</td>
-                                                <td>₹0.00</td>
-                                                <td class="d-flex align-items-center">
-                                                    <a href="#" class="btn-action-icon me-2" data-bs-toggle="modal"
-                                                        data-bs-target="#add_discount"><span><i
-                                                                class="fas fa-edit"></i></span></a>
-                                                    <a href="#" class="btn-action-icon" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_discount"><span><i
-                                                                class="fas fa-trash-2"></i></span></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                        <div class="form-group-item">
+                            <div class="card-table">
+                                <div class="card-body">
+                                    <div class="table-responsive no-pagination">
+                                        <table class="table table-center table-hover datatable">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Product / Service</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit</th>
+                                                    <th>Rate</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td> {{product_name||''}}
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="quantity"
+                                                            class="form-control" value="0">
+                                                    </td>
+                                                    <td>boxs</td>
+                                                    <td>
+                                                        <input type="number" formControlName="rate" class="form-control"
+                                                            value="0">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="total_amount"
+                                                            class="form-control" value="0">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group-item border-0 p-0">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="form-group-bank">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <div class="input-block mb-3">
-                                                <label for="bankSelect">Select Bank</label>
-                                                <select id="bankSelect" class="form-control">
-                                                    <option value="" disabled selected>Select Bank</option>
-                                                    <option value="sbi">SBI</option>
-                                                    <option value="iob">IOB</option>
-                                                    <option value="canara">Canara</option>
-                                                </select>
-                                            </div>
+                        <div class="form-group-item border-0 p-0">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-12">
+                                    <div class="form-group-bank">
+                                        <div class="input-block mb-3 notes-form-group-info">
+                                            <label>Notes</label>
+                                            <textarea formControlName="notes" class="form-control"
+                                                placeholder="Enter Notes"></textarea>
                                         </div>
-                                        <div class="col-md-4">
-                                            <div class="form-groups">
-                                                <a class="btn btn-primary" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#bank_details" title="Add Bank">
-                                                    Add Bank
-                                                </a>
-                                            </div>
+                                        <div class="input-block mb-3 notes-form-group-info mb-0">
+                                            <label>Terms and Conditions</label>
+                                            <textarea class="form-control" formControlName="terms_conditions"
+                                                placeholder="Enter Terms and Conditions"></textarea>
                                         </div>
-                                    </div>
-
-                                    <div class="input-block mb-3 notes-form-group-info">
-                                        <label>Notes</label>
-                                        <textarea class="form-control" placeholder="Enter Notes"></textarea>
-                                    </div>
-                                    <div class="input-block mb-3 notes-form-group-info mb-0">
-                                        <label>Terms and Conditions</label>
-                                        <textarea class="form-control"
-                                            placeholder="Enter Terms and Conditions"></textarea>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="form-group-bank">
-                                    <div class="invoice-total-box">
+                                <div class="col-xl-6 col-lg-12">
+                                    <div class="form-group-bank">
+                                        <div class="invoice-total-box">
 
-                                        <div class="invoice-total-footer">
-                                            <h4>Total Amount <span>₹0.00</span></h4>
+                                            <div class="invoice-total-footer">
+                                                <h4>Total Amount <span>₹{{invoiceForm.value?.total_amount}}</span></h4>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="input-block mb-3">
-                                        <label>Signature Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Signature Name">
-                                    </div>
-                                    <div class="input-block mb-0">
-                                        <label>Signature Image</label>
-                                        <div class="input-block mb-3 service-upload service-upload-info mb-0">
-                                            <span><i class="fas fa-upload"></i>Upload Signature</span>
-                                            <input type="file" multiple="" id="image_sign">
-                                            <div id="frames"></div>
+                                        <div class="input-block mb-3">
+                                            <label>Signature Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Signature Name">
+                                        </div>
+                                        <div class="input-block mb-0">
+                                            <label>Signature Image</label>
+                                            <div class="input-block mb-3 service-upload service-upload-info mb-0">
+                                                <span><i class="fas fa-upload"></i>Upload Signature</span>
+                                                <input type="file" multiple="" id="image_sign">
+                                                <div id="frames"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <form action="https://kanakku.dreamstechnologies.com/html/template/invoices.html"
-                        class="add-customer-btns text-end">
                         <button type="reset" class="btn btn-primary cancel me-2">Cancel</button>
                         <button type="reset" class="btn btn-primary cancel me-2">Save</button>
                         <button type="submit" class="btn btn-primary">Save & Send</button>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

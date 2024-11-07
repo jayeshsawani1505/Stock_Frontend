@@ -1,0 +1,40 @@
+<div class="p-5">
+    <h4 class="mb-0">{{ categoryForm.value.category_id ? 'Edit Category' : 'Add Category' }}</h4>
+    <form [formGroup]="categoryForm" (ngSubmit)="categoryForm.value.category_id ? editCategory() : addCategory()">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-block mb-3">
+                        <label>Name <span class="text-danger">*</span></label>
+                        <input formControlName="category_name" type="text" class="form-control"
+                            placeholder="Enter Category Name">
+                        <div *ngIf="categoryForm.get('category_name')?.invalid && categoryForm.get('category_name')?.touched"
+                            class="text-danger">
+                            Name is required.
+                        </div>
+                    </div>
+                    <div class="input-block mb-3">
+                        <label>Description</label>
+                        <input formControlName="description" type="text" class="form-control"
+                            placeholder="Enter Description">
+                    </div>
+                    <div class="input-block mb-3">
+                        <label>Image</label>
+                        <div class="service-upload">
+                            <span><img src="assets/img/icons/drop-icon.svg" alt="upload"></span>
+                            <h6 class="drop-browse">Drop your files here or <span class="text-primary">browse</span>
+                            </h6>
+                            <p class="text-muted">Maximum size: 50MB</p>
+                            <input type="file" formControlName="image" id="image_sign">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" (click)="onClose()" class="btn btn-back cancel-btn me-2">Cancel</button>
+            <button type="submit" class="btn btn-primary">
+                {{ categoryForm.value.category_id ? 'Update Category' : 'Add Category' }}</button>
+        </div>
+    </form>
+</div>

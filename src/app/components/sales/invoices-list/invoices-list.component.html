@@ -218,310 +218,54 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
+                                <tr *ngFor="let invoice of invoiceList">
                                     <td>
                                         <label class="custom_check">
                                             <input type="checkbox" name="invoice">
                                             <span class="checkmark"></span>
                                         </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4987</a>
+                                        <a [routerLink]="['/admin/invoices/invoice-details', invoice.id]"
+                                            class="invoice-link">#{{ invoice.invoice_number }}</a>
                                     </td>
-                                    <td>Advertising</td>
-                                    <td>23 Mar 2023</td>
+                                    <td>{{ invoice.category_name || 'N/A' }}</td>
+                                    <td>{{ invoice.created_at | date:'d MMM y' }}</td>
                                     <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-14.jpg" alt="User Image"></a>
-                                            <a href="profile.html">John Smith <span>+1 843-443-3282</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>₹0</td>
-                                    <td>-</td>
-                                    <td><span class="badge bg-success-light">Paid</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
+                                        <div class="main-container" style="display: flex; align-items: center;">
+                                            <!-- Image Container -->
+                                            <div class="avatar-container" style="margin-right: 15px;">
+                                                <img class="avatar-img rounded-circle"
+                                                    [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
+                                                    alt="User Image" style="width: 50px; height: 50px;">
+                                            </div>
+
+                                            <!-- Name and Phone Container -->
+                                            <div class="info-container" style="display: flex; flex-direction: column;">
+                                                <span class="customer-name">{{ invoice?.customer_name }}</span>
+                                                <span class="customer-phone">{{ invoice?.customer_phone }}</span>
                                             </div>
                                         </div>
+
                                     </td>
-                                </tr>
-                                <tr>
+
+                                    <td>₹{{ invoice.total_amount | number:'1.2-2' }}</td>
+                                    <td>₹{{ invoice.paid_amount | number:'1.2-2' }}</td>
+                                    <td>{{ invoice.payment_mode || 'N/A' }}</td>
+                                    <td>₹{{ invoice.balance_amount | number:'1.2-2' }}</td>
+                                    <td>{{ invoice.due_date | date:'d MMM y' }}</td>
                                     <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4988</a>
+                                        <span class="badge" [ngClass]="{
+                                            'bg-success-light': invoice.status === 'Paid',
+                                            'bg-warning-light': invoice.status === 'Pending',
+                                            'bg-danger-light': invoice.status === 'Overdue'
+                                        }">{{ invoice.status }}</span>
                                     </td>
-                                    <td>Food</td>
-                                    <td>16 Mar 2023</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-15.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Johnny <span>+1 917-409-0861</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cheque</td>
-                                    <td>₹0.00</td>
-                                    <td>16 Jan 2023</td>
-                                    <td><span class="badge bg-warning-light text-warning">Overdue</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4989</a>
-                                    </td>
-                                    <td>Marketing</td>
-                                    <td>25 Feb 2023</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-16.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Robert <span>+1 956-623-2880</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>₹0.00</td>
-                                    <td>16 Jan 2023</td>
-                                    <td><span class="badge bg-danger-light">Cancelled</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4990</a>
-                                    </td>
-                                    <td>Repairs</td>
-                                    <td>25 Mar 2023</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-17.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Sharonda <span>+1 707-439-1732</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>₹0.00</td>
-                                    <td>12 May 2023</td>
-                                    <td><span class="badge bg-primary-light">Partially Paid</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4991</a>
-                                    </td>
-                                    <td>Software</td>
-                                    <td>12 May 2022</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-18.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Pricilla <span>+1 559-741-9672</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cheque</td>
-                                    <td>₹0.00</td>
-                                    <td>18 May 2022</td>
-                                    <td><span class="badge bg-light-gray text-secondary">Unpaid</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a href="invoice-details.html" class="invoice-link">#4992</a>
-                                    </td>
-                                    <td>Stationary</td>
-                                    <td>16 Nov 2022</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-19.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Randall <span>+1 989-438-3131</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>₹0.00</td>
-                                    <td>25 Feb 2022</td>
-                                    <td><span class="badge bg-info-lights">Refunded</span></td>
-                                    <td class="text-end">
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end customer-dropdown">
-                                                <a class="dropdown-item" href="edit-invoice.html"><i
-                                                        class="far fa-edit me-2"></i>Edit</a>
-                                                <a class="dropdown-item" href="invoice-details.html"><i
-                                                        class="far fa-eye me-2"></i>View</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#view_modal"><i
-                                                        class="far fa-eye me-2"></i>View Delivery Challans</a>
-                                                <a class="dropdown-item" href="javascript:void(0);"
-                                                    data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                        class="far fa-trash-alt me-2"></i>Delete</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-send me-2"></i>Send</a>
-                                                <a class="dropdown-item" href="#"><i
-                                                        class="fas fa-download me-2"></i>Download</a>
-                                                <a class="dropdown-item" href="add-credit-notes.html"><i
-                                                        class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
-                                                <a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
-                                                    as Invoice</a>
-                                            </div>
-                                        </div>
+                                    <td class="d-flex">
+                                        <a class="btn-action-icon me-2" (click)="editInvoice(invoice)">
+                                            <i class="far fa-edit me-2"></i>
+                                        </a>
+                                        <a class="btn-action-icon" (click)="openDeleteConfirmation(invoice.id)">
+                                            <i class=" far fa-trash-alt me-2"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -534,3 +278,12 @@
     <!-- /Table -->
 
 </div>
+
+<!-- <a class="dropdown-item" href="invoice-details.html"><i class="far fa-eye me-2"></i>View</a>
+<a class="dropdown-item" href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#view_modal"><i
+        class="far fa-eye me-2"></i>View Delivery Challans</a>
+<a class="dropdown-item" href="#"><i class="fas fa-send me-2"></i>Send</a>
+<a class="dropdown-item" href="#"><i class="fas fa-download me-2"></i>Download</a>
+<a class="dropdown-item" href="add-credit-notes.html"><i class="fas fa-file-text me-2"></i>Convert to Sales Return</a>
+<a class="dropdown-item" href="#"><i class="fas fa-copy me-2"></i>Clone
+    as Invoice</a> -->

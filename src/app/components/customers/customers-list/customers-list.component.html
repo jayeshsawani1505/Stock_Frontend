@@ -85,321 +85,60 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Phone</th>
-                                    <th>Balance </th>
-                                    <th>Total Invoice </th>
+                                    <th>Balance</th>
+                                    <th>Total Invoice</th>
                                     <th>Created</th>
                                     <th>Status</th>
                                     <th class="no-sort">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
+                                <tr *ngFor="let customer of customerList; let i = index">
+                                    <td>{{ i + 1 }}</td>
                                     <td>
                                         <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-14.jpg" alt="User Image"></a>
-                                            <a href="profile.html">John Smith <span><span class="__cf_email__"
-                                                        data-cfemail="dab0b5b2b49abfa2bbb7aab6bff4b9b5b7">[email&#160;protected]</span></span></a>
+                                            <a href="profile.html" class="avatar avatar-md me-2">
+                                                <img class="avatar-img rounded-circle"
+                                                    [src]="customer.profile_photo || 'assets/img/profiles/avatar-14.jpg'"
+                                                    alt="User Image">
+                                            </a>
+                                            <a href="profile.html">
+                                                {{ customer.name }}
+                                                <span><span class="__cf_email__">{{ customer.email }}</span></span>
+                                            </a>
                                         </h2>
                                     </td>
-                                    <td>+1 989-438-3131</td>
-                                    <td>₹0.00</td>
-                                    <td>2</td>
-                                    <td>19 Dec 2023, 06:12 PM</td>
+                                    <td>{{ customer.phone }}</td>
+                                    <td>{{ customer.currency }}0.00</td>
+                                    <td>0.00</td>
+                                    <td>{{ customer.created_at | date: 'dd MMM yyyy, hh:mm a' }}</td>
                                     <td><span class="badge bg-success-light">Active</span></td>
                                     <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
+                                        <!-- <a href="add-invoice.html" class="btn btn-greys me-2">
+                                            <i class="fa fa-plus-circle me-1"></i> Invoice
+                                        </a>
+                                        <a href="customers-ledger.html" class="btn btn-greys me-2">
+                                            <i class="fa-regular fa-eye me-1"></i> Ledger
+                                        </a> -->
                                         <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
+                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
+                                                aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </a>
                                             <div class="dropdown-menu dropdown-menu-end">
                                                 <ul>
                                                     <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
+                                                        <a class="dropdown-item" (click)="editCustomer(customer)">
+                                                            <i class="far fa-edit me-2"></i>Edit
+                                                        </a>
                                                     </li>
                                                     <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
+                                                        <a class="dropdown-item"
+                                                            (click)="openDeleteConfirmation(customer?.customer_id)">
+                                                            <i class="far fa-trash-alt me-2"></i>Delete
+                                                        </a>
                                                     </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-15.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Johnny Charles <span><span class="__cf_email__"
-                                                        data-cfemail="610b0e090f0f18210419000c110d044f020e0c">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 843-443-3282</td>
-                                    <td>₹0.00</td>
-                                    <td>1</td>
-                                    <td>15 Dec 2023, 04:35 PM</td>
-                                    <td><span class="badge bg-success-light">Active</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-16.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Robert George <span><span class="__cf_email__"
-                                                        data-cfemail="2f5d404d4a5d5b6f4a574e425f434a014c4042">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 917-409-0861</td>
-                                    <td>₹0.00</td>
-                                    <td>3</td>
-                                    <td>04 Dec 2023, 12:38 PM</td>
-                                    <td><span class="badge  bg-danger-light">Deactive</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-17.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Sharonda Letha <span><span class="__cf_email__"
-                                                        data-cfemail="e1928980938e8fa18499808c918d84cf828e8c">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 956-623-2880</td>
-                                    <td>₹0.00</td>
-                                    <td>6</td>
-                                    <td>28 Nov 2023, 03:25 PM</td>
-                                    <td><span class="badge  bg-success-light">Active</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-18.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Pricilla Maureen <span><span class="__cf_email__"
-                                                        data-cfemail="4636342f252f2a2a2706233e272b362a236825292b">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 707-439-1732</td>
-                                    <td>₹0.00</td>
-                                    <td>4</td>
-                                    <td>20 Nov 2022, 02:47 PM</td>
-                                    <td><span class="badge bg-danger-light">Deactive</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-md me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-19.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Randall Hollis <span><span class="__cf_email__"
-                                                        data-cfemail="7406151a1015181834110c15190418115a171b19">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 559-741-9672</td>
-                                    <td>₹0.00</td>
-                                    <td>1</td>
-                                    <td>15 Nov 2022, 10:42 AM</td>
-                                    <td><span class="badge  bg-success-light">Active</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="add-invoice.html" class="btn btn-greys me-2"><i
-                                                class="fa fa-plus-circle me-1"></i> Invoice</a>
-                                        <a href="customers-ledger.html" class="btn btn-greys me-2"><i
-                                                class="fa-regular fa-eye me-1"></i> Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-customer.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="customer-details.html"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="active-customers.html"><i
-                                                                class="fa-solid fa-power-off me-2"></i>Activate</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="deactive-customers.html"><i
-                                                                class="far fa-bell-slash me-2"></i>Deactivate</a>
-                                                    </li>
+
                                                 </ul>
                                             </div>
                                         </div>
@@ -408,8 +147,23 @@
                             </tbody>
                         </table>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- 
+<li>
+    <a class="dropdown-item" href="customer-details.html"><i
+            class="far fa-eye me-2"></i>View</a>
+</li>
+<li>
+    <a class="dropdown-item" href="active-customers.html"><i
+            class="fa-solid fa-power-off me-2"></i>Activate</a>
+</li>
+<li>
+    <a class="dropdown-item" href="deactive-customers.html"><i
+            class="far fa-bell-slash me-2"></i>Deactivate</a>
+</li> -->

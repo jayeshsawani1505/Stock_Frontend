@@ -1,160 +1,127 @@
-<div class="content container-fluid">
-    <div class="card mb-0">
-        <div class="card-body">
-            <div class="page-header">
-                <div class="content-page-header">
-                    <h5>Add Products / Services</h5>
+<form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    <div class="content container-fluid">
+        <div class="card mb-0">
+            <div class="card-body">
+                <div class="page-header">
+                    <div class="content-page-header">
+                        <h5>Add Products / Services</h5>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group-item">
-                        <h5 class="form-title">Basic Details</h5>
-                        <div class="row">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group-item">
+                            <h5 class="form-title">Basic Details</h5>
+                            <div class="row">
+                                <!-- Item Type -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Item Type<span class="text-danger"> *</span></label>
                                     <div class="align-center">
                                         <div class="form-control me-3">
                                             <label class="custom_radio me-3 mb-0">
-                                                <input type="radio" class="form-control" name="payment" checked>
+                                                <input type="radio" formControlName="item_type" value="Product" checked>
                                                 <span class="checkmark"></span> Product
                                             </label>
                                         </div>
                                         <div class="form-control">
                                             <label class="custom_radio mb-0">
-                                                <input type="radio" name="payment">
+                                                <input type="radio" formControlName="item_type" value="Service">
                                                 <span class="checkmark"></span> Service
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Product Name -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Product Name <span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" placeholder="Enter Product Name">
+                                    <input type="text" class="form-control" placeholder="Enter Product Name"
+                                        formControlName="product_name">
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3 add-products">
+
+                                <!-- Product Code (SKU) -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Product Code (SKU)<span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" placeholder="Enter Product Code">
-                                    <button type="submit" class="btn btn-primary">
-                                        Generate Code
-                                    </button>
+                                    <input type="text" class="form-control" placeholder="Enter Product Code"
+                                        formControlName="product_code">
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Category -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Category <span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" placeholder="Enter Category Name">
+                                    <select class="form-control" formControlName="category_id">
+                                        <option *ngFor="let category of categoryList" [value]="category.category_id">
+                                            {{ category.category_name }}
+                                        </option>
+                                    </select>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+
+                                <!-- Selling Price -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Selling Price <span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" placeholder="Enter Selling Price">
+                                    <input type="number" min="0" class="form-control" placeholder="Enter Selling Price"
+                                        formControlName="selling_price">
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Purchase Price -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Purchase Price <span class="text-danger"> *</span></label>
-                                    <input type="text" class="form-control" placeholder="Enter Purchase Prices">
+                                    <input type="number" min="0" class="form-control" placeholder="Enter Purchase Price"
+                                    formControlName="purchase_price">
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Quantity -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Quantity <span class="text-danger"> *</span></label>
-                                    <input type="number" class="form-control" placeholder="Enter Quantity" name="name">
+                                    <input type="number" min="0" class="form-control" placeholder="Enter Quantity"
+                                        formControlName="quantity">
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Units -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Units</label>
-                                    <select class="select">
-                                        <option>Select Units</option>
+                                    <select class="form-control" formControlName="units">
                                         <option>Pieces</option>
                                         <option>Box</option>
                                         <option>Kilograms</option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Discount Type</label>
-                                    <select class="select">
-                                        <option>Select Discount Type</option>
-                                        <option>Percentage</option>
-                                        <option>Fixed</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3 add-products">
-                                    <label>Generate Barcode</label>
-                                    <input type="text" class="form-control" placeholder="Enter Barcode Code">
-                                    <button type="submit" class="btn btn-primary">
-                                        Generate Code
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Alert Quantity </label>
-                                    <input type="number" class="form-control" placeholder="Enter Alert Quantity"
-                                        name="name">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Tax</label>
-                                    <select class="select">
-                                        <option>Select Tax</option>
-                                        <option>IVA - (21%)</option>
-                                        <option>IRPF - (-15%)</option>
-                                        <option>PDV - (20%)</option>
-                                    </select>
+
+
+                                <!-- Alert Quantity -->
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <label>Alert Quantity</label>
+                                    <input type="number" min="0" class="form-control" placeholder="Enter Alert Quantity"
+                                        formControlName="alert_quantity">
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group-item">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-12 description-box">
-                                <div class="input-block mb-3" id="summernote_container">
+
+                        <div class="form-group-item">
+                            <div class="row">
+                                <!-- Description -->
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12 description-box">
                                     <label class="form-control-label">Product Descriptions</label>
-                                    <textarea class="summernote form-control"
+                                    <textarea class="summernote form-control" formControlName="description"
                                         placeholder="Type your message"></textarea>
                                 </div>
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                <div class="input-block mb-3">
+
+                                <!-- Product Image (File Upload) -->
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
                                     <label>Product Image</label>
-                                    <div class="input-block mb-3 service-upload mb-0">
-                                        <span><img src="assets/img/icons/drop-icon.svg" alt="upload"></span>
-                                        <h6 class="drop-browse align-center">
-                                            Drop your files here or<span class="text-primary ms-1">browse</span>
-                                        </h6>
-                                        <p class="text-muted">Maximum size: 50MB</p>
-                                        <input type="file" multiple="" id="image_sign">
-                                        <div id="frames"></div>
-                                    </div>
+                                    <input type="file" formControlName="product_image" multiple id="image_sign">
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-actions text-end">
+                            <button type="button" class="btn btn-primary cancel me-2"
+                                (click)="productForm.reset()">Cancel</button>
+                            <button type="submit" class="btn customer-btn-cancel">Save Changes</button>
+                        </div>
                     </div>
-                    <form action="https://kanakku.dreamstechnologies.com/html/template/product-list.html"
-                        class="text-end">
-                        <button type="reset" class="btn btn-primary cancel me-2">
-                            Cancel
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Add Item
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</form>

@@ -111,366 +111,35 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>1</td>
+                                    <tr *ngFor="let product of productList; let i = index">
+                                        <td>{{ i + 1 }}</td>
                                         <td>
                                             <h2 class="table-avatar">
                                                 <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return1.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Lenovo 3rd Generation</a>
+                                                    <img *ngIf="product.product_image; else defaultImage"
+                                                        class="avatar-img sales-rep" [src]="product.product_image"
+                                                        alt="Product Image" />
+                                                    <ng-template #defaultImage>
+                                                        <img class="avatar-img sales-rep"
+                                                            src="assets/img/sales-return1.svg" alt="Default Image" />
+                                                    </ng-template>
+                                                </a>
+                                                <a href="profile.html">{{ product.product_name }}</a>
                                             </h2>
                                         </td>
-                                        <td>P125389</td>
-                                        <td>Laptop</td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td c0s="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return2.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Nike Jordan</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125390</td>
-                                        <td>Shoes</td>
-                                        <td>Pieces</td>
-                                        <td>4</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>3</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return3.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Apple Series 5 Watch</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125391</td>
-                                        <td>Accessories</td>
-                                        <td>Inches</td>
-                                        <td>7</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>4</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return4.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Amazon Echo Dot</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125392</td>
-                                        <td>Electronics</td>
-                                        <td>Box</td>
-                                        <td>3</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>5</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return5.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Lobar Handy</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125393</td>
-                                        <td>Furnitures </td>
-                                        <td>Kilograms</td>
-                                        <td>1</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>6</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return6.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Woodcraft Sandal</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125394</td>
-                                        <td>Bags</td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>7</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return7.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Black Slim 200</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125394</td>
-                                        <td>Furnitures</td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>8</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return8.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Red Premium Handy</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125394</td>
-                                        <td>Bags</td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>9</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep" src="assets/img/sales-return9.svg"
-                                                        alt="User Image"></a>
-                                                <a href="profile.html">Bold V3.2</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125394</td>
-                                        <td>Electronics</td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>10</td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="profile.html" class="avatar avatar-md me-2 companies">
-                                                    <img class="avatar-img sales-rep"
-                                                        src="assets/img/sales-return10.svg" alt="User Image"></a>
-                                                <a href="profile.html">Iphone 14 Pro</a>
-                                            </h2>
-                                        </td>
-                                        <td>P125394</td>
-                                        <td>Phone
-
-                                        </td>
-                                        <td>Inches</td>
-                                        <td>2</td>
-                                        <td>₹0.00</td>
-                                        <td>₹0.00</td>
-                                        <td class="d-flex align-items-center">
-                                            <div class="dropdown dropdown-action">
-                                                <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                    aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                                <div class="dropdown-menu dropdown-menu-right">
-                                                    <ul>
-                                                        <li>
-                                                            <a class="dropdown-item" href="edit-products.html"><i
-                                                                    class="far fa-edit me-2"></i>Edit</a>
-                                                        </li>
-                                                        <li>
-                                                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                                data-bs-target="#delete_modal"><i
-                                                                    class="far fa-trash-alt me-2"></i>Delete</a>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
+                                        <td>{{ product.product_code }}</td>
+                                        <td>{{ product.category_name }}</td>
+                                        <td>{{ product.units }}</td>
+                                        <td>{{ product.quantity }}</td>
+                                        <td>₹{{ product.selling_price }}</td>
+                                        <td>₹{{ product.purchase_price }}</td>
+                                        <td class="d-flex">
+                                            <a class="btn-action-icon me-2" (click)="editProduct(product)">
+                                                <i class="far fa-edit me-2"></i>
+                                            </a>
+                                            <a class="btn-action-icon" (click)="onDelete(product.product_id)">
+                                                <i class="far fa-trash-alt me-2"></i>
+                                            </a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -482,5 +151,4 @@
         </div>
     </div>
     <!-- /Table -->
-
 </div>

@@ -7,10 +7,10 @@
                     <h5>Add Customer</h5>
                 </div>
             </div>
-            <!-- /Page Header -->
-            <div class="row">
-                <div class="col-md-12">
-                    <form action="#">
+            <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+                <!-- /Page Header -->
+                <div class="row">
+                    <div class="col-md-12">
                         <div class="form-group-item">
                             <h5 class="form-title">Basic Details</h5>
                             <div class="profile-picture">
@@ -35,26 +35,28 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Name <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" placeholder="Enter Name">
+                                        <input type="text" formControlName="name" class="form-control"
+                                            placeholder="Enter Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Email <span class="text-danger">*</span></label>
-                                        <input type="email" class="form-control" placeholder="Enter Email Address">
+                                        <input type="email" formControlName="email" class="form-control"
+                                            placeholder="Enter Email Address">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Phone <span class="text-danger">*</span></label>
-                                        <input type="text" id="mobile_code" class="form-control"
+                                        <input type="text" id="mobile_code" class="form-control" formControlName="phone"
                                             placeholder="Phone Number" name="name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Currency</label>
-                                        <select class="select">
+                                        <select class="form-control" formControlName="currency">
                                             <option>Select Currency</option>
                                             <option>₹</option>
                                             <option>₹</option>
@@ -66,13 +68,15 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Website</label>
-                                        <input type="text" class="form-control" placeholder="Enter Website Address">
+                                        <input type="text" formControlName="website" class="form-control"
+                                            placeholder="Enter Website Address">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Notes</label>
-                                        <input type="email" class="form-control" placeholder="Enter Your Notes">
+                                        <input type="email" formControlName="notes" class="form-control"
+                                            placeholder="Enter Your Notes">
                                     </div>
                                 </div>
                             </div>
@@ -85,35 +89,42 @@
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Name">
+                                        <input type="text" formControlName="billing_name" class="form-control"
+                                            placeholder="Enter Name">
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Address Line 1</label>
-                                        <input type="text" class="form-control" placeholder="Enter Address 1">
+                                        <input type="text" formControlName="billing_address_line1" class="form-control"
+                                            placeholder="Enter Address 1">
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Address Line 2</label>
-                                        <input type="text" class="form-control" placeholder="Enter Address 2">
+                                        <input type="text" formControlName="billing_address_line2" class="form-control"
+                                            placeholder="Enter Address 2">
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6 col-md-12">
                                             <div class="input-block mb-3">
                                                 <label>Country</label>
-                                                <input type="text" class="form-control" placeholder="Enter Country">
+                                                <input type="text" formControlName="billing_country"
+                                                    class="form-control" placeholder="Enter Country">
                                             </div>
                                             <div class="input-block mb-3">
                                                 <label>City</label>
-                                                <input type="text" class="form-control" placeholder="Enter City">
+                                                <input type="text" formControlName="billing_city" class="form-control"
+                                                    placeholder="Enter City">
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-12">
                                             <div class="input-block mb-3">
                                                 <label>State</label>
-                                                <input type="text" class="form-control" placeholder="Enter State">
+                                                <input type="text" formControlName="billing_state" class="form-control"
+                                                    placeholder="Enter State">
                                             </div>
                                             <div class="input-block mb-3">
                                                 <label>Pincode</label>
-                                                <input type="text" class="form-control" placeholder="Enter Pincode">
+                                                <input type="text" formControlName="billing_pincode"
+                                                    class="form-control" placeholder="Enter Pincode">
                                             </div>
                                         </div>
                                     </div>
@@ -121,39 +132,48 @@
                                 <div class="col-md-6">
                                     <div class="billing-btn">
                                         <h5 class="form-title mb-0">Shipping Address</h5>
-                                        <a href="#" class="btn btn-primary">Copy from Billing</a>
+                                        <button type="button" class="btn btn-primary"
+                                            (click)="copyBillingToShipping()">Copy from
+                                            Billing</button>
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Name">
+                                        <input type="text" formControlName="shipping_name" class="form-control"
+                                            placeholder="Enter Name">
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Address Line 1</label>
-                                        <input type="text" class="form-control" placeholder="Enter Address 1">
+                                        <input type="text" formControlName="shipping_address_line1" class="form-control"
+                                            placeholder="Enter Address 1">
                                     </div>
                                     <div class="input-block mb-3">
                                         <label>Address Line 2</label>
-                                        <input type="text" class="form-control" placeholder="Enter Address 2">
+                                        <input type="text" formControlName="shipping_address_line2" class="form-control"
+                                            placeholder="Enter Address 2">
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-6 col-md-12">
                                             <div class="input-block mb-3">
                                                 <label>Country</label>
-                                                <input type="text" class="form-control" placeholder="Enter Country">
+                                                <input type="text" formControlName="shipping_country"
+                                                    class="form-control" placeholder="Enter Country">
                                             </div>
                                             <div class="input-block mb-3">
                                                 <label>City</label>
-                                                <input type="text" class="form-control" placeholder="Enter City">
+                                                <input type="text" formControlName="shipping_city" class="form-control"
+                                                    placeholder="Enter City">
                                             </div>
                                         </div>
                                         <div class="col-lg-6 col-md-12">
                                             <div class="input-block mb-3">
                                                 <label>State</label>
-                                                <input type="text" class="form-control" placeholder="Enter State">
+                                                <input type="text" formControlName="shipping_state" class="form-control"
+                                                    placeholder="Enter State">
                                             </div>
                                             <div class="input-block mb-3">
                                                 <label>Pincode</label>
-                                                <input type="text" class="form-control" placeholder="Enter Pincode">
+                                                <input type="text" formControlName="shipping_pincode"
+                                                    class="form-control" placeholder="Enter Pincode">
                                             </div>
                                         </div>
                                     </div>
@@ -166,42 +186,47 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Bank Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Bank Name">
+                                        <input type="text" formControlName="bank_name" class="form-control"
+                                            placeholder="Enter Bank Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Branch</label>
-                                        <input type="text" class="form-control" placeholder="Enter Branch Name">
+                                        <input type="text" formControlName="branch" class="form-control"
+                                            placeholder="Enter Branch Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-12 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Account Holder Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Account Holder Name">
+                                        <input type="text" class="form-control" formControlName="account_holder_name"
+                                            placeholder="Enter Account Holder Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-12 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Account Number</label>
-                                        <input type="text" class="form-control" placeholder="Enter Account Number">
+                                        <input type="text" formControlName="account_number" class="form-control"
+                                            placeholder="Enter Account Number">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-12 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>IFSC</label>
-                                        <input type="text" class="form-control" placeholder="Enter IFSC Code">
+                                        <input type="text" formControlName="ifsc" class="form-control"
+                                            placeholder="Enter IFSC Code">
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="add-customer-btns text-end">
-                            <a href="customers.html" class="btn customer-btn-cancel">Cancel</a>
-                            <a href="customers.html" class="btn customer-btn-save">Save Changes</a>
+                            <button type="submit" class="btn customer-btn-cancel">Save Changes</button>
+                            <button type="button" class="btn customer-btn-save">Cancel</button>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
