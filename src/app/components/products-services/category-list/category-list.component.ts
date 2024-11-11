@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { CategoryService } from '../../../services/Category.service';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
+import { CategoryService } from '../../../services/Category.service';
+import { ExcelService } from '../../../services/excel.service';
 import { CategoryAddEditComponent } from './category-add-edit/category-add-edit.component';
+import { DeleteCategoryComponent } from './delete-category/delete-category.component';
 
 @Component({
   selector: 'app-category-list',
@@ -16,8 +17,11 @@ import { CategoryAddEditComponent } from './category-add-edit/category-add-edit.
 })
 export class CategoryListComponent implements OnInit {
   categoryList: any[] = [];
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  dataForExcel: any[] = [];
 
   constructor(private categoryService: CategoryService,
+    private ExcelService: ExcelService,
     public dialog: MatDialog) {
   }
 
@@ -39,7 +43,25 @@ export class CategoryListComponent implements OnInit {
       }
     });
   }
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
 
+    // Check if input and input.files are not null
+    if (input && input.files && input.files.length > 0) {
+      const file = input.files[0];
+      this.categoryService.UploadExcel(file).subscribe(
+        response => {
+          this.GetCategories();
+          console.log('File uploaded successfully', response);
+        },
+        error => {
+          console.error('File upload failed', error);
+        }
+      );
+    } else {
+      console.error('No file selected');
+    }
+  }
   // Open the edit modal with the selected category
   openAddCategory() {
     const dialogRef = this.dialog.open(CategoryAddEditComponent, {
@@ -67,23 +89,48 @@ export class CategoryListComponent implements OnInit {
 
   // Open delete confirmation with the selected category's ID
   openDeleteCategory(categoryId: number): void {
-    const confirmation = window.confirm('Are you sure you want to delete this category?');
-    if (confirmation) {
-      this.deleteCategory(categoryId);
-    }
-  }
+    const dialogRef = this.dialog.open(DeleteCategoryComponent, {
+      data: categoryId,
+      width: '550px',
+    });
 
-  // Delete the category by calling the service method
-  deleteCategory(categoryId: number): void {
-    this.categoryService.DeleteCategory(categoryId).subscribe({
-      next: (response) => {
-        console.log('Category deleted successfully:', response);
-        // Optionally, refresh the category list after deletion
-        this.GetCategories();
-      },
-      error: (error) => {
-        console.error('Error deleting category:', error);
-      }
+    dialogRef.afterClosed().subscribe(() => {
+      this.GetCategories();
     });
   }
+
+  excelDownload(title: string) {
+    // Assuming categoryList contains the list of categories
+    let dataToExport = this.categoryList.map((x: any) => ({
+      category_id: x.category_id,
+      category_name: x.category_name,
+      description: x.description,
+      created_at: x.created_at,
+    }));
+
+    // Prepare the data to export by converting each row to its values
+    this.dataForExcel = []; // Make sure to clear previous data
+    dataToExport.forEach((row: any) => {
+      this.dataForExcel.push(Object.values(row));
+    });
+
+    console.log(this.dataForExcel);
+
+    // Extract the header names dynamically from the keys of the first object
+    let headers = Object.keys(dataToExport[0]);
+
+    // Define the report data with the headers and corresponding data
+    let reportData = {
+      data: this.dataForExcel,
+      headers: headers, // Dynamically use the keys as headers
+      title: title
+    };
+
+    // Call the Excel service to generate the excel file
+    this.ExcelService.generateExcel(reportData);
+
+    // Clear the data after exporting
+    this.dataForExcel = [];
+  }
+
 }

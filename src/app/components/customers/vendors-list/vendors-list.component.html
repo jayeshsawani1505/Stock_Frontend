@@ -7,74 +7,26 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter </a>
-                    </li>
-                    <li class="">
-                        <div class="dropdown dropdown-action" data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="download">
-                            <a href="#" class="btn-filters" data-bs-toggle="dropdown" aria-expanded="false"><span><i
-                                        class="fas fa-download"></i></span></a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <ul class="d-block">
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file-pdf me-2"></i>PDF</a>
-                                    </li>
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file me-2"></i>CVS</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('vendor')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="print"><span><i class="fas fa-print"></i></span> </a>
+                        <a class="btn btn-import" href="javascript:void(0);" (click)="fileInput.click()"><span><i
+                                    class="fas fa-check-square me-2"></i>Import vendor</span></a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
-                        <a class="btn btn-import" href="javascript:void(0);"><span><i
-                                    class="fas fa-check-square me-2"></i>Import</span></a>
-                    </li>
-                    <li>
-                        <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal"
-                            data-bs-target="#add_vendor"><i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add
-                            Vendors</a>
+                        <a class="btn btn-primary" (click)="openAddvendor()">
+                            <i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add Vendor
+                        </a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
     <!-- /Page Header -->
-
-    <!-- Search Filter -->
-    <div id="filter_inputs" class="card filter-card">
-        <div class="card-body pb-0">
-            <div class="row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Name</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Email</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Phone</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /Search Filter -->
 
     <div class="row">
         <div class="col-sm-12">
@@ -87,232 +39,29 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Phone</th>
-                                    <th>Created</th>
                                     <th>Balance</th>
-                                    <th Class="no-sort">Actions</th>
+                                    <th>Created</th>
+                                    <th class="no-sort">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
+                                <tr *ngFor="let vendor of vendorList; let i = index">
+                                    <td>{{ i + 1 }}</td>
                                     <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-14.jpg" alt="User Image"></a>
-                                            <a href="profile.html">John Smith <span><span class="__cf_email__"
-                                                        data-cfemail="5f353037311f3a273e322f333a713c3032">[email&#160;protected]</span></span></a>
-                                        </h2>
+                                        <span>{{ vendor.vendor_name }}</span><br>
+                                        <span>{{ vendor.email }}</span>
                                     </td>
-                                    <td>+1 989-438-3131</td>
-                                    <td>19 Dec 2023, 06:12 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-15.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Johnny Charles<span><span class="__cf_email__"
-                                                        data-cfemail="c6aca9aea8a8bf86a3bea7abb6aaa3e8a5a9ab">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 843-443-3282</td>
-                                    <td>15 Dec 2023, 06:12 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-16.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Robert George<span><span class="__cf_email__"
-                                                        data-cfemail="0f7d606d6a7d7b4f6a776e627f636a216c6062">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 917-409-0861</td>
-                                    <td>04 Dec 2023, 12:38 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-17.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Sharonda Letha<span><span class="__cf_email__"
-                                                        data-cfemail="b8cbd0d9cad7d6f8ddc0d9d5c8d4dd96dbd7d5">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 956-623-2880</td>
-                                    <td>14 Dec 2023, 12:38 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-18.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Pricilla Maureen<span><span class="__cf_email__"
-                                                        data-cfemail="d8a8aab1bbb1b4b4b998bda0b9b5a8b4bdf6bbb7b5">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 956-613-2880</td>
-                                    <td>12 Dec 2022, 12:38 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-19.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Randall Hollis<span><span class="__cf_email__"
-                                                        data-cfemail="b5c7d4dbd1d4d9d9f5d0cdd4d8c5d9d09bd6dad8">[email&#160;protected]</span></span></a>
-                                        </h2>
-                                    </td>
-                                    <td>+1 117-409-0861</td>
-                                    <td>04 Dec 2022, 12:38 PM</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="ledger.html" class="btn btn-greys me-2"><i class="fa fa-eye me-1"></i>
-                                            Ledger</a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_vendor"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+
+                                    <td>{{ vendor.phone_number }}</td>
+                                    <td>₹{{ vendor.closing_balance | number: '1.2-2' }}</td>
+                                    <td>{{ vendor.created_at | date:'dd MMM yyyy, hh:mm a' }}</td>
+                                    <td class="d-flex">
+                                        <a class="btn-action-icon me-2" (click)="openEditvendor(vendor)">
+                                            <i class="far fa-edit me-2"></i>
+                                        </a>
+                                        <a class="btn-action-icon" (click)="DeleteVendor(vendor.vendor_id)">
+                                            <i class="far fa-trash-alt me-2"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>
@@ -320,56 +69,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-<!-- Add Vendor Modal -->
-<div class="modal custom-modal fade" id="add_vendor" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Add Vendor</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="input-block mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" placeholder="Enter Name">
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="input-block mb-3">
-                                <label>Email</label>
-                                <input type="text" class="form-control" placeholder="Enter Email Address">
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="input-block mb-3">
-                                <label>Phone Number</label>
-                                <input type="number" class="form-control" placeholder="Enter Phone Number">
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-sm-12">
-                            <div class="input-block mb-0">
-                                <label>Closing Balance</label>
-                                <input type="number" class="form-control" placeholder="Enter Closing Balance Amount">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn">Add
-                        Vendor</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

@@ -4,186 +4,177 @@
             <div class="content-page-header">
                 <h5>Add Purchases</h5>
             </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group-item border-0 mb-0">
-                        <div class="row align-item-center">
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Purchases Id</label>
-                                    <input type="text" class="form-control" placeholder="Enter Purchases Id">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label for="vendorSelect">Select Vendor</label>
-                                    <div class="d-flex align-items-center">
-                                        <select id="vendorSelect" class="form-control me-2">
-                                            <option value="" disabled selected>Choose Vendor</option>
-                                            <option value="vendor1">Vendor 1</option>
-                                            <option value="vendor2">Vendor 2</option>
-                                            <option value="vendor3">Vendor 3</option>
-                                        </select>
-                                        <a class="btn btn-primary" href="add-customer.html" title="Add Vendor">
-                                            <i class="fas fa-plus-circle"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Purchases Date</label>
-                                    <input type="text" class="datetimepicker form-control" placeholder="Select Date">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Due Date</label>
-                                    <input type="text" class="datetimepicker form-control" placeholder="Select Date">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Reference No</label>
-                                    <input type="text" class="form-control" placeholder="Enter Reference Number">
-                                </div>
-                            </div>
-                            <div class="col-lg-4 col-md-6 col-sm-12">
-                                <div class="input-block mb-3">
-                                    <label>Supplier Invoice Serial No</label>
-                                    <input type="text" class="form-control"
-                                        placeholder="Enter Supplier Invoice Serial No">
-                                </div>
-                            </div>
-                            <div class="col-lg-8">
-                                <div class="input-block mb-3">
-                                    <label for="productSelect">Products</label>
-                                    <div class="d-flex align-items-center">
-                                        <select id="productSelect" class="form-control me-2">
-                                            <option value="" disabled selected>Select Product</option>
-                                            <option value="product1">Product 1</option>
-                                            <option value="product2">Product 2</option>
-                                            <option value="product3">Product 3</option>
-                                        </select>
-                                        <a class="btn btn-primary" href="add-products.html" title="Add Product">
-                                            <i class="fas fa-plus-circle"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <div class="form-group-item">
-                        <div class="card-table">
-                            <div class="card-body">
-                                <div class="table-responsive no-pagination">
-                                    <table class="table table-center table-hover datatable">
-                                        <thead class="thead-light">
-                                            <tr>
-                                                <th>Product / Service</th>
-                                                <th>Quantity</th>
-                                                <th>Unit</th>
-                                                <th>Rate</th>
-                                                <th>Discount</th>
-                                                <th>Tax</th>
-                                                <th>Amount</th>
-                                                <th class="no-sort">Action</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>Nike Jordan</td>
-                                                <td>1</td>
-                                                <td>Pcs</td>
-                                                <td>₹0.00</td>
-                                                <td>0</td>
-                                                <td>0</td>
-                                                <td>₹0.00</td>
-                                                <td class="d-flex align-items-center">
-                                                    <a href="#" class="btn-action-icon me-2" data-bs-toggle="modal"
-                                                        data-bs-target="#add_discount"><span><i
-                                                                class="fas fa-edit"></i></span></a>
-                                                    <a href="#" class="btn-action-icon" data-bs-toggle="modal"
-                                                        data-bs-target="#delete_discount"><span><i
-                                                                class="fas fa-trash-2"></i></span></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group-item border-0 p-0">
-                        <div class="row">
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="form-group-bank">
-                                    <div class="row align-items-center">
-                                        <div class="col-md-8">
-                                            <div class="input-block mb-3">
-                                                <label for="bankSelect">Select Bank</label>
-                                                <select id="bankSelect" class="form-control">
-                                                    <option value="" disabled selected>Select Bank</option>
-                                                    <option value="sbi">SBI</option>
-                                                    <option value="iob">IOB</option>
-                                                    <option value="canara">Canara</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-groups">
-                                                <a class="btn btn-primary" href="#" data-bs-toggle="modal"
-                                                    data-bs-target="#bank_details" title="Add Bank">
-                                                    Add Bank
-                                                </a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
-                                    <div class="input-block mb-3 notes-form-group-info">
-                                        <label>Notes</label>
-                                        <textarea class="form-control" placeholder="Enter Notes"></textarea>
-                                    </div>
-                                    <div class="input-block notes-form-group-info mb-0">
-                                        <label>Terms and Conditions</label>
-                                        <textarea class="form-control"
-                                            placeholder="Enter Terms and Conditions"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-lg-12">
-                                <div class="form-group-bank">
-                                    <div class="invoice-total-box">
-
-                                        <div class="invoice-total-footer">
-                                            <h4>Total Amount <span>₹0.00</span></h4>
-                                        </div>
-                                    </div>
+            <form [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group-item border-0 mb-0">
+                            <div class="row align-item-center">
+                                <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Signature Name</label>
-                                        <input type="text" class="form-control" placeholder="Enter Signature Name">
+                                        <label for="vendorSelect">Select Vendor</label>
+                                        <div class="d-flex align-items-center">
+                                            <select formControlName="vendor_id" class="form-control me-2">
+                                                <option value="" disabled selected>Choose Vendor</option>
+                                                <option *ngFor="let vendor of vendorList" [value]="vendor.vendor_id">
+                                                    {{ vendor.vendor_name }}
+                                                </option>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="input-block mb-0">
-                                        <label>Signature Image</label>
-                                        <div class="input-block service-upload service-upload-info mb-0">
-                                            <span><i class="fas fa-upload"></i>Upload Signature</span>
-                                            <input type="file" multiple="" id="image_sign">
-                                            <div id="frames"></div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Purchases Date</label>
+                                        <input type="text" formControlName="purchase_date"
+                                            class="datetimepicker form-control" placeholder="Select Date">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Due Date</label>
+                                        <input type="text" formControlName="due_date"
+                                            class="datetimepicker form-control" placeholder="Select Date">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label for="statusSelect">Status</label>
+                                        <select id="statusSelect" formControlName="status" class="form-control">
+                                            <option value="" disabled selected>Select Status</option>
+                                            <option value="unpaid">Unpaid</option>
+                                            <option value="partially_paid">Partially Paid</option>
+                                            <option value="paid">Paid</option>
+                                            <option value="overdue">Overdue</option>
+                                            <option value="cancelled">Cancelled</option>
+                                            <option value="refunded">Refunded</option>
+                                            <option value="draft">Draft</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Reference Number</label>
+                                        <input type="text" formControlName="reference_no" class="form-control"
+                                            placeholder="Enter Reference Number">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Supplier Invoice Serial No</label>
+                                        <input type="text" formControlName="supplier_invoice_serial_no"
+                                            class="form-control" placeholder="Enter Supplier Invoice Serial No">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="input-block mb-3">
+                                        <label>Payment Method</label>
+                                        <input type="text" formControlName="payment_mode" class="form-control"
+                                            placeholder="Enter Payment Method">
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="input-block mb-3">
+                                        <label for="productSelect">Products</label>
+                                        <div class="d-flex align-items-center">
+                                            <select id="productSelect" formControlName="product_id"
+                                                class="form-control me-2" (change)="onProductChange($event)">
+                                                <option value="" disabled selected>Select Product</option>
+                                                <!-- Loop through productList to dynamically populate the options -->
+                                                <option *ngFor="let product of productList"
+                                                    [value]="product.product_id">
+                                                    {{ product.product_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-group-item">
+                            <div class="card-table">
+                                <div class="card-body">
+                                    <div class="table-responsive no-pagination">
+                                        <table class="table table-center table-hover datatable">
+                                            <thead class="thead-light">
+                                                <tr>
+                                                    <th>Product</th>
+                                                    <th>Quantity</th>
+                                                    <th>Unit</th>
+                                                    <th>Rate</th>
+                                                    <th>Amount</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td> {{product_name}}
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="quantity"
+                                                            class="form-control" value="0">
+                                                    </td>
+                                                    <td>boxs</td>
+                                                    <td>
+                                                        <input type="number" formControlName="rate" class="form-control"
+                                                            value="0">
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="total_amount"
+                                                            class="form-control" value="0">
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group-item border-0 p-0">
+                            <div class="row">
+                                <div class="col-xl-6 col-lg-12">
+                                    <div class="form-group-bank">
+                                        <div class="input-block mb-3 notes-form-group-info">
+                                            <label>Notes</label>
+                                            <textarea formControlName="notes" class="form-control"
+                                                placeholder="Enter Notes"></textarea>
+                                        </div>
+                                        <div class="input-block mb-3 notes-form-group-info mb-0">
+                                            <label>Terms and Conditions</label>
+                                            <textarea class="form-control" formControlName="terms_conditions"
+                                                placeholder="Enter Terms and Conditions"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-6 col-lg-12">
+                                    <div class="form-group-bank">
+                                        <div class="invoice-total-box">
+
+                                            <div class="invoice-total-footer">
+                                                <h4>Total Amount <span>₹{{purchaseForm.value?.total_amount}}</span></h4>
+                                            </div>
+                                        </div>
+                                        <div class="input-block mb-3">
+                                            <label>Signature Name</label>
+                                            <input type="text" class="form-control" placeholder="Enter Signature Name">
+                                        </div>
+                                        <div class="input-block mb-0">
+                                            <label>Signature Image</label>
+                                            <div class="input-block mb-3 service-upload service-upload-info mb-0">
+                                                <span><i class="fas fa-upload"></i>Upload Signature</span>
+                                                <input type="file" multiple="" id="image_sign">
+                                                <div id="frames"></div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <form action="https://kanakku.dreamstechnologies.com/html/template/purchases.html" class="text-end">
                         <button type="reset" class="btn btn-primary cancel me-2">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
-                    </form>
+                        <button type="submit" class="btn btn-primary">Save & Send</button>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>

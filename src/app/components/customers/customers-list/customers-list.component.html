@@ -6,36 +6,15 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter </a>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('customer')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <div class="dropdown dropdown-action" data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="Download">
-                            <a href="#" class="btn-filters" data-bs-toggle="dropdown" aria-expanded="false"><span><i
-                                        class="fas fa-download"></i></span></a>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <ul class="d-block">
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file-pdf me-2"></i>PDF</a>
-                                    </li>
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file me-2"></i>CVS</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </li>
-                    <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Print"><span><i class="fas fa-print"></i></span> </a>
-                    </li>
-                    <li>
-                        <a class="btn btn-import" href="javascript:void(0);"><span><i
+                        <a class="btn btn-import" (click)="fileInput.click()"><span><i
                                     class="fas fa-check-square me-2"></i>Import Customer</span></a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
                         <a class="btn btn-primary" routerLink="/admin/customers/customers-add"><i
@@ -46,33 +25,6 @@
         </div>
     </div>
     <!-- /Page Header -->
-
-    <!-- Search Filter -->
-    <div id="filter_inputs" class="card filter-card">
-        <div class="card-body pb-0">
-            <div class="row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Name</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Email</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Phone</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /Search Filter -->
 
     <div class="row">
         <div class="col-sm-12">
@@ -101,7 +53,9 @@
                                             <div class="avatar-container" style="margin-right: 15px;">
                                                 <img class="avatar-img rounded-circle"
                                                     [src]="customer.profile_photo || 'assets/img/profiles/avatar-14.jpg'"
-                                                    alt="User Image" style="width: 50px; height: 50px;">
+                                                    alt="User Image" (error)="onImageError($event)"
+                                                    style="width: 50px; height: 50px;">
+
                                             </div>
 
                                             <!-- Name and Phone Container -->
@@ -116,35 +70,22 @@
                                     <td>0.00</td>
                                     <td>{{ customer.created_at | date: 'dd MMM yyyy, hh:mm a' }}</td>
                                     <td><span class="badge bg-success-light">Active</span></td>
-                                    <td class="d-flex align-items-center">
+                                    <td class="d-flex align-items-center mt-3">
                                         <!-- <a href="add-invoice.html" class="btn btn-greys me-2">
                                             <i class="fa fa-plus-circle me-1"></i> Invoice
                                         </a>
                                         <a href="customers-ledger.html" class="btn btn-greys me-2">
                                             <i class="fa-regular fa-eye me-1"></i> Ledger
                                         </a> -->
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class="btn-action-icon" data-bs-toggle="dropdown"
-                                                aria-expanded="false">
-                                                <i class="fas fa-ellipsis-v"></i>
-                                            </a>
-                                            <div class="dropdown-menu dropdown-menu-end">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" (click)="editCustomer(customer)">
-                                                            <i class="far fa-edit me-2"></i>Edit
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item"
-                                                            (click)="openDeleteConfirmation(customer?.customer_id)">
-                                                            <i class="far fa-trash-alt me-2"></i>Delete
-                                                        </a>
-                                                    </li>
 
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        <a class="btn-action-icon me-2" (click)="editCustomer(customer)">
+                                            <i class="far fa-edit"></i>
+                                        </a>
+
+                                        <a class="btn-action-icon"
+                                            (click)="openDeleteConfirmation(customer?.customer_id)">
+                                            <i class="far fa-trash-alt"></i>
+                                        </a>
                                     </td>
                                 </tr>
                             </tbody>

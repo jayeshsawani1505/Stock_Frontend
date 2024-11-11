@@ -10427,6 +10427,7 @@ table .badge {
 }
 
 .inovices-card .card-body {
+  height: 75px;
   padding: 15px;
 }
 

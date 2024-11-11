@@ -32,10 +32,7 @@
                                                         {{ customer.name }}
                                                     </option>
                                                 </select>
-                                                <a class="btn btn-primary" href="add-customer.html"
-                                                    title="Add Customer">
-                                                    <i class="fas fa-plus-circle"></i>
-                                                </a>
+
                                             </div>
                                         </div>
                                     </div>
@@ -128,10 +125,6 @@
                                                     {{ product.product_name }}
                                                 </option>
                                             </select>
-
-                                            <a class="btn btn-primary" href="add-products.html" title="Add Product">
-                                                <i class="fas fa-plus-circle"></i>
-                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -153,7 +146,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td> {{product_name||''}}
+                                                    <td> {{product_name}}
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="quantity"
@@ -216,7 +209,6 @@
                             </div>
                         </div>
                         <button type="reset" class="btn btn-primary cancel me-2">Cancel</button>
-                        <button type="reset" class="btn btn-primary cancel me-2">Save</button>
                         <button type="submit" class="btn btn-primary">Save & Send</button>
                     </div>
                 </div>

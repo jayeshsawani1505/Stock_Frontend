@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { CustomerService } from '../../../../services/company.service';
+import { CustomerService } from '../../../../services/Customer.service';
 
 @Component({
   selector: 'app-customers-add-edit',

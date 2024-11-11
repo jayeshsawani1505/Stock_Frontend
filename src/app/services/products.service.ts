@@ -40,4 +40,14 @@ export class ProductService {
             .delete(environment.baseURL + `/products/${productId}`)
             .pipe(catchError(this.handleError));
     }
+
+    // Upload Excel file to add multiple customers
+    UploadExcel(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return this.httpClient
+            .post(environment.baseURL + `/products/upload-excel`, formData)
+            .pipe(catchError(this.handleError));
+    }
 }

@@ -1,59 +1,33 @@
 <div class="content container-fluid">
-
-    <!-- Page Header -->
     <div class="page-header">
         <div class="content-page-header">
+
             <h5>Credit Notes</h5>
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" data-bs-original-title="Filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter </a>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('invoice-credit-notes')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" data-bs-original-title="Settings"><span><i
-                                    class="fas fa-settings"></i></span> </a>
+                        <a class="btn btn-import" href="javascript:void(0);" (click)="fileInput.click()">
+                            <span><i class="fas fa-check-square me-2"></i>Import Credit Notes</span>
+                        </a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
-                        <a class="btn btn-primary" routerLink="/admin/sales/credit-notes-add"><i class="fa fa-plus-circle me-2"
-                                aria-hidden="true"></i>Credit Notes</a>
+                        <a class="btn btn-primary" routerLink="/admin/sales/credit-notes-add">
+                            <i class="fa fa-plus-circle me-2"></i>Add Credit Note
+                        </a>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-    <!-- /Page Header -->
 
-    <!-- Search Filter -->
-    <div id="filter_inputs" class="card filter-card">
-        <div class="card-body pb-0">
-            <div class="row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Name</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Email</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Phone</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /Search Filter -->
-
-    <!-- Table -->
+    <!-- Credit Notes Table -->
     <div class="row">
         <div class="col-sm-12">
             <div class="card-table">
@@ -63,350 +37,43 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>#</th>
-                                    <th>Credit Notes ID</th>
-                                    <th>Vendor</th>
-                                    <th>Amount</th>
-                                    <th>Payment Mode</th>
+                                    <th>Credit Note ID</th>
+                                    <th>Reference Number</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>Total Amount</th>
                                     <th>Created On</th>
-                                    <th>Status</th>
                                     <th class="no-sort">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905681</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-14.jpg" alt="User Image"></a>
-                                            <a href="profile.html">John Smith <span>+1 843-443-3282</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>19 Dec 2023, 06:12 PM</td>
-                                    <td><span class="badge bg-success-light text-success-light">Paid</span></td>
+                                <tr *ngFor="let note of creditNoteList; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ note.id }}</td>
+                                    <td>{{ note.reference_number }}</td>
+                                    <td>{{ note.quantity }}</td>
+                                    <td>₹{{ note.rate | number:'1.2-2' }}</td>
+                                    <td>₹{{ note.total_amount | number:'1.2-2' }}</td>
+                                    <td>{{ note.created_at | date:'dd MMM yyyy, hh:mm a' }}</td>
                                     <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905682</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-15.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Johnny <span>+1 917-409-0861</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>15 Dec 2023, 04:35 PM</td>
-                                    <td><span class="badge bg-warning-light text-warning-light">Pending</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905683</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-16.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Robert<span>+1 956-623-2880</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>04 Dec 2023, 12:38 PM</td>
-                                    <td><span class="badge bg-danger-light">Cancelled</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905684</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-17.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Sharonda<span>+1 707-439-1732</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>28 Nov 2023, 03:25 PM</td>
-                                    <td><span class="badge bg-success-light text-success-light">Paid</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905685</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-18.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Pricilla<span>+1 559-741-9672</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>20 Nov 2022, 02:47 PM</td>
-                                    <td><span class="badge bg-warning-light text-warning-light">Pending</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">4905686</a>
-                                    </td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <a href="profile.html" class="avatar avatar-sm me-2"><img
-                                                    class="avatar-img rounded-circle"
-                                                    src="assets/img/profiles/avatar-19.jpg" alt="User Image"></a>
-                                            <a href="profile.html">Randalll<span>+1 989-438-3131</span></a>
-                                        </h2>
-                                    </td>
-                                    <td>₹0.00</td>
-                                    <td>Cash</td>
-                                    <td>15 Nov 2022, 10:42 AM</td>
-                                    <td><span class="badge bg-danger-light">Cancelled</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right credit-note-dropdown">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="edit-credit-notes.html"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="far fa-eye me-2"></i>View</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-send me-2"></i>Send</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#"><i
-                                                                class="fas fa-download me-2"></i>Download</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="add-delivery-challans.html"><i
-                                                                class="fas fa-file-text me-2"></i>Convert to
-                                                            DeliveryChallan</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+                                        <!-- <a class="btn-action-icon me-2" (click)="downloadCreditNotePdf(note.id)">
+                                            <i class="fas fa-download"></i>
+                                        </a> -->
+                                        <a class="btn-action-icon me-2" (click)="editCreditNote(note)">
+                                            <i class="far fa-edit me-2"></i>
+                                        </a>
+
+                                        <a class="btn-action-icon me-2" (click)="openDeleteConfirmation(note.id)">
+                                            <i class="far fa-trash-alt me-2"></i>
+                                        </a>
+
+                                        <!-- <a class="btn-action-icon me-2" (click)="viewCreditNoteDetails(note)">
+                                            <i class="far fa-eye me-2"></i>
+                                        </a>
+
+                                        <a class="btn-action-icon me-2" (click)="sendCreditNoteEmail(note.id)">
+                                            <i class="fas fa-send me-2"></i>
+                                        </a> -->
                                     </td>
                                 </tr>
                             </tbody>
@@ -416,6 +83,4 @@
             </div>
         </div>
     </div>
-    <!-- /Table -->
-
 </div>

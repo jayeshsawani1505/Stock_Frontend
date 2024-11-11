@@ -7,37 +7,19 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" data-bs-original-title="filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter </a>
-                    </li>
-                    <li class="">
-                        <div class="dropdown dropdown-action" data-bs-toggle="tooltip" data-bs-placement="top"
-                            data-bs-original-title="download">
-                            <a href="#" class="btn-filters" data-bs-toggle="dropdown" aria-expanded="false"><span><i
-                                        class="fas fa-download"></i></span></a>
-                            <div class="dropdown-menu dropdown-menu-right">
-                                <ul class="d-block">
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file-pdf me-2"></i>PDF</a>
-                                    </li>
-                                    <li>
-                                        <a class="d-flex align-items-center download-item" href="javascript:void(0);"
-                                            download><i class="far fa-file me-2"></i>CVS</a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('inventory')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" data-bs-original-title="print"><span><i
-                                    class="fas fa-printer"></i></span> </a>
+                        <a class="btn btn-import" href="javascript:void(0);" (click)="fileInput.click()"><span><i
+                                    class="fas fa-check-square me-2"></i>Import Inventory</span></a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
-                        <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal"
-                            data-bs-target="#add_inventory"><i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add
+                        <a class="btn btn-primary" (click)="openAddinventory()"><i class="fa fa-plus-circle me-2"
+                                aria-hidden="true"></i>Add
                             New</a>
                     </li>
                 </ul>
@@ -66,250 +48,35 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Lenovo 3rd Generation</td>
-                                    <td>P125389</td>
-                                    <td>Inches</td>
-                                    <td>2</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
+                                <tr *ngFor="let inventory of inventoryList; let i = index">
+                                    <td>{{ i + 1 }}</td>
+                                    <td>{{ inventory.item_name }}</td>
+                                    <td>{{ inventory.item_code }}</td>
+                                    <td>{{ inventory.units }}</td>
+                                    <td>{{ inventory.quantity }}</td>
+                                    <td>₹{{ inventory.selling_price | number:'1.2-2' }}</td>
+                                    <td>₹{{ inventory.purchase_price | number:'1.2-2' }}</td>
                                     <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
+                                        <!-- <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
                                             data-bs-target="#inventory_history">
                                             <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
+                                        </a> -->
+                                        <a class="btn btn-greys bg-success-light me-2"
+                                            (click)="openStockDialog(true,inventory)">
                                             <i class="fa fa-plus-circle me-1"></i> Stock in
                                         </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
+                                        <a class="btn btn-greys bg-danger-light me-2"
+                                            (click)="openStockDialog(false,inventory)">
                                             <i class="fa fa-plus-circle me-1"></i> Stock out
                                         </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Nike Jordan</td>
-                                    <td>P125390</td>
-                                    <td>Pieces</td>
-                                    <td>4</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#inventory_history">
-                                            <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock in
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock out
-                                        </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Apple Series 5 Watch</td>
-                                    <td>P125391</td>
-                                    <td>Inches</td>
-                                    <td>7</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#inventory_history">
-                                            <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock in
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock out
-                                        </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Amazon Echo Dot</td>
-                                    <td>P125392</td>
-                                    <td>Box</td>
-                                    <td>3</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#inventory_history">
-                                            <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock in
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock out
-                                        </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>Lobar Handy</td>
-                                    <td>P125393</td>
-                                    <td>Kilograms</td>
-                                    <td>1</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#inventory_history">
-                                            <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock in
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock out
-                                        </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>Woodcraft Sandal</td>
-                                    <td>P125389</td>
-                                    <td>Inches</td>
-                                    <td>2</td>
-                                    <td>₹0.00</td>
-                                    <td>₹0.00</td>
-                                    <td class="d-flex align-items-center">
-                                        <a href="#" class="btn btn-greys bg-history-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#inventory_history">
-                                            <i class="far fa-eye me-1"></i> History
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-success-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_in">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock in
-                                        </a>
-                                        <a href="#" class="btn btn-greys bg-danger-light me-2" data-bs-toggle="modal"
-                                            data-bs-target="#stock_out">
-                                            <i class="fa fa-plus-circle me-1"></i> Stock out
-                                        </a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#edit_inventory"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="#" data-bs-toggle="modal"
-                                                            data-bs-target="#delete_stock"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+
+                                        <a class="btn-action-icon me-2" (click)="openEditinventory(inventory)"><i
+                                                class="far fa-edit me-2"></i></a>
+
+                                        <a class="btn-action-icon me-2"
+                                            (click)="openDeleteinventory(inventory?.inventory_id)"><i
+                                                class="far fa-trash-alt"></i></a>
+
                                     </td>
                                 </tr>
                             </tbody>
@@ -320,195 +87,7 @@
         </div>
     </div>
     <!-- /Table -->
-
 </div>
-<!-- Add Stock in Modal -->
-<div class="modal custom-modal fade" id="stock_in" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Add Stock in</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Name</label>
-                                <input type="text" class="bg-white-smoke form-control" placeholder="SEO Service">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Quantity</label>
-                                <input type="number" class="form-control" placeholder="0">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-0">
-                                <label for="unitsSelect">Units</label>
-                                <select id="unitsSelect" class="form-control">
-                                    <option value="" disabled selected>Select Unit</option>
-                                    <option value="pieces">Pieces</option>
-                                    <option value="inches">Inches</option>
-                                    <option value="kilograms">Kilograms</option>
-                                    <option value="box">Box</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12">
-                            <div class="input-block mb-0">
-                                <label>Notes</label>
-                                <textarea rows="3" cols="3" class="form-control" placeholder="Enter Notes"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn">Add
-                        Quantity</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- /Add Stock in Modal -->
-
-<!-- Remove Stock Modal -->
-<div class="modal custom-modal fade" id="stock_out" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Remove Stock</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Name</label>
-                                <input type="text" class="bg-white-smoke form-control" placeholder="SEO Service">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Quantity</label>
-                                <input type="number" class="form-control" placeholder="0">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-0">
-                                <label for="unitsSelect">Units</label>
-                                <select id="unitsSelect" class="form-control">
-                                    <option value="" disabled selected>Select Unit</option>
-                                    <option value="pieces">Pieces</option>
-                                    <option value="inches">Inches</option>
-                                    <option value="kilograms">Kilograms</option>
-                                    <option value="box">Box</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-12">
-                            <div class="input-block mb-0">
-                                <label>Notes</label>
-                                <textarea rows="3" cols="3" class="form-control" placeholder="Enter Notes"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn">Remove
-                        Quantity</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- /Remove Stock Modal -->
-
-<!-- Add Inventory -->
-<div class="modal custom-modal fade" id="add_inventory" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Add Inventory</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Name</label>
-                                <input type="text" class="form-control" placeholder="Enter Name">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Code</label>
-                                <input type="text" class="form-control" placeholder="Enter Code">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Units</label>
-                                <input type="text" class="form-control" placeholder="Enter Units">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Quantity</label>
-                                <input type="text" class="form-control" placeholder="Enter Quantity">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Selling Price</label>
-                                <input type="text" class="form-control" placeholder="Enter Selling Price">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Purchase Price</label>
-                                <input type="text" class="form-control" placeholder="Enter Purchase Price">
-                            </div>
-                        </div>
-                        <div class="col-lg-6 col-md-12">
-                            <div class="input-block mb-0">
-                                <label>Status</label>
-                                <input type="text" class="form-control" placeholder="Enter Status">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal"
-                        class="btn btn-primary paid-continue-btn">Update</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- /Add Inventory -->
 
 <!-- Inventory History Modal -->
 <div class="modal custom-modal fade" id="inventory_history" role="dialog">

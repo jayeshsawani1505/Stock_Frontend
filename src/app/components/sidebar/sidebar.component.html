@@ -1,194 +1,220 @@
-<div class="main-wrapper">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-inner slimscroll">
-            <div id="sidebar-menu" class="sidebar-menu">
-                <ul class="sidebar-vertical" style="overflow-x: auto; height: 88vh;">
-                    <!-- Main -->
-                    <li class="menu-title" (click)="toggleMenu('Main')">
-                        <span>Main</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('Main')">
-                        <p routerLink="/admin/dashboard" class="menu-item"><i class="fas fa-users"></i>
-                            <span>Dashboard</span>
-                        </p>
-                    </li>
+<!-- Navbar with Offcanvas Sidebar -->
+<nav class="navbar navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <div class="d-flex align-items-center">
+            <img src="../../../assets/img/logo.png" height="100px" width="120px" class="me-3">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
+                aria-controls="offcanvasNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div>
+            <ul class="nav nav-tabs user-menu">
+                <li class="nav-item dropdown">
+                    <a href="javascript:void(0)" class="user-link  nav-link" data-bs-toggle="dropdown">
+                        <span class="user-img">
+                            <img src="../../../assets/img/profiles/avatar-07.jpg" alt="img" class="profilesidebar">
+                            <span class="animate-circle"></span>
+                        </span>
+                        <span class="user-content">
+                            <span class="user-details text-white">Admin</span><br>
+                            <span class="text-white">PEC Trading</span>
+                        </span>
+                    </a>
+                    <div class="dropdown-menu menu-drop-user">
+                        <div class="profilemenu">
+                            <div class="subscription-menu">
+                                <ul>
+                                    <li>
+                                        <a class="dropdown-item" href="profile.html">Profile</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="subscription-logout">
+                                <ul>
+                                    <li class="pb-0">
+                                        <a class="dropdown-item" href="login.html">Log Out</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
 
-                    <!-- Application -->
-                    <li class="menu-title" (click)="toggleMenu('Application')">
-                        <span>Application</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('Application')">
-                        <p routerLink="/admin/application/chat" class="menu-item"><i class="fas fa-users"></i>
-                            <span>Chat</span>
-                        </p>
-                    </li>
 
-                    <!-- Customers -->
-                    <li class="menu-title" (click)="toggleMenu('customers')">
-                        <span>Customers</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('customers')">
-                        <p routerLink="/admin/customers/customers-list" class="menu-item"><i class="fas fa-users"></i>
-                            <span>Customers</span>
-                        </p>
-                        <p routerLink="/admin/customers/customer-details" class="menu-item"><i class="fas fa-file"></i>
-                            <span>Customer
-                                Details</span>
-                        </p>
-                        <p routerLink="/admin/customers/vendors-list" class="menu-item"><i class="fas fa-user"></i>
-                            <span>Vendors</span>
-                        </p>
-                    </li>
+        <div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1" id="offcanvasNavbar"
+            aria-labelledby="offcanvasNavbarLabel" style="width: 280px;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title text-white m-0" id="offcanvasNavbarLabel">Menu</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <ul class="navbar-nav">
 
-                    <!-- Inventory -->
-                    <li class="menu-title" (click)="toggleMenu('productsServices')">
-                        <span>Products / Services</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('productsServices')">
-                        <p routerLink="/admin/productsServices/product-list" class="menu-item">Product List</p>
-                        <p routerLink="/admin/productsServices/category-list" class="menu-item">Category</p>
-                        <p routerLink="/admin/productsServices/inventory-list" class="menu-item">Inventory
-                        </p>
-                    </li>
-
-                    <!-- Signature -->
-                    <li class="menu-title" (click)="toggleMenu('signature')">
-                        <span>Signature</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('signature')">
-                        <p routerLink="/admin/signature/signature-list" class="menu-item"><i
-                                class="fas fa-clipboard"></i>
-                            <span>List of Signature</span>
-                        </p>
-                        <p routerLink="/admin/signature/signature-invoice" class="menu-item"><i class="fas fa-box"></i>
-                            <span>Signature Invoice</span>
-                        </p>
+                    <!-- Main Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#mainSection" role="button"
+                            aria-expanded="false" aria-controls="mainSection">
+                            Main
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="mainSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/dashboard">Dashboard</a>
+                        </div>
                     </li>
 
-                    <!-- Sales -->
-                    <li class="menu-title" (click)="toggleMenu('sales')">
-                        <span>Sales</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
+                    <!-- Application Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#applicationSection"
+                            role="button" aria-expanded="false" aria-controls="applicationSection">
+                            Application
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="applicationSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/application/chat">Chat</a>
+                        </div>
                     </li>
 
-                    <li *ngIf="isActive('sales')">
-                        <p routerLink="/admin/sales/invoices" class="menu-item">Invoices List</p>
-
-                        <!-- <p routerLink="/admin/sales/invoice-details-admin" class="menu-item">Invoice Details (Admin)</p>
-
-                        <p routerLink="/admin/sales/invoice-details" class="menu-item">Invoice Details (Customer)</p> -->
-
-                        <p routerLink="/admin/sales/invoice-template" class="menu-item">Invoice Templates</p>
-
-                        <!-- <p routerLink="/admin/sales/recurring-invoices" class="menu-item">
-                            Recurring Invoices
-                        </p> -->
-
-                        <p routerLink="/admin/sales/credit-notes" class="menu-item">Credit
-                            Notes</p>
+                    <!-- Customers Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#customersSection" role="button"
+                            aria-expanded="false" aria-controls="customersSection">
+                            Customers
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="customersSection">
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/customers/customers-list">Customers</a>
+                            <!-- <a class="nav-link text-white ps-4" routerLink="/admin/customers/customer-details">Customer
+                                Details</a> -->
+                            <a class="nav-link text-white ps-4" routerLink="/admin/customers/vendors-list">Vendors</a>
+                        </div>
                     </li>
 
-                    <!-- Purchases -->
-                    <li class="menu-title" (click)="toggleMenu('purchases')">
-                        <span>Purchases</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('purchases')">
-                        <p routerLink="/admin/purchases/list" class="menu-item"><i class="fas fa-shopping-cart"></i>
-                            <span>Purchases</span>
-                        </p>
-                    </li>
-                    <li *ngIf="isActive('purchases')">
-                        <p routerLink="/admin/purchases/purchase-orders" class="menu-item"><i
-                                class="fas fa-shopping-bag"></i>
-                            <span>Purchase Orders</span>
-                        </p>
-                    </li>
-                    <li *ngIf="isActive('purchases')">
-                        <p routerLink="/admin/purchases/debit-notes" class="menu-item"><i class="fas fa-file"></i>
-                            <span>Debit
-                                Notes</span>
-                        </p>
+                    <!-- Products / Services Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#productsServicesSection"
+                            role="button" aria-expanded="false" aria-controls="productsServicesSection">
+                            Products
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="productsServicesSection">
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/productsServices/product-list">Product
+                                List</a>
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/productsServices/category-list">Category List</a>
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/productsServices/inventory-list">Inventory List</a>
+                        </div>
                     </li>
 
-                    <!-- Finance & Accounts -->
-                    <li class="menu-title" (click)="toggleMenu('financeAccounts')">
-                        <span>Finance & Accounts</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('financeAccounts')">
-                        <p routerLink="/admin/finance-account/expenses" class="menu-item"><i
-                                class="fas fa-file-plus"></i>
-                            <span>Expenses</span>
-                        </p>
-                    </li>
-                    <li *ngIf="isActive('financeAccounts')">
-                        <p routerLink="/admin/finance-account/payments" class="menu-item"><i
-                                class="fas fa-credit-card"></i>
-                            <span>Payments</span>
-                        </p>
+                    <!-- Signature Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#signatureSection" role="button"
+                            aria-expanded="false" aria-controls="signatureSection">
+                            Signature
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="signatureSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/signature/signature-list">List of
+                                Signature</a>
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/signature/signature-invoice">Signature
+                                Invoice</a>
+                        </div>
                     </li>
 
-                    <!-- Quotations -->
-                    <li class="menu-title" (click)="toggleMenu('quotations')">
-                        <span>Quotations</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
-                    </li>
-                    <li *ngIf="isActive('quotations')">
-                        <p routerLink="/admin/quotations/list" class="menu-item"><i class="fas fa-clipboard"></i>
-                            <span>Quotations</span>
-                        </p>
-                    </li>
-                    <li *ngIf="isActive('quotations')">
-                        <p routerLink="/admin/quotations/delivery-challans" class="menu-item"><i
-                                class="fas fa-file-text"></i>
-                            <span>Delivery Challans</span>
-                        </p>
+                    <!-- Sales Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#salesSection" role="button"
+                            aria-expanded="false" aria-controls="salesSection">
+                            Sales
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="salesSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/sales/invoices">Invoices List</a>
+                            <a class="nav-link text-white ps-4" routerLink="/admin/sales/invoice-template">Invoice
+                                Templates</a>
+                            <a class="nav-link text-white ps-4" routerLink="/admin/sales/credit-notes">Credit Notes</a>
+                        </div>
                     </li>
 
-                    <!-- Reports -->
-                    <li class="menu-title" (click)="toggleMenu('reportsMain')">
-                        <span>Reports</span>
-                        <i class="fa fa-angle-down fa-lg pull-right" aria-hidden="true"></i>
+                    <!-- Purchases Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#purchasesSection" role="button"
+                            aria-expanded="false" aria-controls="purchasesSection">
+                            Purchases
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="purchasesSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/purchases/list">Purchases</a>
+                            <a class="nav-link text-white ps-4" routerLink="/admin/purchases/debit-notes">Debit
+                                Notes</a>
+                        </div>
                     </li>
-                    <li *ngIf="isActive('reportsMain')">
-                        <p routerLink="/admin/reports/payment-summary" class="menu-item"><i class="fas fa-credit-card"></i>
-                            <span>Payment Summary</span>
-                        </p>
 
-                        <p routerLink="/expense-report" class="menu-item">Expense Report</p>
-
-                        <p routerLink="/purchase-report" class="menu-item">Purchase Report</p>
-
-                        <p routerLink="/purchase-return" class="menu-item">Purchase Return Report</p>
-
-                        <p routerLink="/sales-report" class="menu-item">Sales Report</p>
-
-                        <p routerLink="/sales-return-report" class="menu-item">Sales Return Report</p>
-
-                        <p routerLink="/quotation-report" class="menu-item">Quotation Report</p>
-
-                        <p routerLink="/payment-report-2" class="menu-item">Payment Report</p>
-
-                        <p routerLink="/stock-report" class="menu-item">Stock Report</p>
-
-                        <p routerLink="/low-stock-report" class="menu-item">Low Stock Report</p>
-
-                        <p routerLink="/income-report" class="menu-item">Income Report</p>
-
-                        <p routerLink="/tax-purchase" class="menu-item">Tax Report</p>
-
-                        <p routerLink="/profit-loss-list" class="menu-item">Profit & Loss</p>
+                    <!-- Finance & Accounts Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#financeAccountsSection"
+                            role="button" aria-expanded="false" aria-controls="financeAccountsSection">
+                            Finance & Accounts
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="financeAccountsSection">
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/finance-account/expenses">Expenses</a>
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/finance-account/payments">Payments</a>
+                        </div>
                     </li>
+
+                    <!-- Quotations Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#quotationsSection" role="button"
+                            aria-expanded="false" aria-controls="quotationsSection">
+                            Quotations
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="quotationsSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/quotations/list">Quotations</a>
+                            <a class="nav-link text-white ps-4"
+                                routerLink="/admin/quotations/delivery-challans">Delivery
+                                Challans</a>
+                        </div>
+                    </li>
+
+                    <!-- Reports Section -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" data-bs-toggle="collapse" href="#reportsSection" role="button"
+                            aria-expanded="false" aria-controls="reportsSection">
+                            Reports
+                            <i class="fa fa-angle-down float-end"></i>
+                        </a>
+                        <div class="collapse" id="reportsSection">
+                            <a class="nav-link text-white ps-4" routerLink="/admin/reports/payment-summary">Payment
+                                Summary</a>
+                            <a class="nav-link text-white ps-4" routerLink="/expense-report">Expense Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/purchase-report">Purchase Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/purchase-return">Purchase Return Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/sales-report">Sales Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/sales-return-report">Sales Return
+                                Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/quotation-report">Quotation Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/payment-report-2">Payment Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/stock-report">Stock Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/low-stock-report">Low Stock Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/income-report">Income Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/tax-purchase">Tax Report</a>
+                            <a class="nav-link text-white ps-4" routerLink="/profit-loss-list">Profit & Loss</a>
+                        </div>
+                    </li>
+
                 </ul>
             </div>
         </div>
     </div>
-    <!-- /Sidebar -->
-</div>
+</nav>

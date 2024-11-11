@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { CustomerService } from '../../../../services/company.service';
+import { CustomerService } from '../../../../services/Customer.service';
 import { ProductService } from '../../../../services/products.service';
 import { InvoiceService } from '../../../../services/invoice.service';
 
@@ -101,8 +101,14 @@ export class InvoicesAddEditComponent implements OnInit {
       product_id: invoice.product_id,
       notes: invoice.notes,
       terms_conditions: invoice.terms_conditions,
+      quantity: invoice.quantity,
+      rate: invoice.rate,
+      total_amount: invoice.total_amount,
     });
+    const product = this.productList.find(p => p.product_id === invoice.product_id);
+    this.product_name = product ? product.product_name : null;
   }
+  
   onProductChange(event: Event): void {
     // Parse the selected product ID as an integer
     const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);

@@ -1,1 +1,45 @@
-<p>vendors-add-edit works!</p>
+<div class="p-5">
+    <h4 class="mb-0">
+        {{ vendorForm.value.vendor_id ? 'Edit vendor' : 'Add vendor' }}
+    </h4>
+    <form [formGroup]="vendorForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-12 col-sm-12">
+                    <div class="input-block mb-3">
+                        <label for="vendorName">Name</label>
+                        <input id="vendorName" type="text" class="form-control" placeholder="Enter Name"
+                            formControlName="vendor_name" />
+                    </div>
+                </div>
+                <div class="col-lg-12 col-sm-12">
+                    <div class="input-block mb-3">
+                        <label for="email">Email</label>
+                        <input id="email" type="email" class="form-control" placeholder="Enter Email Address"
+                            formControlName="email" />
+                    </div>
+                </div>
+                <div class="col-lg-12 col-sm-12">
+                    <div class="input-block mb-3">
+                        <label for="phoneNumber">Phone Number</label>
+                        <input id="phoneNumber" type="number" class="form-control" placeholder="Enter Phone Number"
+                            formControlName="phone_number" />
+                    </div>
+                </div>
+                <div class="col-lg-12 col-sm-12">
+                    <div class="input-block mb-0">
+                        <label for="closingBalance">Closing Balance</label>
+                        <input id="closingBalance" type="number" class="form-control"
+                            placeholder="Enter Closing Balance Amount" formControlName="closing_balance" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer mt-3">
+            <button type="button" class="btn btn-back cancel-btn me-2" (click)="onClose()">Cancel</button>
+            <button type="submit" class="btn btn-primary paid-continue-btn">
+                {{ vendorForm.value.vendor_id ? 'Save Changes' : 'Add Vendor' }}
+            </button>
+        </div>
+    </form>
+</div>

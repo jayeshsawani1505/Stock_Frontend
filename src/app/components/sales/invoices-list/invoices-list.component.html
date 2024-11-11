@@ -7,14 +7,15 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter </a>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('invoice')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Settings"><span><i class="fas fa-settings"></i></span>
-                        </a>
+                        <a class="btn btn-import" href="javascript:void(0);" (click)="fileInput.click()"><span><i
+                                    class="fas fa-check-square me-2"></i>Import Customer</span></a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
                         <a class="btn btn-primary" routerLink="/admin/sales/invoices-add"><i
@@ -26,36 +27,9 @@
     </div>
     <!-- /Page Header -->
 
-    <!-- Search Filter -->
-    <div id="filter_inputs" class="card filter-card">
-        <div class="card-body pb-0">
-            <div class="row">
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Name</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Email</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3">
-                    <div class="input-block mb-3">
-                        <label>Phone</label>
-                        <input type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /Search Filter -->
-
     <!-- Inovices card -->
     <div class="row">
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -65,19 +39,31 @@
                         <div class="dash-count">
                             <div class="dash-title">Total Invoice</div>
                             <div class="dash-counts">
-                                <p>₹0.00</p>
+                                <p>₹{{InvoiceTotal?.total_all_statuses}}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">02</span></p>
-                        <p class="inovice-trending text-success-light">02 <span class="ms-2"><i
-                                    class="fas fa-trending-up"></i></span></p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
+            <div class="card inovices-card w-100">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="inovices-widget-icon bg-info-light">
+                            <img src="assets/img/icons/receipt-item.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Total Paid</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_paid_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -85,21 +71,16 @@
                             <img src="assets/img/icons/transaction-minus.svg" alt="invoice">
                         </span>
                         <div class="dash-count">
-                            <div class="dash-title">Outstanding</div>
+                            <div class="dash-title">Partially Paid</div>
                             <div class="dash-counts">
-                                <p>₹0.00</p>
+                                <p>₹{{InvoiceTotal?.total_partially_paid_amount}}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">03</span></p>
-                        <p class="inovice-trending text-success-light">04 <span class="ms-2"><i
-                                    class="fas fa-trending-up"></i></span></p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -109,19 +90,14 @@
                         <div class="dash-count">
                             <div class="dash-title">Total Overdue</div>
                             <div class="dash-counts">
-                                <p>₹0.00</p>
+                                <p>₹{{InvoiceTotal?.total_overdue_amount}}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">01</span></p>
-                        <p class="inovice-trending text-danger-light">03 <span class="ms-2"><i
-                                    class="fas fa-trending-down"></i></span></p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -131,19 +107,14 @@
                         <div class="dash-count">
                             <div class="dash-title">Cancelled</div>
                             <div class="dash-counts">
-                                <p>100</p>
+                                <p>₹{{InvoiceTotal?.total_cancelled_amount}}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">04</span></p>
-                        <p class="inovice-trending text-danger-light">05 <span class="ms-2"><i
-                                    class="fas fa-trending-down"></i></span></p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -153,19 +124,14 @@
                         <div class="dash-count">
                             <div class="dash-title">Draft</div>
                             <div class="dash-counts">
-                                <p>₹0.00</p>
+                                <p>₹{{InvoiceTotal?.total_draft_amount}}</p>
                             </div>
                         </div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">06</span></p>
-                        <p class="inovice-trending text-danger-light">02 <span class="ms-2"><i
-                                    class="fas fa-trending-down"></i></span></p>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-4 col-sm-6 col-12 d-flex">
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
             <div class="card inovices-card w-100">
                 <div class="card-body">
                     <div class="dash-widget-header">
@@ -173,16 +139,28 @@
                             <img src="assets/img/icons/3d-rotate.svg" alt="invoice">
                         </span>
                         <div class="dash-count">
-                            <div class="dash-title">Recurring</div>
+                            <div class="dash-title">Unpaid</div>
                             <div class="dash-counts">
-                                <p>₹0.00</p>
+                                <p>₹{{InvoiceTotal?.total_unpaid_amount}}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p class="inovices-all">No of Invoice <span class="rounded-circle bg-light-gray">03</span></p>
-                        <p class="inovice-trending text-success-light">02 <span class="ms-2"><i
-                                    class="fas fa-trending-up"></i></span></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 d-flex">
+            <div class="card inovices-card w-100">
+                <div class="card-body">
+                    <div class="dash-widget-header">
+                        <span class="inovices-widget-icon bg-danger-light">
+                            <img src="assets/img/icons/3d-rotate.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Refund</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_refunded_amount}}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -209,10 +187,10 @@
                                     <th>Created On</th>
                                     <th>Invoice To</th>
                                     <th>Total</th>
-                                    <th>Paid</th>
+                                    <!-- <th>Paid</th>
                                     <th>Payment Mode</th>
                                     <th>Balance</th>
-                                    <th>Due Date</th>
+                                    <th>Due Date</th> -->
                                     <th>Status</th>
                                     <th class="text-end">Action</th>
                                 </tr>
@@ -235,7 +213,9 @@
                                             <div class="avatar-container" style="margin-right: 15px;">
                                                 <img class="avatar-img rounded-circle"
                                                     [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
-                                                    alt="User Image" style="width: 50px; height: 50px;">
+                                                    alt="User Image" (error)="onImageError($event)"
+                                                    style="width: 50px; height: 50px;">
+
                                             </div>
 
                                             <!-- Name and Phone Container -->
@@ -248,18 +228,22 @@
                                     </td>
 
                                     <td>₹{{ invoice.total_amount | number:'1.2-2' }}</td>
-                                    <td>₹{{ invoice.paid_amount | number:'1.2-2' }}</td>
+                                    <!-- <td>₹{{ invoice.paid_amount | number:'1.2-2' }}</td>
                                     <td>{{ invoice.payment_mode || 'N/A' }}</td>
                                     <td>₹{{ invoice.balance_amount | number:'1.2-2' }}</td>
-                                    <td>{{ invoice.due_date | date:'d MMM y' }}</td>
+                                    <td>{{ invoice.due_date | date:'d MMM y' }}</td> -->
                                     <td>
                                         <span class="badge" [ngClass]="{
-                                            'bg-success-light': invoice.status === 'Paid',
-                                            'bg-warning-light': invoice.status === 'Pending',
-                                            'bg-danger-light': invoice.status === 'Overdue'
-                                        }">{{ invoice.status }}</span>
+                                            'bg-success-light': invoice.status === 'paid',
+                                            'bg-warning-light': invoice.status === 'pending' || invoice.status === 'partially_paid' || invoice.status === 'unpaid' || invoice.status === 'draft',
+                                            'bg-danger-light': invoice.status === 'overdue',
+                                            'bg-secondary-light': invoice.status === 'cancelled',
+                                            'bg-info-light': invoice.status === 'refunded'
+                                        }">
+                                            {{ invoice.status }}
+                                        </span>
                                     </td>
-                                    <td class="d-flex">
+                                    <td class="d-flex mt-3">
                                         <a class="btn-action-icon me-2" (click)="editInvoice(invoice)">
                                             <i class="far fa-edit me-2"></i>
                                         </a>

@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  baseURL: 'https://stock-backend-pied.vercel.app/api',
+  baseURL: 'http://localhost:3000/api',
 };

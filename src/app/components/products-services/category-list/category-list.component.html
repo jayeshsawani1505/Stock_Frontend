@@ -7,10 +7,15 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" data-bs-original-title="Filter">
-                            <span class="me-2"><img src="assets/img/icons/filter-icon.svg" alt="filter"></span>Filter
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('category')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
                         </a>
+                    </li>
+                    <li>
+                        <a class="btn btn-import" href="javascript:void(0);" (click)="fileInput.click()"><span><i
+                                    class="fas fa-check-square me-2"></i>Import Category</span></a>
+                        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)"
+                            accept=".xlsx, .xls" />
                     </li>
                     <li>
                         <a class="btn btn-primary" (click)="openAddCategory()">

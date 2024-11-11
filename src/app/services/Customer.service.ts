@@ -20,6 +20,13 @@ export class CustomerService {
             .pipe(catchError(this.handleError));
     }
 
+    // Get all customers
+    GetCustomersCount(): Observable<any> {
+        return this.httpClient
+            .get(environment.baseURL + `/customers/count`,)
+            .pipe(catchError(this.handleError));
+    }
+
     // Add a new customer
     AddCustomer(customerData: any): Observable<any> {
         return this.httpClient
@@ -38,6 +45,15 @@ export class CustomerService {
     DeleteCustomer(customerId: any): Observable<any> {
         return this.httpClient
             .delete(environment.baseURL + `/customers/${customerId}`)
+            .pipe(catchError(this.handleError));
+    }
+    // Upload Excel file to add multiple customers
+    UploadExcel(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return this.httpClient
+            .post(environment.baseURL + `/customers/upload-excel`, formData)
             .pipe(catchError(this.handleError));
     }
 }
