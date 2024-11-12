@@ -26,7 +26,7 @@ export class InvoicesListComponent implements OnInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['invoice_number', 'category_name', 'created_at', 'customer_name', 'total_amount', 'due_date', 'status', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private invoiceService: InvoiceService,
     private ExcelService: ExcelService, public dialog: MatDialog,

@@ -25,7 +25,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(
     private VendorService: VendorService,
@@ -38,7 +38,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator!;
   }
 
   // Fetch vendors

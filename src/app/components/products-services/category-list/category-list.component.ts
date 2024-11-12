@@ -25,7 +25,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['index', 'category_name', 'description', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private categoryService: CategoryService,
     private ExcelService: ExcelService,

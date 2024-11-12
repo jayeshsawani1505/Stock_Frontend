@@ -23,7 +23,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['index', 'subproduct_name', 'subproduct_code', 'product_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private SubProductService: SubProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -34,7 +34,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator!;
   }
 
   // GetProducts method

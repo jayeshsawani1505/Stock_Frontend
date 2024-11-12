@@ -25,7 +25,7 @@ export class InventoryListComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['index', 'item_name', 'item_code', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
   dataSource = new MatTableDataSource<any>();
   dataForExcel: any[] = [];
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(
     private InventoryService: InventoryService,
@@ -38,7 +38,7 @@ export class InventoryListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator!;
   }
 
   // Fetch inventory data

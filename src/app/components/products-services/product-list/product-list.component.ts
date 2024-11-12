@@ -25,7 +25,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['index', 'product_name', 'product_code', 'category_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private productService: ProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -36,7 +36,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator!;
   }
 
   // GetProducts method
@@ -45,8 +45,8 @@ export class ProductListComponent implements OnInit, AfterViewInit {
       next: (res: any) => {
         console.log(res);
         if (res && res.products) {
+          this.dataSource.data = res.products;
           this.productList = res.products; // Assign products data to productList
-          this.dataSource.data = this.productList;
         }
       },
       error: (err: any) => {

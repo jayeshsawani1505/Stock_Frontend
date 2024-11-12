@@ -25,7 +25,7 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
   dataForExcel: any[] = [];
   displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'totalInvoice', 'created', 'status', 'actions'];
   dataSource = new MatTableDataSource<any>();
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(
     private CustomerService: CustomerService,
@@ -38,7 +38,7 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator; // Attach paginator after view initialization
+    this.dataSource.paginator = this.paginator!;
   }
 
   // GetCustomers method
