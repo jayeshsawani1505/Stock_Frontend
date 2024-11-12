@@ -38,7 +38,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       status: ['Pending', Validators.required],
       payment_mode: ['', Validators.required],
       product_id: ['', Validators.required],
-      subproduct_id: [0, Validators.required],
+      subproduct_id: [0],
       quantity: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],

@@ -37,7 +37,7 @@ export class CreditNotesAddEditComponent implements OnInit {
       reference_number: ['', Validators.required],
       status: ['Pending', Validators.required],
       product_id: ['', Validators.required],
-      subproduct_id: [0, Validators.required],
+      subproduct_id: [0],
       quantity: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
