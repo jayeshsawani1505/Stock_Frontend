@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { VendorService } from '../../../../services/vendors.service';
-import { ProductService } from '../../../../services/products.service';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { ProductService } from '../../../../services/products.service';
 import { PurchaseService } from '../../../../services/purchases.service';
+import { SubProductService } from '../../../../services/subProduct.service';
+import { VendorService } from '../../../../services/vendors.service';
 
 @Component({
   selector: 'app-purchase-add-edit',
@@ -17,6 +18,7 @@ export class PurchaseAddEditComponent implements OnInit {
   purchaseForm!: FormGroup;
   vendorList: any[] = [];
   productList: any[] = [];
+  subProductList: any[] = []; // Define subProductList to store product dataX
   purchaseData: any;
   product_name: any;
 
@@ -25,6 +27,7 @@ export class PurchaseAddEditComponent implements OnInit {
     private VendorService: VendorService,
     private productService: ProductService,
     private PurchaseService: PurchaseService,
+    private SubProductService: SubProductService,
     private router: Router
   ) {
     this.purchaseForm = this.fb.group({
@@ -36,6 +39,7 @@ export class PurchaseAddEditComponent implements OnInit {
       supplier_invoice_serial_no: ['', Validators.required],
       payment_mode: ['', Validators.required],
       product_id: ['', Validators.required],
+      subproduct_id: [0, Validators.required],
       quantity: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
@@ -74,6 +78,15 @@ export class PurchaseAddEditComponent implements OnInit {
     });
   }
 
+  GetSubProductsByProductId(productId: any) {
+    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.subProductList = res.subproducts; // Assign products data to productList
+      }
+    });
+  }
+
   // Method to fetch Purchase data, either from route state or API
   fetchPurchaseData() {
     // Get Purchase data from history state (if available)
@@ -88,6 +101,7 @@ export class PurchaseAddEditComponent implements OnInit {
   }
   // Populate the form with the purchase data
   populateForm(purchase: any): void {
+    this.GetSubProductsByProductId(purchase.product_id,)
     this.purchaseForm.patchValue({
       vendor_id: purchase.vendor_id || '',
       purchase_date: purchase.purchase_date,
@@ -97,6 +111,7 @@ export class PurchaseAddEditComponent implements OnInit {
       supplier_invoice_serial_no: purchase.supplier_invoice_serial_no || '',
       payment_mode: purchase.payment_mode || '',
       product_id: purchase.product_id || '',
+      subproduct_id: purchase.subproduct_id,
       quantity: purchase.quantity || '',
       rate: purchase.rate || '',
       notes: purchase.notes || '',
@@ -111,6 +126,7 @@ export class PurchaseAddEditComponent implements OnInit {
     // Parse the selected product ID as an integer
     const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
     console.log('Selected Product ID:', selectedProductId);
+    this.GetSubProductsByProductId(selectedProductId);
 
     // Find the selected product from the productList
     const selectedProduct = this.productList.find(product => product.product_id === selectedProductId);

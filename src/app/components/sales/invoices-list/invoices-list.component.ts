@@ -1,15 +1,19 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { InvoiceService } from '../../../services/invoice.service';
 import { CommonModule } from '@angular/common';
-import { ExcelService } from '../../../services/excel.service';
-import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router, RouterModule } from '@angular/router';
+import { ExcelService } from '../../../services/excel.service';
+import { InvoiceService } from '../../../services/invoice.service';
+import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
 
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   providers: [InvoiceService],
   templateUrl: './invoices-list.component.html',
   styleUrl: './invoices-list.component.css'
@@ -20,6 +24,9 @@ export class InvoicesListComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   InvoiceTotal: any;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['invoice_number', 'category_name', 'created_at', 'customer_name', 'total_amount', 'due_date', 'status', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private invoiceService: InvoiceService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -30,19 +37,32 @@ export class InvoicesListComponent implements OnInit {
     this.getInvoiceTotalsByStatus();
   }
 
-  // GetInvoices method
   GetInvoices() {
     this.invoiceService.GetInvoices().subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.data) {
           this.invoiceList = res.data; // Assign invoice data to invoiceList
+          this.dataSource.data = this.invoiceList;
         }
       },
       error: (err: any) => {
         console.error('Error fetching invoices:', err);
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator!;
+  }
+
+  // Apply the filter for invoice search
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   // getInvoiceTotalsByStatus method

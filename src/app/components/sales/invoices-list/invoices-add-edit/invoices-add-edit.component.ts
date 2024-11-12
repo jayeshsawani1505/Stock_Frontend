@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../../services/Customer.service';
-import { ProductService } from '../../../../services/products.service';
 import { InvoiceService } from '../../../../services/invoice.service';
+import { ProductService } from '../../../../services/products.service';
+import { SubProductService } from '../../../../services/subProduct.service';
 
 @Component({
   selector: 'app-invoices-add-edit',
@@ -16,13 +17,15 @@ import { InvoiceService } from '../../../../services/invoice.service';
 export class InvoicesAddEditComponent implements OnInit {
   invoiceForm!: FormGroup;
   customerList: any[] = []; // Define customerList to store customer data
-  productList: any[] = []; // Define productList to store product data
+  productList: any[] = []; // Define productList to store product dataX
+  subProductList: any[] = []; // Define subProductList to store product dataX
   invoiceData: any;
   product_name: any;
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
     private productService: ProductService,
+    private SubProductService: SubProductService,
     private invoiceService: InvoiceService,
     private router: Router
   ) {
@@ -36,6 +39,7 @@ export class InvoicesAddEditComponent implements OnInit {
       // recurring: [0, Validators.required],
       recurring_cycle: [''],
       product_id: ['', Validators.required],
+      subproduct_id: [0, Validators.required],
       quantity: ['', Validators.required],
       // unit: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
@@ -75,6 +79,15 @@ export class InvoicesAddEditComponent implements OnInit {
     });
   }
 
+  GetSubProductsByProductId(productId: any) {
+    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.subProductList = res.subproducts; // Assign products data to productList
+      }
+    });
+  }
+
   // Method to fetch customer data, either from route state or API
   fetchinvoiceData() {
     // Get customer data from history state (if available)
@@ -90,6 +103,7 @@ export class InvoicesAddEditComponent implements OnInit {
 
   // Populate the form with the invoice data
   populateForm(invoice: any): void {
+    this.GetSubProductsByProductId(invoice.product_id,)
     this.invoiceForm.patchValue({
       invoice_number: invoice.invoice_number,
       customer_id: invoice.customer_id,
@@ -99,6 +113,7 @@ export class InvoicesAddEditComponent implements OnInit {
       status: invoice.status,
       recurring_cycle: invoice.recurring_cycle,
       product_id: invoice.product_id,
+      subproduct_id: invoice.subproduct_id,
       notes: invoice.notes,
       terms_conditions: invoice.terms_conditions,
       quantity: invoice.quantity,
@@ -108,10 +123,11 @@ export class InvoicesAddEditComponent implements OnInit {
     const product = this.productList.find(p => p.product_id === invoice.product_id);
     this.product_name = product ? product.product_name : null;
   }
-  
+
   onProductChange(event: Event): void {
     // Parse the selected product ID as an integer
     const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.GetSubProductsByProductId(selectedProductId);
     console.log('Selected Product ID:', selectedProductId);
 
     // Find the selected product from the productList

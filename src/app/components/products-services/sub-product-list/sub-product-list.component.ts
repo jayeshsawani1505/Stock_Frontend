@@ -3,60 +3,56 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angula
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
-import { InventoryService } from '../../../services/inventory.service';
-import { DeleteInventoryComponent } from './delete-inventory/delete-inventory.component';
-import { InOutStockComponent } from './in-out-stock/in-out-stock.component';
-import { InventoryAddEditComponent } from './inventory-add-edit/inventory-add-edit.component';
+import { SubProductService } from '../../../services/subProduct.service';
+import { DeleteProductComponent } from '../product-list/delete-product/delete-product.component';
 
 @Component({
-  selector: 'app-inventory-list',
+  selector: 'app-sub-product-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
     MatPaginatorModule, MatTableModule
-  ],
-  providers: [InventoryService],
-  templateUrl: './inventory-list.component.html',
-  styleUrl: './inventory-list.component.css'
+  ], templateUrl: './sub-product-list.component.html',
+  styleUrl: './sub-product-list.component.css'
 })
-export class InventoryListComponent implements OnInit, AfterViewInit {
-  inventoryList: any[] = [];
-  displayedColumns: string[] = ['index', 'item_name', 'item_code', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
-  dataSource = new MatTableDataSource<any>();
+export class SubProductListComponent implements OnInit, AfterViewInit {
+  productList: any[] = []; // Define productList to store product data
+  productIdToDelete: number | null = null;
+  @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['index', 'subproduct_name', 'subproduct_code', 'product_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
+  dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    private InventoryService: InventoryService,
-    public dialog: MatDialog,
-    private ExcelService: ExcelService,
-  ) { }
+  constructor(private SubProductService: SubProductService,
+    private ExcelService: ExcelService, public dialog: MatDialog,
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.GetInventory();
+    this.GetProducts();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
   }
 
-  // Fetch inventory data
-  GetInventory(): void {
-    this.InventoryService.GetInventory().subscribe({
+  // GetProducts method
+  GetProducts() {
+    this.SubProductService.GetSubProducts().subscribe({
       next: (res: any) => {
-        if (res && res.data) {
-          this.inventoryList = res.data;
-          this.dataSource.data = this.inventoryList;
+        console.log(res);
+        if (res && res.subproducts) {
+          this.productList = res.subproducts; // Assign products data to productList
+          this.dataSource.data = this.productList;
         }
       },
       error: (err: any) => {
-        console.error('Error fetching inventory data:', err);
+        console.error('Error fetching products:', err);
       }
     });
   }
 
-  // Apply filter to the inventory list
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
@@ -72,9 +68,9 @@ export class InventoryListComponent implements OnInit, AfterViewInit {
     // Check if input and input.files are not null
     if (input && input.files && input.files.length > 0) {
       const file = input.files[0];
-      this.InventoryService.UploadExcel(file).subscribe(
+      this.SubProductService.UploadExcel(file).subscribe(
         response => {
-          this.GetInventory();
+          this.GetProducts();
           console.log('File uploaded successfully', response);
         },
         error => {
@@ -86,64 +82,36 @@ export class InventoryListComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openAddinventory() {
-    const dialogRef = this.dialog.open(InventoryAddEditComponent, {
-      width: '550px',
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.GetInventory();
+  editProduct(Product: any) {
+    this.router.navigate(['/admin/productsServices/subProduct-edit', Product.subproduct_id], {
+      state: { productData: Product } // Pass product data as state
     });
   }
 
-  openEditinventory(data: any) {
-    const dialogRef = this.dialog.open(InventoryAddEditComponent, {
-      width: '550px',
-      data: data
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.GetInventory();
-    });
-  }
-
-  openStockDialog(isAddMode: boolean, data: any): void {
-    const dialogRef = this.dialog.open(InOutStockComponent, {
-      width: '550px',
-      data: {
-        isAddMode,
-        stockData: data
-      },
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      this.GetInventory();
-    });
-  }
-
-
-  // Open delete confirmation with the selected inventory's ID
-  openDeleteinventory(inventoryId: number): void {
-    const dialogRef = this.dialog.open(DeleteInventoryComponent, {
-      data: inventoryId,
+  onDelete(productId: number) {
+    const dialogRef = this.dialog.open(DeleteProductComponent, {
+      data: productId,
       width: '550px',
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.GetInventory();
+      this.GetProducts();
     });
   }
 
   excelDownload(title: string) {
-    // Assuming inventoryList contains the list of inventory items
-    let dataToExport = this.inventoryList.map((x: any) => ({
-      item_name: x.item_name,
-      item_code: x.item_code,
-      units: x.units,
+    // Assuming productList contains the list of products
+    let dataToExport = this.productList.map((x: any) => ({
+      subproduct_id: x.subproduct_id,
+      product_id: x.product_id,
+      product_name: x.product_name,
+      subproduct_name: x.subproduct_name,
+      subproduct_code: x.subproduct_code,
       quantity: x.quantity,
       selling_price: x.selling_price,
       purchase_price: x.purchase_price,
-      status: x.status,
+      units: x.units,
+      description: x.description,
       created_at: x.created_at,
     }));
 

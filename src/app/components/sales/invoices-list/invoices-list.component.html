@@ -174,87 +174,114 @@
             <div class="card-table">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-stripped table-hover datatable">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>Invoice ID
-                                    </th>
-                                    <th>Category</th>
-                                    <th>Created On</th>
-                                    <th>Invoice To</th>
-                                    <th>Total</th>
-                                    <!-- <th>Paid</th>
-                                    <th>Payment Mode</th>
-                                    <th>Balance</th>
-                                    <th>Due Date</th> -->
-                                    <th>Status</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let invoice of invoiceList">
-                                    <td>
-                                        <label class="custom_check">
-                                            <input type="checkbox" name="invoice">
-                                            <span class="checkmark"></span>
-                                        </label>
-                                        <a [routerLink]="['/admin/invoices/invoice-details', invoice.id]"
-                                            class="invoice-link">#{{ invoice.invoice_number }}</a>
-                                    </td>
-                                    <td>{{ invoice.category_name || 'N/A' }}</td>
-                                    <td>{{ invoice.created_at | date:'d MMM y' }}</td>
-                                    <td>
-                                        <div class="main-container" style="display: flex; align-items: center;">
-                                            <!-- Image Container -->
-                                            <div class="avatar-container" style="margin-right: 15px;">
-                                                <img class="avatar-img rounded-circle"
-                                                    [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
-                                                    alt="User Image" (error)="onImageError($event)"
-                                                    style="width: 50px; height: 50px;">
+                        <div class="input-block mb-3">
+                            <label>Search</label>
+                            <input type="text" (keyup)="applyFilter($event)" placeholder="Search invoices"
+                                class="form-control">
+                        </div>
 
-                                            </div>
+                        <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
 
-                                            <!-- Name and Phone Container -->
-                                            <div class="info-container" style="display: flex; flex-direction: column;">
-                                                <span class="customer-name">{{ invoice?.customer_name }}</span>
-                                                <span class="customer-phone">{{ invoice?.customer_phone }}</span>
-                                            </div>
+                            <!-- Invoice ID -->
+                            <ng-container matColumnDef="invoice_number">
+                                <th mat-header-cell *matHeaderCellDef>Invoice ID</th>
+                                <td mat-cell *matCellDef="let invoice">#{{ invoice.invoice_number }}</td>
+                            </ng-container>
+
+                            <!-- Category -->
+                            <ng-container matColumnDef="category_name">
+                                <th mat-header-cell *matHeaderCellDef>Category</th>
+                                <td mat-cell *matCellDef="let invoice">{{ invoice.category_name || 'N/A' }}</td>
+                            </ng-container>
+
+                            <!-- Created On -->
+                            <ng-container matColumnDef="created_at">
+                                <th mat-header-cell *matHeaderCellDef>Created On</th>
+                                <td mat-cell *matCellDef="let invoice">{{ invoice.created_at | date:'d MMM y' }}</td>
+                            </ng-container>
+
+                            <!-- Customer Name -->
+                            <ng-container matColumnDef="customer_name">
+                                <th mat-header-cell *matHeaderCellDef>Invoice To</th>
+                                <td mat-cell *matCellDef="let invoice">
+                                    <div style="display: flex; align-items: center;">
+                                        <img class="avatar-img rounded-circle"
+                                            [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
+                                            alt="User Image" style="width: 50px; height: 50px;">
+                                        <div style="margin-left: 10px;">
+                                            <span>{{ invoice?.customer_name }}</span>
+                                            <span>{{ invoice?.customer_phone }}</span>
                                         </div>
+                                    </div>
+                                </td>
+                            </ng-container>
 
-                                    </td>
+                            <!-- Total Amount -->
+                            <ng-container matColumnDef="total_amount">
+                                <th mat-header-cell *matHeaderCellDef>Total</th>
+                                <td mat-cell *matCellDef="let invoice">₹{{ invoice.total_amount | number:'1.2-2' }}</td>
+                            </ng-container>
 
-                                    <td>₹{{ invoice.total_amount | number:'1.2-2' }}</td>
-                                    <!-- <td>₹{{ invoice.paid_amount | number:'1.2-2' }}</td>
-                                    <td>{{ invoice.payment_mode || 'N/A' }}</td>
-                                    <td>₹{{ invoice.balance_amount | number:'1.2-2' }}</td>
-                                    <td>{{ invoice.due_date | date:'d MMM y' }}</td> -->
-                                    <td>
-                                        <span class="badge" [ngClass]="{
-                                            'bg-success-light': invoice.status === 'paid',
-                                            'bg-warning-light': invoice.status === 'pending' || invoice.status === 'partially_paid' || invoice.status === 'unpaid' || invoice.status === 'draft',
-                                            'bg-danger-light': invoice.status === 'overdue',
-                                            'bg-secondary-light': invoice.status === 'cancelled',
-                                            'bg-info-light': invoice.status === 'refunded'
-                                        }">
-                                            {{ invoice.status }}
-                                        </span>
-                                    </td>
-                                    <td class="d-flex mt-3">
-                                        <a class="btn-action-icon me-2" (click)="editInvoice(invoice)">
-                                            <i class="far fa-edit me-2"></i>
-                                        </a>
-                                        <a class="btn-action-icon" (click)="openDeleteConfirmation(invoice.id)">
-                                            <i class=" far fa-trash-alt me-2"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <!-- Paid Amount -->
+                            <ng-container matColumnDef="paid_amount">
+                                <th mat-header-cell *matHeaderCellDef>Paid</th>
+                                <td mat-cell *matCellDef="let invoice">₹{{ invoice.paid_amount | number:'1.2-2' }}</td>
+                            </ng-container>
+
+                            <!-- Balance Amount -->
+                            <ng-container matColumnDef="balance_amount">
+                                <th mat-header-cell *matHeaderCellDef>Balance</th>
+                                <td mat-cell *matCellDef="let invoice">₹{{ invoice.balance_amount | number:'1.2-2' }}
+                                </td>
+                            </ng-container>
+
+                            <!-- Balance Amount -->
+                            <ng-container matColumnDef="payment_mode">
+                                <th mat-header-cell *matHeaderCellDef>payment_mode</th>
+                                <td mat-cell *matCellDef="let invoice">₹{{ invoice.payment_mode}}
+                                </td>
+                            </ng-container>
+
+                            <!-- Due Date -->
+                            <ng-container matColumnDef="due_date">
+                                <th mat-header-cell *matHeaderCellDef>Due Date</th>
+                                <td mat-cell *matCellDef="let invoice">{{ invoice.due_date | date:'d MMM y' }}</td>
+                            </ng-container>
+
+                            <!-- Status -->
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef>Status</th>
+                                <td mat-cell *matCellDef="let invoice"><span class="badge" [ngClass]="{
+                                    'bg-success-light': invoice.status === 'paid',
+                                    'bg-warning-light': invoice.status === 'pending' || invoice.status === 'partially_paid' || invoice.status === 'unpaid' || invoice.status === 'draft',
+                                    'bg-danger-light': invoice.status === 'overdue',
+                                    'bg-secondary-light': invoice.status === 'cancelled',
+                                    'bg-info-light': invoice.status === 'refunded'
+                                }">{{ invoice.status }}</span>
+                                </td>
+                            </ng-container>
+
+                            <!-- Actions -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                                <td mat-cell *matCellDef="let invoice" class="d-flex">
+                                    <a class="btn-action-icon me-2" (click)="editInvoice(invoice)">
+                                        <i class="far fa-edit me-2"></i>
+                                    </a>
+                                    <a class="btn-action-icon" (click)="openDeleteConfirmation(invoice.id)">
+                                        <i class=" far fa-trash-alt me-2"></i>
+                                    </a>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
+
+                        <mat-paginator [length]="invoiceList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+                            showFirstLastButtons></mat-paginator>
                     </div>
+
                 </div>
             </div>
         </div>

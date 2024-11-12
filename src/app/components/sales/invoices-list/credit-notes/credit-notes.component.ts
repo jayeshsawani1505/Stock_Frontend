@@ -1,23 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
 import { CreditNotesService } from '../../../../services/CreditNote.serivce';
 import { ExcelService } from '../../../../services/excel.service';
 import { DeleteCreditNotesComponent } from './delete-credit-notes/delete-credit-notes.component';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-credit-notes',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   templateUrl: './credit-notes.component.html',
   styleUrl: './credit-notes.component.css'
 })
-export class CreditNotesComponent implements OnInit {
+export class CreditNotesComponent implements OnInit, AfterViewInit {
   creditNoteList: any[] = []; // Define creditNoteList to store credit note data
   creditNoteIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['id', 'reference_number', 'quantity', 'rate', 'total_amount', 'created_at', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private creditNotesService: CreditNotesService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -27,19 +34,33 @@ export class CreditNotesComponent implements OnInit {
     this.getCreditNotes();
   }
 
-  // Get all credit notes
-  getCreditNotes() {
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator!;
+  }
+
+  // Fetch credit notes
+  getCreditNotes(): void {
     this.creditNotesService.fetchCreditNotes().subscribe({
       next: (res: any) => {
         if (res && res.invoices) {
           console.log(res);
-          this.creditNoteList = res.invoices; // Assign invoices data to creditNoteList
+          this.creditNoteList = res.invoices;
+          this.dataSource.data = this.creditNoteList;
         }
       },
       error: (err) => {
         console.error('Error fetching credit notes:', err);
       }
     });
+  }
+
+  // Apply filter based on search input
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
   }
 
   // Handle file selection for uploading credit notes

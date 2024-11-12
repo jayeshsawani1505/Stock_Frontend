@@ -1,24 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { ProductService } from '../../../services/products.service';
-import { ExcelService } from '../../../services/excel.service';
-import { DeleteProductComponent } from './delete-product/delete-product.component';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router, RouterModule } from '@angular/router';
+import { ExcelService } from '../../../services/excel.service';
+import { ProductService } from '../../../services/products.service';
+import { DeleteProductComponent } from './delete-product/delete-product.component';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   providers: [ProductService],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, AfterViewInit {
   productList: any[] = []; // Define productList to store product data
   productIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['index', 'product_name', 'product_code', 'category_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private productService: ProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -28,6 +35,10 @@ export class ProductListComponent implements OnInit {
     this.GetProducts();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
   // GetProducts method
   GetProducts() {
     this.productService.GetProducts().subscribe({
@@ -35,6 +46,7 @@ export class ProductListComponent implements OnInit {
         console.log(res);
         if (res && res.products) {
           this.productList = res.products; // Assign products data to productList
+          this.dataSource.data = this.productList;
         }
       },
       error: (err: any) => {
@@ -43,6 +55,15 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+    }
+  }
+  
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 

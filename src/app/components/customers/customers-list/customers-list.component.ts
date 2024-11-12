@@ -1,24 +1,31 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../services/Customer.service';
-import { CommonModule } from '@angular/common';
 import { ExcelService } from '../../../services/excel.service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { DeleteCustomerComponent } from './delete-customer/delete-customer.component';
 
 @Component({
   selector: 'app-customers-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   providers: [CustomerService],
   templateUrl: './customers-list.component.html',
   styleUrl: './customers-list.component.css'
 })
-export class CustomersListComponent implements OnInit {
-  customerList: any[] = []; // Define customerList to store customer data
+export class CustomersListComponent implements OnInit, AfterViewInit {
+  customerList: any[] = [];
   customerIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'totalInvoice', 'created', 'status', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private CustomerService: CustomerService,
@@ -30,19 +37,30 @@ export class CustomersListComponent implements OnInit {
     this.GetCustomers();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator; // Attach paginator after view initialization
+  }
+
   // GetCustomers method
   GetCustomers() {
     this.CustomerService.GetCustomers().subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.customers) {
-          this.customerList = res.customers; // Assign customers data to customerList
+          this.dataSource.data = res.customers;
+          this.customerList = res.customers;
         }
       },
-      error: (err: any) => {
-        console.error('Error fetching customers:', err);
-      }
     });
+  }
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+    }
   }
 
   onFileSelected(event: Event): void {
@@ -70,7 +88,7 @@ export class CustomersListComponent implements OnInit {
       state: { customerData: customer } // Pass customer data as state
     });
   }
-  
+
   onImageError(event: Event) {
     const img = event.target as HTMLImageElement;
     img.src = 'assets/img/profiles/avatar-14.jpg';

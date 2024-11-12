@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../../services/products.service';
-import { VendorService } from '../../../../services/vendors.service';
 import { ReturnDebitNotesPurchaseService } from '../../../../services/return-debit-notes-purchases.service';
+import { SubProductService } from '../../../../services/subProduct.service';
+import { VendorService } from '../../../../services/vendors.service';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
@@ -19,11 +20,13 @@ export class DebitNotesAddEditComponent implements OnInit {
   productList: any[] = [];
   purchaseData: any;
   product_name: any;
+  subProductList: any[] = []; // Define subProductList to store product dataX
 
   constructor(
     private fb: FormBuilder,
     private VendorService: VendorService,
     private productService: ProductService,
+    private SubProductService: SubProductService,
     private ReturnDebitNotesPurchaseService: ReturnDebitNotesPurchaseService,
     private router: Router
   ) {
@@ -35,6 +38,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       status: ['Pending', Validators.required],
       payment_mode: ['', Validators.required],
       product_id: ['', Validators.required],
+      subproduct_id: [0, Validators.required],
       quantity: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
@@ -73,6 +77,15 @@ export class DebitNotesAddEditComponent implements OnInit {
     });
   }
 
+  GetSubProductsByProductId(productId: any) {
+    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.subProductList = res.subproducts; // Assign products data to productList
+      }
+    });
+  }
+
   // Method to fetch Purchase data, either from route state or API
   fetchPurchaseData() {
     // Get Purchase data from history state (if available)
@@ -87,6 +100,7 @@ export class DebitNotesAddEditComponent implements OnInit {
   }
   // Populate the form with the purchase data
   populateForm(purchase: any): void {
+    this.GetSubProductsByProductId(purchase.product_id,)
     this.purchaseForm.patchValue({
       vendor_id: purchase.vendor_id || '',
       purchase_order_date: purchase.purchase_order_date,
@@ -95,6 +109,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       status: purchase.status || 'Pending',
       payment_mode: purchase.payment_mode || '',
       product_id: purchase.product_id || '',
+      subproduct_id: purchase.subproduct_id,
       quantity: purchase.quantity || '',
       rate: purchase.rate || '',
       notes: purchase.notes || '',

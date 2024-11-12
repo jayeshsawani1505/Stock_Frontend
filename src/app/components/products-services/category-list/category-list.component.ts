@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { CategoryService } from '../../../services/Category.service';
 import { ExcelService } from '../../../services/excel.service';
@@ -10,15 +12,20 @@ import { DeleteCategoryComponent } from './delete-category/delete-category.compo
 @Component({
   selector: 'app-category-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   providers: [CategoryService],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.css'
 })
-export class CategoryListComponent implements OnInit {
+export class CategoryListComponent implements OnInit, AfterViewInit {
   categoryList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['index', 'category_name', 'description', 'created_at', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(private categoryService: CategoryService,
     private ExcelService: ExcelService,
@@ -29,6 +36,10 @@ export class CategoryListComponent implements OnInit {
     this.GetCategories();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator!; // Assign paginator to data source after view initialization
+  }
+
   // Fetch categories
   GetCategories(): void {
     this.categoryService.GetCategories().subscribe({
@@ -36,6 +47,7 @@ export class CategoryListComponent implements OnInit {
         console.log(res);
         if (res && res.data) {
           this.categoryList = res.data; // Assign the category data to categoryList
+          this.dataSource.data = this.categoryList; // Assign the data to MatTableDataSource
         }
       },
       error: (err: any) => {
@@ -43,6 +55,16 @@ export class CategoryListComponent implements OnInit {
       }
     });
   }
+  // Apply filter to search
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+    }
+  }
+  
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 

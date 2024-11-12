@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CreditNotesService } from '../../../../../services/CreditNote.serivce';
 import { CustomerService } from '../../../../../services/Customer.service';
 import { ProductService } from '../../../../../services/products.service';
+import { SubProductService } from '../../../../../services/subProduct.service';
 
 @Component({
   selector: 'app-credit-notes-add-edit',
@@ -17,23 +18,26 @@ export class CreditNotesAddEditComponent implements OnInit {
   creditNoteForm!: FormGroup;
   customerList: any[] = []; // Define customerList to store customer data
   productList: any[] = []; // Define productList to store product data
+  subProductList: any[] = []; // Define subProductList to store product dataX
   creditNoteData: any;
   product_name: any;
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
     private productService: ProductService,
     private CreditNotesService: CreditNotesService,
+    private SubProductService: SubProductService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.creditNoteForm = this.fb.group({
       customer_id: ['', Validators.required],
-      invoice_date: ['', Validators.required],
+      creditNote_date: ['', Validators.required],
       due_date: ['', Validators.required],
       reference_number: ['', Validators.required],
       status: ['Pending', Validators.required],
       product_id: ['', Validators.required],
+      subproduct_id: [0, Validators.required],
       quantity: ['', Validators.required],
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
@@ -69,7 +73,14 @@ export class CreditNotesAddEditComponent implements OnInit {
       }
     });
   }
-
+  GetSubProductsByProductId(productId: any) {
+    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.subProductList = res.subproducts; // Assign products data to productList
+      }
+    });
+  }
   // Method to fetch customer data, either from route state or API
   fetchcreditNoteData() {
     // Retrieve credit note data from router state
@@ -86,6 +97,7 @@ export class CreditNotesAddEditComponent implements OnInit {
 
   // Populate the form with the invoice data
   populateForm(invoice: any): void {
+    this.GetSubProductsByProductId(invoice.product_id,)
     this.creditNoteForm.patchValue({
       customer_id: invoice.customer_id,
       creditNote_date: new Date(invoice.creditNote_date), // Change invoice_date to creditNote_date
@@ -93,6 +105,7 @@ export class CreditNotesAddEditComponent implements OnInit {
       reference_number: invoice.reference_number,
       status: invoice.status || 'Pending', // Set default if status is missing
       product_id: invoice.product_id,
+      subproduct_id: invoice.subproduct_id,
       quantity: invoice.quantity,
       rate: invoice.rate,
       notes: invoice.notes,
@@ -102,13 +115,14 @@ export class CreditNotesAddEditComponent implements OnInit {
 
     const product = this.productList.find(p => p.product_id === invoice.product_id);
     console.log(product);
-    
+
     this.product_name = product ? product.product_name : null;
   }
 
   onProductChange(event: Event): void {
     // Parse the selected product ID as an integer
     const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.GetSubProductsByProductId(selectedProductId);
     console.log('Selected Product ID:', selectedProductId);
 
     // Find the selected product from the productList

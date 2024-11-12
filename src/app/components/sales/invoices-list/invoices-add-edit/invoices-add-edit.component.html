@@ -112,7 +112,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-8">
+                                <div class="col-lg-4">
                                     <div class="input-block mb-3">
                                         <label for="productSelect">Products</label>
                                         <div class="d-flex align-items-center">
@@ -123,6 +123,22 @@
                                                 <option *ngFor="let product of productList"
                                                     [value]="product.product_id">
                                                     {{ product.product_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="input-block mb-3">
+                                        <label for="productSelect">Sub Products</label>
+                                        <div class="d-flex align-items-center">
+                                            <select id="productSelect" formControlName="subproduct_id"
+                                                class="form-control me-2">
+                                                <option value="" disabled selected>Select Sub Product</option>
+                                                <!-- Loop through productList to dynamically populate the options -->
+                                                <option *ngFor="let product of subProductList"
+                                                    [value]="product.subproduct_id">
+                                                    {{ product.subproduct_name }}
                                                 </option>
                                             </select>
                                         </div>

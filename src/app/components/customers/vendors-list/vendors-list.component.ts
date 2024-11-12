@@ -1,24 +1,31 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { VendorService } from '../../../services/vendors.service';
 import { CommonModule } from '@angular/common';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
-import { VendorsAddEditComponent } from './vendors-add-edit/vendors-add-edit.component';
 import { ExcelService } from '../../../services/excel.service';
+import { VendorService } from '../../../services/vendors.service';
 import { DeleteVendorComponent } from './delete-vendor/delete-vendor.component';
+import { VendorsAddEditComponent } from './vendors-add-edit/vendors-add-edit.component';
 
 @Component({
   selector: 'app-vendors-list',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   providers: [VendorService],
   templateUrl: './vendors-list.component.html',
   styleUrl: './vendors-list.component.css'
 })
-export class VendorsListComponent implements OnInit {
+export class VendorsListComponent implements OnInit, AfterViewInit {
   vendorList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'created', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private VendorService: VendorService,
@@ -30,12 +37,17 @@ export class VendorsListComponent implements OnInit {
     this.GetVendors();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
   // Fetch vendors
   GetVendors(): void {
     this.VendorService.GetVendors().subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.vendors) {
+          this.dataSource.data = res.vendors; // Assign vendors data to data source
           this.vendorList = res.vendors; // Assign the vendor data to vendorList
         }
       },
@@ -44,7 +56,16 @@ export class VendorsListComponent implements OnInit {
       }
     });
   }
-  
+
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+    }
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 

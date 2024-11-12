@@ -1,23 +1,30 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
-import { ReturnDebitNotesPurchaseService } from '../../../services/return-debit-notes-purchases.service';
-import { ExcelService } from '../../../services/excel.service';
-import { DeleteDebitComponent } from './delete-debit/delete-debit.component';
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { Router, RouterModule } from '@angular/router';
+import { ExcelService } from '../../../services/excel.service';
+import { ReturnDebitNotesPurchaseService } from '../../../services/return-debit-notes-purchases.service';
+import { DeleteDebitComponent } from './delete-debit/delete-debit.component';
 
 @Component({
   selector: 'app-debit-notes',
   standalone: true,
-  imports: [RouterModule, CommonModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, MatDialogModule,
+    MatPaginatorModule, MatTableModule
+  ],
   templateUrl: './debit-notes.component.html',
   styleUrl: './debit-notes.component.css'
 })
-export class DebitNotesComponent implements OnInit {
+export class DebitNotesComponent implements OnInit, AfterViewInit {
   PurchaseList: any[] = []; // Define PurchaseList to store Purchase data
   PurchaseIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
+  displayedColumns: string[] = ['vendor_id', 'vendor_name', 'total_amount', 'payment_mode', 'status', 'created_at', 'actions'];
+  dataSource = new MatTableDataSource<any>();
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private ReturnDebitNotesPurchaseService: ReturnDebitNotesPurchaseService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -27,6 +34,10 @@ export class DebitNotesComponent implements OnInit {
     this.getReturnDebitNotesPurchases();
   }
 
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator!;
+  }
+
   // getReturnDebitNotesPurchases method
   getReturnDebitNotesPurchases() {
     this.ReturnDebitNotesPurchaseService.getReturnDebitNotesPurchases().subscribe({
@@ -34,6 +45,7 @@ export class DebitNotesComponent implements OnInit {
         console.log(res);
         if (res && res.data) {
           this.PurchaseList = res.data; // Assign Purchases data to PurchaseList
+          this.dataSource.data = this.PurchaseList;
         }
       },
       error: (err: any) => {
@@ -42,6 +54,15 @@ export class DebitNotesComponent implements OnInit {
     });
   }
 
+  // Apply filter based on search input
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+  
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
