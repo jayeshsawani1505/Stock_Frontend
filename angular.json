@@ -33,7 +33,10 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": [],
+            "scripts": [
+              "node_modules/pdfmake/build/pdfmake.js",
+              "node_modules/pdfmake-unicode/dist/pdfmake-unicode.js"
+            ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {

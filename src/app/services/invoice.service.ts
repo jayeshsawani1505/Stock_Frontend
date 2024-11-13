@@ -20,10 +20,16 @@ export class InvoiceService {
             .pipe(catchError(this.handleError));
     }
 
-    // Get all invoices
+    // Get all invoices count
     GetInvoiceCount(): Observable<any> {
         return this.httpClient
             .get(environment.baseURL + `/invoices/count`,)
+            .pipe(catchError(this.handleError));
+    }
+
+    getInvoiceDetailsForPDF(id: any): Observable<any> {
+        return this.httpClient
+            .get(`${environment.baseURL}/invoices/pdf/${id}`)
             .pipe(catchError(this.handleError));
     }
 
@@ -55,6 +61,7 @@ export class InvoiceService {
             .delete(environment.baseURL + `/invoices/${invoiceId}`)
             .pipe(catchError(this.handleError));
     }
+
     // Upload Excel file to add multiple customers
     UploadExcel(file: File): Observable<any> {
         const formData = new FormData();

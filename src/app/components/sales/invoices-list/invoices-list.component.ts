@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
 import { InvoiceService } from '../../../services/invoice.service';
 import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-invoices-list',
@@ -24,7 +25,7 @@ export class InvoicesListComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   InvoiceTotal: any;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['invoice_number', 'category_name', 'created_at', 'customer_name', 'total_amount', 'due_date', 'status', 'actions'];
+  displayedColumns: string[] = ['invoice_number', 'category_name', 'customer_name', 'total_amount', 'due_date', 'status', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -35,6 +36,10 @@ export class InvoicesListComponent implements OnInit {
   ngOnInit(): void {
     this.GetInvoices();
     this.getInvoiceTotalsByStatus();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator!;
   }
 
   GetInvoices() {
@@ -52,8 +57,16 @@ export class InvoicesListComponent implements OnInit {
     });
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator!;
+  getInvoiceDetailsForPDF(invoiceId: number) {
+    this.invoiceService.getInvoiceDetailsForPDF(invoiceId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.generatePDF(res.data)
+      },
+      error: (err: any) => {
+        console.error('Error fetching invoices:', err);
+      }
+    });
   }
 
   // Apply the filter for invoice search
@@ -167,4 +180,123 @@ export class InvoicesListComponent implements OnInit {
     this.dataForExcel = [];
   }
 
+  async generatePDF(data: any) {
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+              {
+                text: 'Address: 15 Hodges Mews, High Wycombe HP12 3JL, United Kingdom',
+                fontSize: 10,
+                margin: [0, 0, 0, 30],
+              },
+            ],
+            [
+              {
+                text: 'INVOICE',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+              {
+                text: `Invoice No: ${data.invoice_number}\nInvoice Date: ${data.invoice_date || 'Not Available'}\nDue Date: ${data.due_date || 'Not Available'}`,
+                fontSize: 10,
+                alignment: 'right',
+                margin: [0, 10, 0, 0],
+              }
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader', margin: [0, 20, 0, 10] },
+        {
+          columns: [
+            [
+              { text: 'Customer Details:', bold: true },
+              { text: data.name },
+              { text: `GSTIN: ${data.gstin || 'Not Available'}` },
+              { text: `Payment Status: ${data.status}`, color: data.status === 'paid' ? 'green' : 'red' },
+            ],
+            [
+              { text: 'Billing Address:', bold: true },
+              { text: `${data.billing_name}` },
+              { text: `${data.billing_address_line1}, ${data.billing_address_line2}, ${data.billing_city}, ${data.billing_state}, ${data.billing_country} - ${data.billing_pincode}` },
+            ],
+            [
+              { text: 'Shipping Address:', bold: true },
+              { text: `${data.shipping_name}` },
+              { text: `${data.shipping_address_line1}, ${data.shipping_address_line2}, ${data.shipping_city}, ${data.shipping_state}, ${data.shipping_country} - ${data.shipping_pincode}` },
+            ],
+          ]
+        },
+        { text: ' ', margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [20, '*', 60, 50, 60],
+            body: [
+              [
+                { text: '#', bold: true, alignment: 'center' },
+                { text: 'Item', bold: true },
+                { text: 'Quantity', bold: true },
+                { text: 'Unit Price', bold: true },
+                { text: 'Amount', bold: true },
+              ],
+              ['1', `${data.product_name} - ${data.subproduct_name}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
+            ]
+          }
+        },
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 'auto',
+              table: {
+                body: [
+                  [{ text: 'Total Amount:', alignment: 'right', bold: true }, { text: `INR ${data.total_amount}`, alignment: 'right', bold: true }],
+                ]
+              },
+              layout: 'noBorders',
+            }
+          ],
+          margin: [0, 10, 0, 10]
+        },
+        {
+          columns: [
+            [
+              { text: 'Payment Info:', bold: true },
+              { text: `Amount: INR ${data.total_amount}` },
+            ],
+            [
+              { text: 'Terms & Conditions:', bold: true },
+              { text: data.terms_conditions || 'Not Available' },
+            ]
+          ],
+          margin: [0, 20, 0, 0]
+        },
+        { text: 'Thanks for your Business', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
 }

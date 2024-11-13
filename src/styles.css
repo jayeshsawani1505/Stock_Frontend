@@ -14397,7 +14397,11 @@ body[data-layout-mode=dark] .alertify .ajs-header {
 }
 
 .bg-warning-light {
-  background: #FFF6DC;
+  background: #FFD011;
+}
+
+.bg-secondary-light {
+  background: #78C2F9; /* existing secondary light color */
 }
 
 .bg-blue-light {

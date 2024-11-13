@@ -88,9 +88,9 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onDelete(productId: number) {
+  onDelete(subproduct_id: number) {
     const dialogRef = this.dialog.open(DeleteProductComponent, {
-      data: productId,
+      data: subproduct_id,
       width: '550px',
     });
 

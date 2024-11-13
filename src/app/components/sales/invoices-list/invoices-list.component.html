@@ -209,7 +209,7 @@
                                             [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
                                             alt="User Image" style="width: 50px; height: 50px;">
                                         <div style="margin-left: 10px;">
-                                            <span>{{ invoice?.customer_name }}</span>
+                                            <span>{{ invoice?.customer_name }}</span><br>
                                             <span>{{ invoice?.customer_phone }}</span>
                                         </div>
                                     </div>
@@ -271,6 +271,9 @@
                                     <a class="btn-action-icon" (click)="openDeleteConfirmation(invoice.id)">
                                         <i class=" far fa-trash-alt me-2"></i>
                                     </a>
+                                    <a class="btn-action-icon" (click)="getInvoiceDetailsForPDF(invoice.id)"><i
+                                            class="fas fa-download me-2"></i></a>
+
                                 </td>
                             </ng-container>
 
