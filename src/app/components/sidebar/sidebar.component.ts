@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
     selector: 'app-sidebar',
@@ -10,6 +10,9 @@ import { RouterModule } from '@angular/router';
     styleUrl: './sidebar.component.css'
 })
 export class SidebarComponent {
+
+    constructor(private router: Router) { }
+
     activeMenu: string | null = null;
     openSubmenu: string | null = null;
 
@@ -24,5 +27,9 @@ export class SidebarComponent {
 
     isActive(menu: string): boolean {
         return this.activeMenu === menu;
+    }
+    logout() {
+        localStorage.clear();
+        this.router.navigate(['/auth/login']);
     }
 }

@@ -4,7 +4,7 @@
             <div class="card-body">
                 <div class="page-header">
                     <div class="content-page-header">
-                        <h5>Add Products</h5>
+                        <h5>{{ isAddMode ? 'Add' : 'Edit' }} Products</h5>
                     </div>
                 </div>
                 <div class="row">
@@ -67,7 +67,7 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <label>Purchase Price <span class="text-danger"> *</span></label>
                                     <input type="number" min="0" class="form-control" placeholder="Enter Purchase Price"
-                                    formControlName="purchase_price">
+                                        formControlName="purchase_price">
                                 </div>
 
                                 <!-- Quantity -->
@@ -107,9 +107,27 @@
                                 </div>
 
                                 <!-- Product Image (File Upload) -->
-                                <div class="col-xl-6 col-lg-6 col-md-6 col-12">
-                                    <label>Product Image</label>
-                                    <input type="file" formControlName="product_image" multiple id="image_sign">
+                                <div class="col-xl-6 col-lg-6 col-md-6 col-12 ">
+                                    <label class="form-control-label">Product Image</label><br>
+                                    <div class="profile-picture">
+                                        <div class="upload-profile">
+                                            <div class="profile-img">
+                                                <img [src]="imageUrl || 'assets/img/profiles/avatar-14.jpg'" id="blah"
+                                                    class="avatar" alt="profile-img">
+                                            </div>
+                                            <div class="add-profile">
+                                                <h5>Upload a New Photo</h5>
+                                                <span>{{ fileName || 'No file selected' }}</span>
+                                            </div>
+                                        </div>
+                                        <div class="img-upload">
+                                            <label class="btn btn-upload">
+                                                Upload <input type="file" (change)="onFileSelected($event)"
+                                                    accept="image/*">
+                                            </label>
+                                            <a class="btn btn-remove" (click)="removeImage()">Remove</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

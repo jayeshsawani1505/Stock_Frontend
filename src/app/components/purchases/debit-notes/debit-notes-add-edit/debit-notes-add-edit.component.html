@@ -2,7 +2,7 @@
     <div class="card mb-0">
         <div class="card-body">
             <div class="content-page-header">
-                <h5>Add Return Debit Notes</h5>
+                <h5>{{ isAddMode ? 'Add' : 'Edit' }} Return Debit Notes</h5>
             </div>
             <form [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
                 <div class="row">
@@ -25,16 +25,24 @@
 
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Purchases Date</label>
-                                        <input type="text" formControlName="purchase_order_date"
-                                            class="datetimepicker form-control" placeholder="Select Date">
+                                        <label>Purchases Order Date</label>
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <input matInput [matDatepicker]="picker"
+                                                formControlName="purchase_order_date">
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Due Date</label>
-                                        <input type="text" formControlName="due_date"
-                                            class="datetimepicker form-control" placeholder="Select Date">
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <input matInput [matDatepicker]="picker2" formControlName="due_date">
+                                            <mat-datepicker-toggle matIconSuffix
+                                                [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">

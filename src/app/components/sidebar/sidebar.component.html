@@ -33,7 +33,7 @@
                             <div class="subscription-logout">
                                 <ul>
                                     <li class="pb-0">
-                                        <a class="dropdown-item" href="login.html">Log Out</a>
+                                        <a (click)="logout()">Log Out</a>
                                     </li>
                                 </ul>
                             </div>
@@ -140,8 +140,8 @@
                         </a>
                         <div class="collapse" id="salesSection">
                             <a class="nav-link text-white ps-4" routerLink="/admin/sales/invoices">Invoices List</a>
-                            <a class="nav-link text-white ps-4" routerLink="/admin/sales/invoice-template">Invoice
-                                Templates</a>
+                            <!-- <a class="nav-link text-white ps-4" routerLink="/admin/sales/invoice-template">Invoice
+                                Templates</a> -->
                             <a class="nav-link text-white ps-4" routerLink="/admin/sales/credit-notes">Credit Notes</a>
                         </div>
                     </li>

@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Router, RouterModule } from '@angular/router';
 import { CreditNotesService } from '../../../../../services/CreditNote.serivce';
 import { CustomerService } from '../../../../../services/Customer.service';
@@ -10,7 +14,9 @@ import { SubProductService } from '../../../../../services/subProduct.service';
 @Component({
   selector: 'app-credit-notes-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
+    RouterModule, MatFormFieldModule, MatDatepickerModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './credit-notes-add-edit.component.html',
   styleUrl: './credit-notes-add-edit.component.css'
 })
@@ -21,6 +27,8 @@ export class CreditNotesAddEditComponent implements OnInit {
   subProductList: any[] = []; // Define subProductList to store product dataX
   creditNoteData: any;
   product_name: any;
+  isAddMode: boolean = true;
+
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
     private productService: ProductService,
@@ -87,6 +95,7 @@ export class CreditNotesAddEditComponent implements OnInit {
     this.creditNoteData = history.state.creditNoteData;
 
     if (this.creditNoteData) {
+      this.isAddMode = false;
       console.log('Credit Note Data:', this.creditNoteData);
       // Populate the form with the credit note data
       this.populateForm(this.creditNoteData);

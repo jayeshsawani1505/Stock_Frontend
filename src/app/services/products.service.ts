@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError, Observable, catchError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 
 @Injectable({
@@ -9,8 +9,9 @@ import { environment } from '../../environments/environment.prod';
 export class ProductService {
     constructor(private httpClient: HttpClient) { }
 
-    private handleError(error: any) {
-        return throwError(error);
+    private handleError(error: HttpErrorResponse) {
+        console.error('An error occurred:', error.message);
+        return throwError(() => new Error('Something went wrong; please try again later.'));
     }
 
     // Get all products
@@ -21,16 +22,41 @@ export class ProductService {
     }
 
     // Add a new product
-    AddProduct(productData: any): Observable<any> {
+    // AddProduct(productData: any): Observable<any> {
+    //     return this.httpClient
+    //         .post(environment.baseURL + `/products`, productData)
+    //         .pipe(catchError(this.handleError));
+    // }
+    AddProduct(productData: any, file?: File): Observable<any> {
+        const formData = new FormData();
+
+        Object.keys(productData).forEach(key => {
+            formData.append(key, productData[key]);
+        });
+
+        if (file) {
+            formData.append('product_image', file);
+        }
+
         return this.httpClient
-            .post(environment.baseURL + `/products`, productData)
+            .post(`${environment.baseURL}/products`, formData)
             .pipe(catchError(this.handleError));
     }
 
     // Update a product
-    UpdateProduct(productId: any, productData: any): Observable<any> {
+    UpdateProduct(productId: any, productData: any, file?: File): Observable<any> {
+        const formData = new FormData();
+
+        Object.keys(productData).forEach(key => {
+            formData.append(key, productData[key]);
+        });
+
+        if (file) {
+            formData.append('product_image', file);
+        }
+
         return this.httpClient
-            .put(environment.baseURL + `/products/${productId}`, productData)
+            .put(`${environment.baseURL}/products/${productId}`, formData)
             .pipe(catchError(this.handleError));
     }
 

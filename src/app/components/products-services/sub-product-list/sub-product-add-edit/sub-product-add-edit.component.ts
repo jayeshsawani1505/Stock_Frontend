@@ -17,6 +17,7 @@ export class SubProductAddEditComponent implements OnInit {
   productForm!: FormGroup;
   productList: any[] = [];
   productData: any;
+  isAddMode: boolean = true;
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -58,6 +59,7 @@ export class SubProductAddEditComponent implements OnInit {
   fetchCustomerData() {
     this.productData = history.state.productData;
     if (this.productData) {
+      this.isAddMode = false;
       this.populateForm(this.productData);
     }
   }

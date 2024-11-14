@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../../services/Customer.service';
 import { InvoiceService } from '../../../../services/invoice.service';
@@ -10,7 +14,9 @@ import { SubProductService } from '../../../../services/subProduct.service';
 @Component({
   selector: 'app-invoices-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
+    RouterModule, MatFormFieldModule, MatDatepickerModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './invoices-add-edit.component.html',
   styleUrl: './invoices-add-edit.component.css'
 })
@@ -21,6 +27,7 @@ export class InvoicesAddEditComponent implements OnInit {
   subProductList: any[] = []; // Define subProductList to store product dataX
   invoiceData: any;
   product_name: any;
+  isAddMode: boolean = true;
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -94,6 +101,7 @@ export class InvoicesAddEditComponent implements OnInit {
     this.invoiceData = history.state.invoiceData;
 
     if (this.invoiceData) {
+      this.isAddMode = false
       console.log(this.invoiceData);
 
       // Populate the form with the customer data

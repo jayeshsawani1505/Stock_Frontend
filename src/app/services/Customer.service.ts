@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError, Observable, catchError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 
 @Injectable({
@@ -9,8 +9,9 @@ import { environment } from '../../environments/environment.prod';
 export class CustomerService {
     constructor(private httpClient: HttpClient) { }
 
-    private handleError(error: any) {
-        return throwError(error);
+    private handleError(error: HttpErrorResponse) {
+        console.error('An error occurred:', error.message);
+        return throwError(() => new Error('Something went wrong; please try again later.'));
     }
 
     // Get all customers
@@ -28,16 +29,40 @@ export class CustomerService {
     }
 
     // Add a new customer
-    AddCustomer(customerData: any): Observable<any> {
+    AddCustomer(customerData: any, file?: File): Observable<any> {
+        const formData = new FormData();
+
+        // Add customer data fields
+        Object.keys(customerData).forEach(key => {
+            formData.append(key, customerData[key]);
+        });
+
+        // Add profile photo if provided
+        if (file) {
+            formData.append('profile_photo', file);
+        }
+
         return this.httpClient
-            .post(environment.baseURL + `/customers`, customerData)
+            .post(`${environment.baseURL}/customers`, formData)
             .pipe(catchError(this.handleError));
     }
 
     // update a customer
-    UpdateCustomer(customerId: any, customerData: any): Observable<any> {
+    UpdateCustomer(customerId: any, customerData: any, file?: File): Observable<any> {
+        const formData = new FormData();
+
+        // Append customer data fields to FormData
+        Object.keys(customerData).forEach(key => {
+            formData.append(key, customerData[key]);
+        });
+
+        // Append profile photo if provided
+        if (file) {
+            formData.append('profile_photo', file);
+        }
+
         return this.httpClient
-            .put(environment.baseURL + `/customers/${customerId}`, customerData)
+            .put(`${environment.baseURL}/customers/${customerId}`, formData)
             .pipe(catchError(this.handleError));
     }
 

@@ -14,6 +14,10 @@ import { CustomerService } from '../../../../services/Customer.service';
 export class CustomersAddEditComponent implements OnInit {
   customerForm: FormGroup;
   customerData: any;
+  imageUrl: string | ArrayBuffer | null = null;
+  fileName: string = '';
+  selectedFile: File | null = null;
+  isAddMode: boolean = true;
 
   constructor(private fb: FormBuilder,
     private customerService: CustomerService,
@@ -62,6 +66,7 @@ export class CustomersAddEditComponent implements OnInit {
     this.customerData = history.state.customerData;
 
     if (this.customerData) {
+      this.isAddMode = false;
       // Populate the form with the customer data
       this.populateForm(this.customerData);
     }
@@ -111,6 +116,47 @@ export class CustomersAddEditComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (this.isFileSizeValid(file)) {
+        this.previewFile(file);
+      } else {
+        this.removeImage();
+      }
+    }
+  }
+
+  private isFileSizeValid(file: File): boolean {
+    const maxSizeInMB = 2;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert 2 MB to bytes
+    const isValid = file.size <= maxSizeInBytes;
+
+    if (!isValid) {
+      alert('File size exceeds 2 MB. Please select a smaller file.');
+    }
+
+    return isValid;
+  }
+
+  private previewFile(file: File): void {
+    this.fileName = file.name;
+    this.selectedFile = file;
+
+    // Preview the image
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageUrl = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeImage(): void {
+    this.imageUrl = null;
+    this.fileName = '';
+    this.selectedFile = null;
+  }
+
   onSubmit(): void {
     if (this.customerForm.valid) {
       // Check if history state has customer data for update
@@ -127,7 +173,7 @@ export class CustomersAddEditComponent implements OnInit {
   }
 
   addCustomer(customerData: any) {
-    this.customerService.AddCustomer(customerData).subscribe({
+    this.customerService.AddCustomer(customerData, this.selectedFile || undefined).subscribe({
       next: (response) => {
         console.log('Customer added successfully:', response);
         this.router.navigate(['/admin/customers/customers-list']);
@@ -139,7 +185,7 @@ export class CustomersAddEditComponent implements OnInit {
   }
 
   updateCustomer(customerId: number, updatedData: any) {
-    this.customerService.UpdateCustomer(customerId, updatedData).subscribe({
+    this.customerService.UpdateCustomer(customerId, updatedData, this.selectedFile || undefined).subscribe({
       next: (response) => {
         console.log('Customer updated successfully:', response);
         this.router.navigate(['/admin/customers/customers-list']);

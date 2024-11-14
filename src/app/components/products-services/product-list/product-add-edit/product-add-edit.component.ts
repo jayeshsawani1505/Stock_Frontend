@@ -17,6 +17,10 @@ export class ProductAddEditComponent implements OnInit {
   productForm!: FormGroup;
   categoryList: any[] = [];
   productData: any;
+  imageUrl: string | ArrayBuffer | null = null;
+  fileName: string = '';
+  selectedFile: File | null = null;
+  isAddMode: boolean = true;
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -60,6 +64,7 @@ export class ProductAddEditComponent implements OnInit {
   fetchCustomerData() {
     this.productData = history.state.productData;
     if (this.productData) {
+      this.isAddMode = false;
       this.populateForm(this.productData);
     }
   }
@@ -80,6 +85,47 @@ export class ProductAddEditComponent implements OnInit {
     });
   }
 
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      if (this.isFileSizeValid(file)) {
+        this.previewFile(file);
+      } else {
+        this.removeImage();
+      }
+    }
+  }
+
+  private isFileSizeValid(file: File): boolean {
+    const maxSizeInMB = 2;
+    const maxSizeInBytes = maxSizeInMB * 1024 * 1024; // Convert 2 MB to bytes
+    const isValid = file.size <= maxSizeInBytes;
+
+    if (!isValid) {
+      alert('File size exceeds 2 MB. Please select a smaller file.');
+    }
+
+    return isValid;
+  }
+
+  private previewFile(file: File): void {
+    this.fileName = file.name;
+    this.selectedFile = file;
+
+    // Preview the image
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.imageUrl = reader.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeImage(): void {
+    this.imageUrl = null;
+    this.fileName = '';
+    this.selectedFile = null;
+  }
+
   onSubmit(): void {
     if (this.productForm.valid) {
       const productData = history.state.productData;
@@ -93,7 +139,7 @@ export class ProductAddEditComponent implements OnInit {
   }
 
   addProduct(productData: any) {
-    this.productService.AddProduct(productData).subscribe({
+    this.productService.AddProduct(productData, this.selectedFile || undefined).subscribe({
       next: (response) => {
         console.log('Product added successfully:', response);
         this.router.navigate(['/admin/productsServices/product-list']);
@@ -105,7 +151,7 @@ export class ProductAddEditComponent implements OnInit {
   }
 
   updateProduct(productId: number, updatedData: any) {
-    this.productService.UpdateProduct(productId, updatedData).subscribe({
+    this.productService.UpdateProduct(productId, updatedData, this.selectedFile || undefined).subscribe({
       next: (response) => {
         console.log('Product updated successfully:', response);
         this.router.navigate(['/admin/productsServices/product-list']);

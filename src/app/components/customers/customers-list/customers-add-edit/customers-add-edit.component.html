@@ -4,7 +4,7 @@
             <!-- Page Header -->
             <div class="page-header">
                 <div class="content-page-header">
-                    <h5>Add Customer</h5>
+                    <h5>{{ isAddMode ? 'Add' : 'Edit' }} Customer</h5>
                 </div>
             </div>
             <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
@@ -16,21 +16,22 @@
                             <div class="profile-picture">
                                 <div class="upload-profile">
                                     <div class="profile-img">
-                                        <img id="blah" class="avatar" src="assets/img/profiles/avatar-14.jpg"
-                                            alt="profile-img">
+                                        <img [src]="imageUrl || 'assets/img/profiles/avatar-14.jpg'" id="blah"
+                                            class="avatar" alt="profile-img">
                                     </div>
                                     <div class="add-profile">
                                         <h5>Upload a New Photo</h5>
-                                        <span>Profile-pic.jpg</span>
+                                        <span>{{ fileName || 'No file selected' }}</span>
                                     </div>
                                 </div>
                                 <div class="img-upload">
                                     <label class="btn btn-upload">
-                                        Upload <input type="file">
+                                        Upload <input type="file" (change)="onFileSelected($event)" accept="image/*">
                                     </label>
-                                    <a class="btn btn-remove">Remove</a>
+                                    <a class="btn btn-remove" (click)="removeImage()">Remove</a>
                                 </div>
                             </div>
+
                             <div class="row">
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">

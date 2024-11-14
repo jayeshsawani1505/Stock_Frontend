@@ -18,14 +18,22 @@
                         <input formControlName="description" type="text" class="form-control"
                             placeholder="Enter Description">
                     </div>
-                    <div class="input-block mb-3">
-                        <label>Image</label>
-                        <div class="service-upload">
-                            <span><img src="assets/img/icons/drop-icon.svg" alt="upload"></span>
-                            <h6 class="drop-browse">Drop your files here or <span class="text-primary">browse</span>
-                            </h6>
-                            <p class="text-muted">Maximum size: 50MB</p>
-                            <input type="file" formControlName="image" id="image_sign">
+                    <div class="service-upload">
+                        <div class="upload-profile">
+                            <div class="profile-img">
+                                <img [src]="imageUrl || 'assets/img/icons/drop-icon.svg'" id="blah" class="avatar"
+                                    alt="profile-img">
+                            </div>
+                            <div class="add-profile">
+                                <h5>Upload a New Photo</h5>
+                                <span>{{ fileName || 'No file selected' }}</span>
+                            </div>
+                        </div>
+                        <div class="img-upload">
+                            <label class="btn btn-upload">
+                                Upload <input type="file" (change)="onFileSelected($event)" accept="image/*">
+                            </label>
+                            <a class="btn btn-remove" (click)="removeImage()">Remove</a>
                         </div>
                     </div>
                 </div>

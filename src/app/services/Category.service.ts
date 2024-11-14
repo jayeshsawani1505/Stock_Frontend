@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError, Observable, catchError } from 'rxjs';
+import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 
 @Injectable({
@@ -9,8 +9,9 @@ import { environment } from '../../environments/environment.prod';
 export class CategoryService {
     constructor(private httpClient: HttpClient) { }
 
-    private handleError(error: any) {
-        return throwError(error);
+    private handleError(error: HttpErrorResponse) {
+        console.error('An error occurred:', error.message);
+        return throwError(() => new Error('Something went wrong; please try again later.'));
     }
 
     // Get all categories
@@ -21,7 +22,7 @@ export class CategoryService {
     }
 
     // Add a new category
-    AddCategory(categoryData: any): Observable<any> {
+    AddCategory(categoryData: FormData): Observable<any> {
         return this.httpClient
             .post(environment.baseURL + `/categories`, categoryData)
             .pipe(catchError(this.handleError));
@@ -40,9 +41,9 @@ export class CategoryService {
             .delete(environment.baseURL + `/categories/${categoryId}`)
             .pipe(catchError(this.handleError));
     }
-    
-     // Upload Excel file to add multiple customers
-     UploadExcel(file: File): Observable<any> {
+
+    // Upload Excel file to add multiple customers
+    UploadExcel(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
 

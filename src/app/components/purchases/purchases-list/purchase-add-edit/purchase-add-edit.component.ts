@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../../services/products.service';
 import { PurchaseService } from '../../../../services/purchases.service';
@@ -10,7 +14,9 @@ import { VendorService } from '../../../../services/vendors.service';
 @Component({
   selector: 'app-purchase-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
+    RouterModule, MatFormFieldModule, MatDatepickerModule],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './purchase-add-edit.component.html',
   styleUrl: './purchase-add-edit.component.css'
 })
@@ -21,6 +27,7 @@ export class PurchaseAddEditComponent implements OnInit {
   subProductList: any[] = []; // Define subProductList to store product dataX
   purchaseData: any;
   product_name: any;
+  isAddMode: boolean = true;
 
   constructor(
     private fb: FormBuilder,
@@ -93,6 +100,7 @@ export class PurchaseAddEditComponent implements OnInit {
     this.purchaseData = history.state.PurchaseData;
 
     if (this.purchaseData) {
+      this.isAddMode = false;
       console.log(this.purchaseData);
 
       // Populate the form with the Purchase data

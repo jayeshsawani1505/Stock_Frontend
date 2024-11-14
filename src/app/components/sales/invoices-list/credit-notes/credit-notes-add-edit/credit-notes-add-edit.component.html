@@ -3,7 +3,7 @@
         <div class="card-body">
             <div class="page-header">
                 <div class="content-page-header">
-                    <h5>Add credie notes</h5>
+                    <h5>{{ isAddMode ? 'Add' : 'Edit' }} credie notes</h5>
                 </div>
             </div>
             <form [formGroup]="creditNoteForm" (ngSubmit)="onSubmit()">
@@ -33,20 +33,23 @@
 
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Invoice Date</label>
-                                        <div class="cal-icon cal-icon-info">
-                                            <input type="text" formControlName="creditNote_date"
-                                                class="datetimepicker form-control" placeholder="Select Date">
-                                        </div>
+                                        <label>Credit Note Date</label>
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <input matInput [matDatepicker]="picker" formControlName="creditNote_date">
+                                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker></mat-datepicker>
+                                        </mat-form-field>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Due Date</label>
-                                        <div class="cal-icon cal-icon-info">
-                                            <input type="text" formControlName="due_date"
-                                                class="datetimepicker form-control" placeholder="Select Date">
-                                        </div>
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <input matInput [matDatepicker]="picker2" formControlName="due_date">
+                                            <mat-datepicker-toggle matIconSuffix
+                                                [for]="picker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #picker2></mat-datepicker>
+                                        </mat-form-field>
                                     </div>
                                 </div>
 
