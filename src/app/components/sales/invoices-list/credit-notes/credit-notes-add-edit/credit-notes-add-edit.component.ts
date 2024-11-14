@@ -10,6 +10,7 @@ import { CreditNotesService } from '../../../../../services/CreditNote.serivce';
 import { CustomerService } from '../../../../../services/Customer.service';
 import { ProductService } from '../../../../../services/products.service';
 import { SubProductService } from '../../../../../services/subProduct.service';
+import { SignatureService } from '../../../../../services/signature.srvice';
 
 @Component({
   selector: 'app-credit-notes-add-edit',
@@ -25,6 +26,7 @@ export class CreditNotesAddEditComponent implements OnInit {
   customerList: any[] = []; // Define customerList to store customer data
   productList: any[] = []; // Define productList to store product data
   subProductList: any[] = []; // Define subProductList to store product dataX
+  signatureList: any[] = [];
   creditNoteData: any;
   product_name: any;
   isAddMode: boolean = true;
@@ -34,10 +36,9 @@ export class CreditNotesAddEditComponent implements OnInit {
     private productService: ProductService,
     private CreditNotesService: CreditNotesService,
     private SubProductService: SubProductService,
+    private SignatureService: SignatureService,
     private router: Router
-  ) { }
-
-  ngOnInit(): void {
+  ) {
     this.creditNoteForm = this.fb.group({
       customer_id: ['', Validators.required],
       creditNote_date: ['', Validators.required],
@@ -50,12 +51,16 @@ export class CreditNotesAddEditComponent implements OnInit {
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['', [Validators.required, Validators.min(0)]]
+      total_amount: ['', [Validators.required, Validators.min(0)]],
+      signature_id: [0]
     });
+  }
 
+  ngOnInit(): void {
     this.GetCustomers();
     this.GetProducts();
     this.fetchcreditNoteData();
+    this.GetSignatures();
   }
 
 
@@ -81,6 +86,18 @@ export class CreditNotesAddEditComponent implements OnInit {
       }
     });
   }
+  
+  GetSignatures(): void {
+    this.SignatureService.GetSignatures().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.signatures) {
+          this.signatureList = res.signatures;
+        }
+      }
+    })
+  }
+
   GetSubProductsByProductId(productId: any) {
     this.SubProductService.GetSubProductsByProductId(productId).subscribe({
       next: (res: any) => {
@@ -120,6 +137,7 @@ export class CreditNotesAddEditComponent implements OnInit {
       notes: invoice.notes,
       terms_conditions: invoice.terms_conditions,
       total_amount: invoice.total_amount,
+      signature_id: invoice.signature_id
     });
 
     const product = this.productList.find(p => p.product_id === invoice.product_id);

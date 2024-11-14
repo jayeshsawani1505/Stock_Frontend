@@ -10,6 +10,7 @@ import { ProductService } from '../../../../services/products.service';
 import { ReturnDebitNotesPurchaseService } from '../../../../services/return-debit-notes-purchases.service';
 import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
+import { SignatureService } from '../../../../services/signature.srvice';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
@@ -24,6 +25,7 @@ export class DebitNotesAddEditComponent implements OnInit {
   purchaseForm!: FormGroup;
   vendorList: any[] = [];
   productList: any[] = [];
+  signatureList: any[] = [];
   purchaseData: any;
   product_name: any;
   subProductList: any[] = []; // Define subProductList to store product dataX
@@ -35,6 +37,7 @@ export class DebitNotesAddEditComponent implements OnInit {
     private productService: ProductService,
     private SubProductService: SubProductService,
     private ReturnDebitNotesPurchaseService: ReturnDebitNotesPurchaseService,
+    private SignatureService: SignatureService,
     private router: Router
   ) {
     this.purchaseForm = this.fb.group({
@@ -50,7 +53,8 @@ export class DebitNotesAddEditComponent implements OnInit {
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['', [Validators.required, Validators.min(0)]]
+      total_amount: ['', [Validators.required, Validators.min(0)]],
+      signature_id: [0]
     })
   }
 
@@ -58,6 +62,7 @@ export class DebitNotesAddEditComponent implements OnInit {
     this.GetVendors();
     this.GetProducts();
     this.fetchPurchaseData();
+    this.GetSignatures();
   }
 
   // Fetch vendors
@@ -82,6 +87,17 @@ export class DebitNotesAddEditComponent implements OnInit {
         }
       }
     });
+  }
+
+  GetSignatures(): void {
+    this.SignatureService.GetSignatures().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.signatures) {
+          this.signatureList = res.signatures;
+        }
+      }
+    })
   }
 
   GetSubProductsByProductId(productId: any) {
@@ -122,7 +138,9 @@ export class DebitNotesAddEditComponent implements OnInit {
       rate: purchase.rate || '',
       notes: purchase.notes || '',
       terms_conditions: purchase.terms_conditions || '',
-      total_amount: purchase.total_amount || ''
+      total_amount: purchase.total_amount || '',
+      signature_id: purchase.signature_id
+
     });
     const product = this.productList.find(p => p.product_id === purchase.product_id);
     this.product_name = product ? product.product_name : null;

@@ -7,8 +7,8 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal"
-                            data-bs-target="#add_modal"><i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add
+                        <a class="btn btn-primary" (click)="openAddSignature()"><i class="fa fa-plus-circle me-2"
+                                aria-hidden="true"></i>Add
                             Signature</a>
                     </li>
                 </ul>
@@ -16,252 +16,70 @@
         </div>
     </div>
     <!-- /Page Header -->
-
-
-
-
-
     <!-- Table -->
     <div class="row">
         <div class="col-sm-12">
             <div class=" card-table">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-center datatable signature-table">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Signature Name</th>
-                                    <th>Signature</th>
-                                    <th>Status</th>
-                                    <th class="no-sort">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Allen</td>
-                                    <td>
-                                        <div class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_1" class="check" type="checkbox" checked="">
-                                            <label for="rating_1" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon active me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Remove default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Raymond</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_2" class="check" type="checkbox" checked="">
-                                            <label for="rating_2" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Make as default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Ralph</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_3" class="check" type="checkbox">
-                                            <label for="rating_3" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Make as default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Ruth</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_4" class="check" type="checkbox" checked="">
-                                            <label for="rating_4" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Make as default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>Steven</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_5" class="check" type="checkbox" checked="">
-                                            <label for="rating_5" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Make as default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>Earnes</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="img-fluid light-color-logo" width="80" height="30"
-                                                src="assets/img/user-signature.png" alt="User Image">
-                                            <img class="img-fluid dark-white-logo" width="80" height="30"
-                                                src="assets/img/user-signature-white.png" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>
-                                        <div class="status-toggle">
-                                            <input id="rating_6" class="check" type="checkbox" checked="">
-                                            <label for="rating_6" class="checktoggle checkbox-bg">checkbox</label>
-                                        </div>
-                                    </td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="tooltip" title="Make as default" data-bs-placement="left"><i
-                                                class="fas fa-star"></i></a>
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);"
-                                            data-bs-toggle="modal" data-bs-target="#edit_modal"><i
-                                                class="fas fa-edit"></i></a>
-                                        <a class=" btn-action-icon" href="javascript:void(0);" data-bs-toggle="modal"
-                                            data-bs-target="#warning_modal"><i class="fas fa-trash-2"></i></a>
-                                    </td>
-                                </tr>
-                            </tbody>
+                        <div class="input-block mb-3">
+                            <label>Search <span class="text-danger">*</span></label>
+                            <input type="text" (keyup)="applyFilter($event)" placeholder="Search by name"
+                                class="form-control">
+                        </div>
+                        <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
+                            <ng-container matColumnDef="index">
+                                <th mat-header-cell *matHeaderCellDef>#</th>
+                                <td mat-cell *matCellDef="let element; let i = index">{{ element.signature_id}}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="signature_name">
+                                <th mat-header-cell *matHeaderCellDef>Signature Name</th>
+                                <td mat-cell *matCellDef="let element">{{ element.signature_name }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="signature_photo">
+                                <th mat-header-cell *matHeaderCellDef>Photo</th>
+                                <td mat-cell *matCellDef="let element">
+                                    <img [src]="element.signature_photo || 'assets/img/user-signature.png'"
+                                        alt="User Image" (error)="onImageError($event)"
+                                        style="width: 100px; height: 50px;">
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef>Status</th>
+                                <td mat-cell *matCellDef="let element">
+                                    {{ element.status === '0' ? 'Active' : 'Inactive' }}
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="created_at">
+                                <th mat-header-cell *matHeaderCellDef>Created At</th>
+                                <td mat-cell *matCellDef="let element">{{ element.created_at | date: 'short' }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                                <td mat-cell *matCellDef="let element" class="d-flex">
+                                    <a class="btn-action-icon me-2" (click)="openEditSignature(element)">
+                                        <i class="far fa-edit me-2"></i>
+                                    </a>
+                                    <a class="btn-action-icon" (click)="DeleteSignature(element.signature_id)">
+                                        <i class="far fa-trash-alt me-2"></i>
+                                    </a>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
+                        <mat-paginator [length]="signatureList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"
+                            showFirstLastButtons></mat-paginator>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- /Table -->
-
-</div>
-<div class="modal custom-modal signature-add-modal fade" id="add_modal" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Add Signature</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-lg-12 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Signature Name</label>
-                                <input type="text" class="form-control" placeholder="Signature Name">
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12">
-                            <div class="input-block mb-3">
-                                <label>Upload</label>
-                                <div class="input-block service-upload service-upload-info mb-0">
-                                    <span><i class="fas fa-upload"></i>Upload Signature</span>
-                                    <input type="file" multiple="">
-                                    <div id="frames"></div>
-                                </div>
-                                <p>Image format should be png and jpg</p>
-                            </div>
-                        </div>
-                        <div class="col-lg-12 col-md-12">
-                            <label class="custom_check">
-                                <input type="checkbox" name="invoice">
-                                <span class="checkmark"></span>
-                                Mark as default
-                            </label>
-
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary">Save</button>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>

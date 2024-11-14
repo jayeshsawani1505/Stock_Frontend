@@ -274,6 +274,8 @@ export class InvoicesListComponent implements OnInit {
             [
               { text: 'Payment Info:', bold: true },
               { text: `Amount: INR ${data.total_amount}` },
+              { text: 'Signature:', bold: true, margin: [0, 20, 0, 0], },
+              { text: `${data.signature_name}` },
             ],
             [
               { text: 'Terms & Conditions:', bold: true },

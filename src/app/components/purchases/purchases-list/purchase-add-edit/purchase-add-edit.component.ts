@@ -10,6 +10,7 @@ import { ProductService } from '../../../../services/products.service';
 import { PurchaseService } from '../../../../services/purchases.service';
 import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
+import { SignatureService } from '../../../../services/signature.srvice';
 
 @Component({
   selector: 'app-purchase-add-edit',
@@ -28,6 +29,7 @@ export class PurchaseAddEditComponent implements OnInit {
   purchaseData: any;
   product_name: any;
   isAddMode: boolean = true;
+  signatureList: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +37,7 @@ export class PurchaseAddEditComponent implements OnInit {
     private productService: ProductService,
     private PurchaseService: PurchaseService,
     private SubProductService: SubProductService,
+    private SignatureService: SignatureService,
     private router: Router
   ) {
     this.purchaseForm = this.fb.group({
@@ -51,7 +54,8 @@ export class PurchaseAddEditComponent implements OnInit {
       rate: ['', [Validators.required, Validators.min(0)]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['', [Validators.required, Validators.min(0)]]
+      total_amount: ['', [Validators.required, Validators.min(0)]],
+      signature_id: [0]
     })
   }
 
@@ -59,6 +63,7 @@ export class PurchaseAddEditComponent implements OnInit {
     this.GetVendors();
     this.GetProducts();
     this.fetchPurchaseData();
+    this.GetSignatures();
   }
 
   // Fetch vendors
@@ -83,6 +88,17 @@ export class PurchaseAddEditComponent implements OnInit {
         }
       }
     });
+  }
+
+  GetSignatures(): void {
+    this.SignatureService.GetSignatures().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.signatures) {
+          this.signatureList = res.signatures;
+        }
+      }
+    })
   }
 
   GetSubProductsByProductId(productId: any) {
@@ -124,7 +140,9 @@ export class PurchaseAddEditComponent implements OnInit {
       rate: purchase.rate || '',
       notes: purchase.notes || '',
       terms_conditions: purchase.terms_conditions || '',
-      total_amount: purchase.total_amount || ''
+      total_amount: purchase.total_amount || '',
+      signature_id: purchase.signature_id
+
     });
     const product = this.productList.find(p => p.product_id === purchase.product_id);
     this.product_name = product ? product.product_name : null;

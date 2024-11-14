@@ -27,6 +27,13 @@ export class InvoiceService {
             .pipe(catchError(this.handleError));
     }
 
+    // generate Invoice Number
+    generateInvoiceNumber(): Observable<any> {
+        return this.httpClient
+            .get(environment.baseURL + `/invoices/generateInvoiceNumber`,)
+            .pipe(catchError(this.handleError));
+    }
+
     getInvoiceDetailsForPDF(id: any): Observable<any> {
         return this.httpClient
             .get(`${environment.baseURL}/invoices/pdf/${id}`)
