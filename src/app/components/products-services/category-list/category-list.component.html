@@ -50,6 +50,18 @@
                                 <td mat-cell *matCellDef="let category">{{ category.category_name }}</td>
                             </ng-container>
 
+                            <ng-container matColumnDef="category_photo">
+                                <th mat-header-cell *matHeaderCellDef>Category Image</th>
+                                <td mat-cell *matCellDef="let category">
+                                    <div style="display: flex; align-items: center;">
+                                        <img mat-icon class="avatar-img rounded-circle"
+                                            [src]="imgURL+category.category_photo || 'assets/img/category/category-07.jpg'"
+                                            alt="User Image" (error)="onImageError($event)"
+                                            style="width: 50px; height: 50px; margin-right: 15px;">
+                                    </div>
+                                </td>
+                            </ng-container>
+
                             <ng-container matColumnDef="description">
                                 <th mat-header-cell *matHeaderCellDef>Description</th>
                                 <td mat-cell *matCellDef="let category">{{ category.description }}</td>

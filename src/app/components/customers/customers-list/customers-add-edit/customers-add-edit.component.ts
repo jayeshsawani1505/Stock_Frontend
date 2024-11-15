@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../../services/Customer.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-customers-add-edit',
@@ -18,17 +19,18 @@ export class CustomersAddEditComponent implements OnInit {
   fileName: string = '';
   selectedFile: File | null = null;
   isAddMode: boolean = true;
+  imgURL = environment.ImageUrl
 
   constructor(private fb: FormBuilder,
     private customerService: CustomerService,
     private router: Router,
   ) {
     this.customerForm = this.fb.group({
-      // profile_photo: ['https://example.com/profile.jpg'],
+      profile_photo: [],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      currency: ['USD', Validators.required],
+      currency: ['', Validators.required],
       website: [''],
       notes: [''],
 
@@ -98,8 +100,11 @@ export class CustomersAddEditComponent implements OnInit {
       branch: customer.branch,
       account_holder_name: customer.account_holder_name,
       account_number: customer.account_number,
-      ifsc: customer.ifsc
+      ifsc: customer.ifsc,
+      profile_photo: customer.profile_photo
     });
+    this.imageUrl = this.imgURL + customer.profile_photo,
+      this.selectedFile = customer.profile_photo
   }
 
   // Utility function to copy billing address to shipping address

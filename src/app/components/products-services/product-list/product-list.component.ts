@@ -7,6 +7,8 @@ import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
 import { ProductService } from '../../../services/products.service';
 import { DeleteProductComponent } from './delete-product/delete-product.component';
+import { environment } from '../../../../environments/environment';
+import { InOutStockProductComponent } from './in-out-stock-product/in-out-stock-product.component';
 
 @Component({
   selector: 'app-product-list',
@@ -23,9 +25,10 @@ export class ProductListComponent implements OnInit, AfterViewInit {
   productIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'product_name', 'product_code', 'category_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
+  displayedColumns: string[] = ['index', 'product_image', 'product_name', 'product_code', 'category_name', 'units', 'quantity', 'selling_price', 'purchase_price', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  imgURL = environment.ImageUrl
 
   constructor(private productService: ProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
@@ -63,7 +66,12 @@ export class ProductListComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
     }
   }
-  
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/img/products/product-01.png';
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
@@ -90,6 +98,20 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openStockDialog(isAddMode: boolean, data: any): void {
+    const dialogRef = this.dialog.open(InOutStockProductComponent, {
+      width: '550px',
+      data: {
+        isAddMode,
+        stockData: data
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.GetProducts();
+    });
+  }
+  
   onDelete(productId: number) {
     const dialogRef = this.dialog.open(DeleteProductComponent, {
       data: productId,

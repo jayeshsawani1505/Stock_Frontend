@@ -250,7 +250,7 @@ export class InvoicesListComponent implements OnInit {
                 { text: 'Unit Price', bold: true },
                 { text: 'Amount', bold: true },
               ],
-              ['1', `${data.product_name} - ${data.subproduct_name}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
+              ['1', `${data.product_name} - ${data.subproduct_name || ''}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
             ]
           }
         },

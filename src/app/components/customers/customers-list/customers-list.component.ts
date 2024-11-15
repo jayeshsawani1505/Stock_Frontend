@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../services/Customer.service';
 import { ExcelService } from '../../../services/excel.service';
 import { DeleteCustomerComponent } from './delete-customer/delete-customer.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-customers-list',
@@ -23,10 +24,11 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
   customerIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'totalInvoice', 'created', 'status', 'actions'];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'totalInvoice', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-
+  imgURL = environment.ImageUrl
+  
   constructor(
     private CustomerService: CustomerService,
     private ExcelService: ExcelService,

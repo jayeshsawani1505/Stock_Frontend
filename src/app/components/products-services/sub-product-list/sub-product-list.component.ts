@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
 import { SubProductService } from '../../../services/subProduct.service';
 import { DeleteProductComponent } from '../product-list/delete-product/delete-product.component';
+import { InOutStockSubProductComponent } from './in-out-stock-sub-product/in-out-stock-sub-product.component';
 
 @Component({
   selector: 'app-sub-product-list',
@@ -30,15 +31,15 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
     private router: Router) { }
 
   ngOnInit(): void {
-    this.GetProducts();
+    this.GetSubProducts();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator!;
   }
 
-  // GetProducts method
-  GetProducts() {
+  // GetSubProducts method
+  GetSubProducts() {
     this.SubProductService.GetSubProducts().subscribe({
       next: (res: any) => {
         console.log(res);
@@ -70,7 +71,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
       const file = input.files[0];
       this.SubProductService.UploadExcel(file).subscribe(
         response => {
-          this.GetProducts();
+          this.GetSubProducts();
           console.log('File uploaded successfully', response);
         },
         error => {
@@ -88,6 +89,20 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
     });
   }
 
+  openStockDialog(isAddMode: boolean, data: any): void {
+    const dialogRef = this.dialog.open(InOutStockSubProductComponent, {
+      width: '550px',
+      data: {
+        isAddMode,
+        stockData: data
+      },
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.GetSubProducts();
+    });
+  }
+
   onDelete(subproduct_id: number) {
     const dialogRef = this.dialog.open(DeleteProductComponent, {
       data: subproduct_id,
@@ -95,7 +110,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe(() => {
-      this.GetProducts();
+      this.GetSubProducts();
     });
   }
 

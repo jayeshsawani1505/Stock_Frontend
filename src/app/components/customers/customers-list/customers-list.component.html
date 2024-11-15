@@ -49,7 +49,7 @@
                                 <td mat-cell *matCellDef="let customer">
                                     <div style="display: flex; align-items: center;">
                                         <img mat-icon class="avatar-img rounded-circle"
-                                            [src]="customer.profile_photo || 'assets/img/profiles/avatar-14.jpg'"
+                                            [src]="imgURL+customer.profile_photo || 'assets/img/profiles/avatar-14.jpg'"
                                             alt="User Image" (error)="onImageError($event)"
                                             style="width: 50px; height: 50px; margin-right: 15px;">
                                         <div style="display: flex; flex-direction: column;">
@@ -65,14 +65,14 @@
                                 <td mat-cell *matCellDef="let customer">{{ customer.phone }}</td>
                             </ng-container>
 
-                            <ng-container matColumnDef="balance">
+                            <!-- <ng-container matColumnDef="balance">
                                 <th mat-header-cell *matHeaderCellDef>Balance</th>
                                 <td mat-cell *matCellDef="let customer">{{ customer.currency }}0.00</td>
-                            </ng-container>
+                            </ng-container> -->
 
                             <ng-container matColumnDef="totalInvoice">
                                 <th mat-header-cell *matHeaderCellDef>Total Invoice</th>
-                                <td mat-cell *matCellDef="let customer">0.00</td>
+                                <td mat-cell *matCellDef="let customer">₹{{customer?.total_amount || 0.00}}</td>
                             </ng-container>
 
                             <ng-container matColumnDef="created">
@@ -81,12 +81,12 @@
                                     {{ customer.created_at | date: 'dd MMM yyyy, hh:mm a' }}</td>
                             </ng-container>
 
-                            <ng-container matColumnDef="status">
+                            <!-- <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef>Status</th>
                                 <td mat-cell *matCellDef="let customer">
                                     <span class="badge bg-success-light">Active</span>
                                 </td>
-                            </ng-container>
+                            </ng-container> -->
 
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>Actions</th>

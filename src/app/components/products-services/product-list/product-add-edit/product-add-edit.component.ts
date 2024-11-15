@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } 
 import { Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../../services/Category.service';
 import { ProductService } from '../../../../services/products.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-product-add-edit',
@@ -21,6 +22,7 @@ export class ProductAddEditComponent implements OnInit {
   fileName: string = '';
   selectedFile: File | null = null;
   isAddMode: boolean = true;
+  imgURL = environment.ImageUrl
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -83,6 +85,8 @@ export class ProductAddEditComponent implements OnInit {
       description: product.description,
       product_image: product.product_image
     });
+    this.imageUrl = this.imgURL + product.product_image,
+      this.selectedFile = product.product_image
   }
 
   onFileSelected(event: any): void {

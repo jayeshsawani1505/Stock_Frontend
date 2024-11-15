@@ -11,6 +11,7 @@ import { InvoiceService } from '../../../../services/invoice.service';
 import { ProductService } from '../../../../services/products.service';
 import { SubProductService } from '../../../../services/subProduct.service';
 import { SignatureService } from '../../../../services/signature.srvice';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-invoices-add-edit',
@@ -29,7 +30,9 @@ export class InvoicesAddEditComponent implements OnInit {
   signatureList: any[] = [];
   invoiceData: any;
   product_name: any;
+  subproduct_name: any;
   isAddMode: boolean = true;
+  signature_photo: any
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -63,8 +66,8 @@ export class InvoicesAddEditComponent implements OnInit {
   ngOnInit(): void {
     this.GetCustomers();
     this.GetProducts();
-    this.fetchinvoiceData();
     this.GetSignatures();
+    this.fetchinvoiceData();
     if (this.isAddMode === true) {
       this.generateInvoiceNumber();
     }
@@ -101,6 +104,10 @@ export class InvoicesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.products) {
           this.productList = res.products; // Assign products data to productList
+          if (this.isAddMode === false) {
+            const product = this.productList.find(p => p.product_id === +this.invoiceData?.product_id);
+            this.product_name = product ? product.product_name : null;
+          }
         }
       }
     });
@@ -112,6 +119,10 @@ export class InvoicesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.signatures) {
           this.signatureList = res.signatures;
+          if (this.isAddMode === false) {
+            const selectedSignature = this.signatureList.find(signature => signature.signature_id === +this.invoiceData?.signature_id);
+            this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+          }
         }
       }
     })
@@ -122,6 +133,10 @@ export class InvoicesAddEditComponent implements OnInit {
       next: (res: any) => {
         console.log(res);
         this.subProductList = res.subproducts; // Assign products data to productList
+        if (this.isAddMode === false) {
+          const selectedProduct = this.subProductList.find(product => product.subproduct_id === +this.invoiceData?.signature_id);
+          this.subproduct_name = selectedProduct?.subproduct_name
+        }
       }
     });
   }
@@ -160,8 +175,6 @@ export class InvoicesAddEditComponent implements OnInit {
       total_amount: invoice.total_amount,
       signature_id: invoice.signature_id
     });
-    const product = this.productList.find(p => p.product_id === invoice.product_id);
-    this.product_name = product ? product.product_name : null;
   }
 
   onProductChange(event: Event): void {
@@ -178,6 +191,28 @@ export class InvoicesAddEditComponent implements OnInit {
     }
   }
 
+  onSubProductChange(event: Event): void {
+    // Parse the selected product ID as an integer
+    const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.GetSubProductsByProductId(selectedProductId);
+    console.log('Selected SubProduct ID:', selectedProductId);
+
+    // Find the selected product from the productList
+    const selectedProduct = this.subProductList.find(product => product.subproduct_id === selectedProductId);
+    if (selectedProduct) {
+      this.subproduct_name = selectedProduct?.subproduct_name
+      console.log('Selected Product:', selectedProduct);
+    }
+  }
+
+  onSignatureSelect(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    const selectedSignature = this.signatureList.find(signature => signature.signature_id === +selectedId);
+    if (selectedSignature) {
+      this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+      console.log('Signature Photo:', this.signature_photo);
+    }
+  }
   onSubmit(): void {
     if (this.invoiceForm.valid) {
       // Check if history state has invoice data for update

@@ -5,6 +5,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { SignatureService } from '../../../../services/signature.srvice';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-add-edit-signature',
@@ -19,6 +20,7 @@ export class AddEditSignatureComponent implements OnInit {
   imageUrl: string | ArrayBuffer | null = null;
   fileName: string = '';
   selectedFile: File | null = null;
+  imgURL = environment.ImageUrl
 
   constructor(private SignatureService: SignatureService,
     public dialog: MatDialog,
@@ -88,6 +90,8 @@ export class AddEditSignatureComponent implements OnInit {
       signature_photo: signature.signature_photo,
       status: signature.status
     });
+    this.imageUrl = this.imgURL + signature.signature_photo;
+    this.selectedFile = signature.signature_photo
   }
 
   addSignature() {

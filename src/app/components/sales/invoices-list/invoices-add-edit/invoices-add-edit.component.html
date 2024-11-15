@@ -15,7 +15,7 @@
                                     <div class="input-block mb-3">
                                         <label>Invoice Number</label>
                                         <input type="text" formControlName="invoice_number" class="form-control"
-                                            placeholder="Enter Invoice Number">
+                                            placeholder="Enter Invoice Number" readonly>
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
@@ -42,7 +42,8 @@
                                     <div class="input-block mb-3">
                                         <label>Invoice Date</label><br>
                                         <mat-form-field appearance="outline" class="w-100">
-                                            <input matInput [matDatepicker]="picker" formControlName="invoice_date">
+                                            <input matInput [matDatepicker]="picker" formControlName="invoice_date"
+                                                readonly placeholder="Select Date">
                                             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                                             <mat-datepicker #picker></mat-datepicker>
                                         </mat-form-field>
@@ -52,7 +53,8 @@
                                     <div class="input-block mb-3">
                                         <label>Due Date</label><br>
                                         <mat-form-field appearance="outline" class="w-100">
-                                            <input matInput [matDatepicker]="picker2" formControlName="due_date">
+                                            <input matInput [matDatepicker]="picker2" formControlName="due_date"
+                                                readonly placeholder="Select Date">
                                             <mat-datepicker-toggle matIconSuffix
                                                 [for]="picker2"></mat-datepicker-toggle>
                                             <mat-datepicker #picker2></mat-datepicker>
@@ -136,7 +138,7 @@
                                         <label for="productSelect">Sub Products</label>
                                         <div class="d-flex align-items-center">
                                             <select id="productSelect" formControlName="subproduct_id"
-                                                class="form-control me-2">
+                                                class="form-control me-2" (change)="onSubProductChange($event)">
                                                 <option value="" disabled selected>Select Sub Product</option>
                                                 <!-- Loop through productList to dynamically populate the options -->
                                                 <option *ngFor="let product of subProductList"
@@ -156,7 +158,7 @@
                                         <table class="table table-center table-hover datatable">
                                             <thead class="thead-light">
                                                 <tr>
-                                                    <th>Product / Service</th>
+                                                    <th>Product</th>
                                                     <th>Quantity</th>
                                                     <th>Unit</th>
                                                     <th>Rate</th>
@@ -165,7 +167,7 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td> {{product_name}}
+                                                    <td> {{subproduct_name || product_name}}
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="quantity"
@@ -213,19 +215,21 @@
                                         </div>
                                         <div class="input-block mb-3">
                                             <label for="signature">Signature Name</label>
-                                            <select class="form-control" id="signature" formControlName="signature_id">
-                                                <option *ngFor="let signature of signatureList"
-                                                    [value]="signature.signature_id">
-                                                    {{ signature.signature_name }}
-                                                </option>
-                                            </select>
+                                            <div class="input-block mb-3">
+                                                <select class="form-control" id="signature"
+                                                    formControlName="signature_id" (change)="onSignatureSelect($event)">
+                                                    <option *ngFor="let signature of signatureList"
+                                                        [value]="signature.signature_id">
+                                                        {{ signature.signature_name }}
+                                                    </option>
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        <div class="input-block mb-0">
+                                        <div class="input-block mb-0" *ngIf="signature_photo">
                                             <label>Signature Image</label>
                                             <div class="input-block mb-3 service-upload service-upload-info mb-0">
-                                                <span><i class="fas fa-upload"></i>Upload Signature</span>
-                                                <input type="file" multiple="" id="image_sign">
+                                                <img src="{{signature_photo}}" width="250" height="150">
                                                 <div id="frames"></div>
                                             </div>
                                         </div>

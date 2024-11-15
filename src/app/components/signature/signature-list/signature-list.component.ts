@@ -19,7 +19,7 @@ import { DeleteSignatureComponent } from './delete-signature/delete-signature.co
 })
 export class SignatureListComponent implements OnInit, AfterViewInit {
   signatureList: any[] = [];
-  displayedColumns: string[] = ['index', 'signature_name', 'signature_photo', 'status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['index', 'signature_name', 'signature_photo', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 

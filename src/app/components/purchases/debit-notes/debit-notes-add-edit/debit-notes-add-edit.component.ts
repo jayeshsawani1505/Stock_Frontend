@@ -11,6 +11,7 @@ import { ReturnDebitNotesPurchaseService } from '../../../../services/return-deb
 import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
 import { SignatureService } from '../../../../services/signature.srvice';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
@@ -30,6 +31,7 @@ export class DebitNotesAddEditComponent implements OnInit {
   product_name: any;
   subProductList: any[] = []; // Define subProductList to store product dataX
   isAddMode: boolean = true;
+  signature_photo: any
 
   constructor(
     private fb: FormBuilder,
@@ -61,8 +63,8 @@ export class DebitNotesAddEditComponent implements OnInit {
   ngOnInit(): void {
     this.GetVendors();
     this.GetProducts();
-    this.fetchPurchaseData();
     this.GetSignatures();
+    this.fetchPurchaseData();
   }
 
   // Fetch vendors
@@ -84,6 +86,10 @@ export class DebitNotesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.products) {
           this.productList = res.products; // Assign products data to productList
+          if (this.isAddMode === false) {
+            const product = this.productList.find(p => p.product_id === +this.purchaseData?.product_id);
+            this.product_name = product ? product.product_name : null;
+          }
         }
       }
     });
@@ -95,6 +101,10 @@ export class DebitNotesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.signatures) {
           this.signatureList = res.signatures;
+          if (this.isAddMode === false) {
+            const selectedSignature = this.signatureList.find(signature => signature.signature_id === +this.purchaseData?.signature_id);
+            this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+          }
         }
       }
     })
@@ -140,10 +150,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       terms_conditions: purchase.terms_conditions || '',
       total_amount: purchase.total_amount || '',
       signature_id: purchase.signature_id
-
     });
-    const product = this.productList.find(p => p.product_id === purchase.product_id);
-    this.product_name = product ? product.product_name : null;
   }
 
   onProductChange(event: Event): void {
@@ -156,6 +163,15 @@ export class DebitNotesAddEditComponent implements OnInit {
     if (selectedProduct) {
       this.product_name = selectedProduct?.product_name
       console.log('Selected Product:', selectedProduct);
+    }
+  }
+
+  onSignatureSelect(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    const selectedSignature = this.signatureList.find(signature => signature.signature_id === +selectedId);
+    if (selectedSignature) {
+      this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+      console.log('Signature Photo:', this.signature_photo);
     }
   }
 

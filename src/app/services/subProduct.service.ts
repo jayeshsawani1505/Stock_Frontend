@@ -54,7 +54,21 @@ export class SubProductService {
         formData.append('file', file);
 
         return this.httpClient
-            .post(environment.baseURL + `/products/upload-excel`, formData)
+            .post(environment.baseURL + `/subproducts/upload-excel`, formData)
+            .pipe(catchError(this.handleError));
+    }
+
+    // In-stock (Add quantity to subproducts)
+    InStock(subproduct_id: any, quantity: number): Observable<any> {
+        return this.httpClient
+            .post(environment.baseURL + `/subproducts/in-stock/${subproduct_id}`, { quantity })
+            .pipe(catchError(this.handleError));
+    }
+
+    // Out-stock (Remove quantity from subproducts)
+    OutStock(subproduct_id: any, quantity: number): Observable<any> {
+        return this.httpClient
+            .post(environment.baseURL + `/subproducts/out-stock/${subproduct_id}`, { quantity })
             .pipe(catchError(this.handleError));
     }
 }

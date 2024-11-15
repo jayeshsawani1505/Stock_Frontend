@@ -8,6 +8,7 @@ import { CategoryService } from '../../../services/Category.service';
 import { ExcelService } from '../../../services/excel.service';
 import { CategoryAddEditComponent } from './category-add-edit/category-add-edit.component';
 import { DeleteCategoryComponent } from './delete-category/delete-category.component';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-category-list',
@@ -23,9 +24,10 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   categoryList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'category_name', 'description', 'created_at', 'actions'];
+  displayedColumns: string[] = ['index', 'category_name', 'category_photo', 'description', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+  imgURL = environment.ImageUrl
 
   constructor(private categoryService: CategoryService,
     private ExcelService: ExcelService,
@@ -64,7 +66,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
     }
   }
-  
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
 
@@ -84,6 +86,12 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
       console.error('No file selected');
     }
   }
+
+  onImageError(event: Event) {
+    const img = event.target as HTMLImageElement;
+    img.src = 'assets/img/category/category-07.jpg';
+  }
+
   // Open the edit modal with the selected category
   openAddCategory() {
     const dialogRef = this.dialog.open(CategoryAddEditComponent, {

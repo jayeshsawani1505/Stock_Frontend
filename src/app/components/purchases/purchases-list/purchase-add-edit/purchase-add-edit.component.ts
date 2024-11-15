@@ -11,6 +11,7 @@ import { PurchaseService } from '../../../../services/purchases.service';
 import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
 import { SignatureService } from '../../../../services/signature.srvice';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-purchase-add-edit',
@@ -30,6 +31,7 @@ export class PurchaseAddEditComponent implements OnInit {
   product_name: any;
   isAddMode: boolean = true;
   signatureList: any[] = [];
+  signature_photo: any
 
   constructor(
     private fb: FormBuilder,
@@ -62,8 +64,8 @@ export class PurchaseAddEditComponent implements OnInit {
   ngOnInit(): void {
     this.GetVendors();
     this.GetProducts();
-    this.fetchPurchaseData();
     this.GetSignatures();
+    this.fetchPurchaseData();
   }
 
   // Fetch vendors
@@ -85,6 +87,10 @@ export class PurchaseAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.products) {
           this.productList = res.products; // Assign products data to productList
+          if (this.isAddMode === false) {
+            const product = this.productList.find(p => p.product_id === +this.purchaseData?.product_id);
+            this.product_name = product ? product.product_name : null;
+          }
         }
       }
     });
@@ -96,6 +102,10 @@ export class PurchaseAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.signatures) {
           this.signatureList = res.signatures;
+          if (this.isAddMode === false) {
+            const selectedSignature = this.signatureList.find(signature => signature.signature_id === +this.purchaseData?.signature_id);
+            this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+          }
         }
       }
     })
@@ -162,6 +172,15 @@ export class PurchaseAddEditComponent implements OnInit {
     }
   }
 
+  onSignatureSelect(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    const selectedSignature = this.signatureList.find(signature => signature.signature_id === +selectedId);
+    if (selectedSignature) {
+      this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+      console.log('Signature Photo:', this.signature_photo);
+    }
+  }
+  
   onSubmit(): void {
     if (this.purchaseForm.valid) {
       // Check if history state has Purchase data for update

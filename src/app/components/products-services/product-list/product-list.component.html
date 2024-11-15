@@ -47,6 +47,18 @@
                                 <td mat-cell *matCellDef="let product; let i = index">{{ i + 1 }}</td>
                             </ng-container>
 
+                            <ng-container matColumnDef="product_image">
+                                <th mat-header-cell *matHeaderCellDef>Product Image</th>
+                                <td mat-cell *matCellDef="let product">
+                                    <div style="display: flex; align-items: center;">
+                                        <img mat-icon class="avatar-img rounded-circle"
+                                            [src]="imgURL+product.product_image || 'assets/img/products/product-01.png'"
+                                            alt="User Image" (error)="onImageError($event)"
+                                            style="width: 50px; height: 50px; margin-right: 15px;">
+                                    </div>
+                                </td>
+                            </ng-container>
+
                             <!-- Product Name Column -->
                             <ng-container matColumnDef="product_name">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Item</th>
@@ -94,7 +106,16 @@
                             <!-- Actions Column -->
                             <ng-container matColumnDef="actions">
                                 <th mat-header-cell *matHeaderCellDef>Actions</th>
-                                <td mat-cell *matCellDef="let product" class="d-flex">
+                                <td mat-cell *matCellDef="let product" class="d-flex align-items-center">
+                                    <a class="btn btn-greys bg-success-light me-2"
+                                        (click)="openStockDialog(true, product)">
+                                        <i class="fa fa-plus-circle me-1"></i> Stock in
+                                    </a>
+                                    <a class="btn btn-greys bg-danger-light me-2"
+                                        (click)="openStockDialog(false, product)">
+                                        <i class="fa fa-minus-circle me-1"></i> Stock out
+                                    </a>
+
                                     <a class="btn-action-icon me-2" (click)="editProduct(product)">
                                         <i class="far fa-edit me-2"></i>
                                     </a>

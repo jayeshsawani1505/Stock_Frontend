@@ -204,15 +204,8 @@
                             <ng-container matColumnDef="customer_name">
                                 <th mat-header-cell *matHeaderCellDef>Invoice To</th>
                                 <td mat-cell *matCellDef="let invoice">
-                                    <div style="display: flex; align-items: center;">
-                                        <img class="avatar-img rounded-circle"
-                                            [src]="invoice?.customer_profile_photo || 'assets/img/profiles/avatar-14.jpg'"
-                                            alt="User Image" style="width: 50px; height: 50px;">
-                                        <div style="margin-left: 10px;">
-                                            <span>{{ invoice?.customer_name }}</span><br>
-                                            <span>{{ invoice?.customer_phone }}</span>
-                                        </div>
-                                    </div>
+                                    <span>{{ invoice?.customer_name }}</span><br>
+                                    <span>{{ invoice?.customer_phone }}</span>
                                 </td>
                             </ng-container>
 

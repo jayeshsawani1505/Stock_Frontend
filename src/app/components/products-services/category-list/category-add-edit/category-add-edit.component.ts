@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } 
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../../services/Category.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-category-add-edit',
@@ -18,6 +19,7 @@ export class CategoryAddEditComponent implements OnInit {
   imageUrl: string | ArrayBuffer | null = null;
   fileName: string = '';
   selectedFile: File | null = null;
+  imgURL = environment.ImageUrl
 
   constructor(private categoryService: CategoryService,
     public dialog: MatDialog,
@@ -84,8 +86,11 @@ export class CategoryAddEditComponent implements OnInit {
     this.categoryForm.patchValue({
       category_id: category.category_id,
       category_name: category.category_name,
-      description: category.description
+      description: category.description,
+      category_photo: category.category_photo
     });
+    this.imageUrl = this.imgURL + category.category_photo,
+    this.selectedFile = category.category_photo
   }
 
   addCategory() {

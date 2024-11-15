@@ -11,6 +11,7 @@ import { CustomerService } from '../../../../../services/Customer.service';
 import { ProductService } from '../../../../../services/products.service';
 import { SubProductService } from '../../../../../services/subProduct.service';
 import { SignatureService } from '../../../../../services/signature.srvice';
+import { environment } from '../../../../../../environments/environment';
 
 @Component({
   selector: 'app-credit-notes-add-edit',
@@ -30,6 +31,7 @@ export class CreditNotesAddEditComponent implements OnInit {
   creditNoteData: any;
   product_name: any;
   isAddMode: boolean = true;
+  signature_photo: any
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -59,8 +61,8 @@ export class CreditNotesAddEditComponent implements OnInit {
   ngOnInit(): void {
     this.GetCustomers();
     this.GetProducts();
-    this.fetchcreditNoteData();
     this.GetSignatures();
+    this.fetchcreditNoteData();
   }
 
 
@@ -82,17 +84,25 @@ export class CreditNotesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.products) {
           this.productList = res.products; // Assign products data to productList
+          if (this.isAddMode === false) {
+            const product = this.productList.find(p => p.product_id === +this.creditNoteData?.product_id);
+            this.product_name = product ? product.product_name : null;
+          }
         }
       }
     });
   }
-  
+
   GetSignatures(): void {
     this.SignatureService.GetSignatures().subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.signatures) {
           this.signatureList = res.signatures;
+          if (this.isAddMode === false) {
+            const selectedSignature = this.signatureList.find(signature => signature.signature_id === +this.creditNoteData?.signature_id);
+            this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+          }
         }
       }
     })
@@ -139,11 +149,6 @@ export class CreditNotesAddEditComponent implements OnInit {
       total_amount: invoice.total_amount,
       signature_id: invoice.signature_id
     });
-
-    const product = this.productList.find(p => p.product_id === invoice.product_id);
-    console.log(product);
-
-    this.product_name = product ? product.product_name : null;
   }
 
   onProductChange(event: Event): void {
@@ -160,6 +165,15 @@ export class CreditNotesAddEditComponent implements OnInit {
     }
   }
 
+  onSignatureSelect(event: Event): void {
+    const selectedId = (event.target as HTMLSelectElement).value;
+    const selectedSignature = this.signatureList.find(signature => signature.signature_id === +selectedId);
+    if (selectedSignature) {
+      this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
+      console.log('Signature Photo:', this.signature_photo);
+    }
+  }
+  
   onSubmit(): void {
     if (this.creditNoteForm.valid) {
       // Check if history state has invoice data for update

@@ -27,7 +27,8 @@
                                     <div class="input-block mb-3">
                                         <label>Purchases Date</label>
                                         <mat-form-field appearance="outline" class="w-100">
-                                            <input matInput [matDatepicker]="picker" formControlName="purchase_date">
+                                            <input matInput [matDatepicker]="picker" formControlName="purchase_date"
+                                                readonly placeholder="Select Date">
                                             <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                                             <mat-datepicker #picker></mat-datepicker>
                                         </mat-form-field>
@@ -37,7 +38,8 @@
                                     <div class="input-block mb-3">
                                         <label>Due Date</label>
                                         <mat-form-field appearance="outline" class="w-100">
-                                            <input matInput [matDatepicker]="picker2" formControlName="due_date">
+                                            <input matInput [matDatepicker]="picker2" formControlName="due_date"
+                                                readonly placeholder="Select Date">
                                             <mat-datepicker-toggle matIconSuffix
                                                 [for]="picker2"></mat-datepicker-toggle>
                                             <mat-datepicker #picker2></mat-datepicker>
@@ -179,19 +181,18 @@
                                         </div>
                                         <div class="input-block mb-3">
                                             <label>Signature Name</label>
-                                            <select class="form-control" id="signature" formControlName="signature_id">
+                                            <select class="form-control" id="signature" formControlName="signature_id"
+                                                (change)="onSignatureSelect($event)">
                                                 <option *ngFor="let signature of signatureList"
                                                     [value]="signature.signature_id">
                                                     {{ signature.signature_name }}
                                                 </option>
                                             </select>
                                         </div>
-                                        <div class="input-block mb-0">
+                                        <div class="input-block mb-0" *ngIf="signature_photo">
                                             <label>Signature Image</label>
                                             <div class="input-block mb-3 service-upload service-upload-info mb-0">
-                                                <span><i class="fas fa-upload"></i>Upload Signature</span>
-                                                <input type="file" multiple="" id="image_sign">
-                                                <div id="frames"></div>
+                                                <img src="{{signature_photo}}" width="250" height="150">
                                             </div>
                                         </div>
                                     </div>

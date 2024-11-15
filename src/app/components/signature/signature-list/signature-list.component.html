@@ -41,18 +41,18 @@
                             <ng-container matColumnDef="signature_photo">
                                 <th mat-header-cell *matHeaderCellDef>Photo</th>
                                 <td mat-cell *matCellDef="let element">
-                                    <img [src]="element.signature_photo || 'assets/img/user-signature.png'"
+                                    <img [src]="element.signature_photo ? 'http://localhost:3000' + element.signature_photo : 'assets/img/user-signature.png'"
                                         alt="User Image" (error)="onImageError($event)"
                                         style="width: 100px; height: 50px;">
                                 </td>
                             </ng-container>
 
-                            <ng-container matColumnDef="status">
+                            <!-- <ng-container matColumnDef="status">
                                 <th mat-header-cell *matHeaderCellDef>Status</th>
                                 <td mat-cell *matCellDef="let element">
                                     {{ element.status === '0' ? 'Active' : 'Inactive' }}
                                 </td>
-                            </ng-container>
+                            </ng-container> -->
 
                             <ng-container matColumnDef="created_at">
                                 <th mat-header-cell *matHeaderCellDef>Created At</th>

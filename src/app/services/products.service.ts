@@ -22,11 +22,6 @@ export class ProductService {
     }
 
     // Add a new product
-    // AddProduct(productData: any): Observable<any> {
-    //     return this.httpClient
-    //         .post(environment.baseURL + `/products`, productData)
-    //         .pipe(catchError(this.handleError));
-    // }
     AddProduct(productData: any, file?: File): Observable<any> {
         const formData = new FormData();
 
@@ -74,6 +69,20 @@ export class ProductService {
 
         return this.httpClient
             .post(environment.baseURL + `/products/upload-excel`, formData)
+            .pipe(catchError(this.handleError));
+    }
+
+    // In-stock (Add quantity to products)
+    InStock(productId: any, quantity: number): Observable<any> {
+        return this.httpClient
+            .post(environment.baseURL + `/products/in-stock/${productId}`, { quantity })
+            .pipe(catchError(this.handleError));
+    }
+
+    // Out-stock (Remove quantity from products)
+    OutStock(productId: any, quantity: number): Observable<any> {
+        return this.httpClient
+            .post(environment.baseURL + `/products/out-stock/${productId}`, { quantity })
             .pipe(catchError(this.handleError));
     }
 }
