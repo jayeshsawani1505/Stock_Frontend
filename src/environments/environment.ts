@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
-  baseURL: 'http://localhost:3000/api',
-  ImageUrl: 'http://localhost:3000'
+  baseURL: 'https://stock1-12de6a7f0d09.herokuapp.com/api',
+  ImageUrl: 'https://stock1-12de6a7f0d09.herokuapp.com'
 };
