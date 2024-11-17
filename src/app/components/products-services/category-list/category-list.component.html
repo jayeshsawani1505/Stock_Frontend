@@ -41,8 +41,8 @@
                         <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
                             <!-- Column Definitions -->
                             <ng-container matColumnDef="index">
-                                <th mat-header-cell *matHeaderCellDef>#</th>
-                                <td mat-cell *matCellDef="let category; let i = index">{{ i + 1 }}</td>
+                                <th mat-header-cell *matHeaderCellDef>Category Id </th>
+                                <td mat-cell *matCellDef="let category; let i = index">{{ category?.category_id }}</td>
                             </ng-container>
 
                             <ng-container matColumnDef="category_name">

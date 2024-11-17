@@ -43,8 +43,8 @@
                             matSort>
                             <!-- Index Column -->
                             <ng-container matColumnDef="index">
-                                <th mat-header-cell *matHeaderCellDef>#</th>
-                                <td mat-cell *matCellDef="let product; let i = index">{{ i + 1 }}</td>
+                                <th mat-header-cell *matHeaderCellDef>Product Id</th>
+                                <td mat-cell *matCellDef="let product; let i = index">{{ product?.product_id }}</td>
                             </ng-container>
 
                             <ng-container matColumnDef="product_image">
