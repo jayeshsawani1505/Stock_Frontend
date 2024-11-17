@@ -89,4 +89,10 @@ export class QuotationService {
             .delete(`${this.deliveryChallansBaseUrl}/${challanId}`)
             .pipe(catchError(this.handleError));
     }
+
+    getChallanDetailsForPDF(id: any): Observable<any> {
+        return this.httpClient
+            .get(`${this.deliveryChallansBaseUrl}/pdf/${id}`)
+            .pipe(catchError(this.handleError));
+    }
 }

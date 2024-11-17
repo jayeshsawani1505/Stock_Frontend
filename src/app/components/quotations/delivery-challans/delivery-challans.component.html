@@ -7,7 +7,8 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('Delivery-Challans')">
+                        <a class="btn btn-import p-2" title="Export to Excel"
+                            (click)="excelDownload('Delivery-Challans')">
                             <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
                         </a>
                     </li>
@@ -88,6 +89,8 @@
                                     <a class="btn-action-icon" (click)="openDeleteConfirmation(invoice.id)">
                                         <i class=" far fa-trash-alt me-2"></i>
                                     </a>
+                                    <a class="btn-action-icon" (click)="getChallanDetailsForPDF(invoice.id)"><i
+                                            class="fas fa-download me-2"></i></a>
                                 </td>
                             </ng-container>
 

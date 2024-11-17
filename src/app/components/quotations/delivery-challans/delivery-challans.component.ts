@@ -7,6 +7,7 @@ import { Router, RouterModule } from '@angular/router';
 import { QuotationService } from '../../../services/quotation.service';
 import { ExcelService } from '../../../services/excel.service';
 import { DeleteChallanComponent } from './delete-challan/delete-challan.component';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-delivery-challans',
@@ -61,6 +62,17 @@ export class DeliveryChallansComponent implements OnInit {
     });
   }
 
+  getChallanDetailsForPDF(invoiceId: number) {
+    this.QuotationService.getChallanDetailsForPDF(invoiceId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.generateDeliveryChallanPDF(res.data)
+      },
+      error: (err: any) => {
+        console.error('Error fetching invoices:', err);
+      }
+    });
+  }
   // Apply the filter for invoice search
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
@@ -139,4 +151,125 @@ export class DeliveryChallansComponent implements OnInit {
     this.dataForExcel = [];
   }
 
+  async generateDeliveryChallanPDF(data: any) {
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+              {
+                text: 'Address: 15 Hodges Mews, High Wycombe HP12 3JL, United Kingdom',
+                fontSize: 10,
+                margin: [0, 0, 0, 30],
+              },
+            ],
+            [
+              {
+                text: 'DELIVERY CHALLAN',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+              {
+                text: `Challan No: ${data.challan_number}\nChallan Date: ${data.challan_date || 'Not Available'}`,
+                fontSize: 10,
+                alignment: 'right',
+                margin: [0, 10, 0, 0],
+              }
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader', margin: [0, 20, 0, 10] },
+        {
+          columns: [
+            [
+              { text: 'Customer Details:', bold: true },
+              { text: data.name },
+              { text: `GSTIN: ${data.gstin || 'Not Available'}` },
+              { text: `Status: ${data.status}`, color: data.status === 'delivered' ? 'green' : 'red' },
+            ],
+            [
+              { text: 'Billing Address:', bold: true },
+              { text: `${data.billing_name}` },
+              { text: `${data.billing_address_line1}, ${data.billing_address_line2}, ${data.billing_city}, ${data.billing_state}, ${data.billing_country} - ${data.billing_pincode}` },
+            ],
+            [
+              { text: 'Shipping Address:', bold: true },
+              { text: `${data.shipping_name}` },
+              { text: `${data.shipping_address_line1}, ${data.shipping_address_line2}, ${data.shipping_city}, ${data.shipping_state}, ${data.shipping_country} - ${data.shipping_pincode}` },
+            ],
+          ]
+        },
+        { text: ' ', margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [20, '*', 60, 50, 60],
+            body: [
+              [
+                { text: '#', bold: true, alignment: 'center' },
+                { text: 'Item', bold: true },
+                { text: 'Quantity', bold: true },
+                { text: 'Unit Price', bold: true },
+                { text: 'Amount', bold: true },
+              ],
+              ['1', `${data.product_name} - ${data.subproduct_name || ''}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
+            ]
+          }
+        },
+        {
+          columns: [
+            { width: '*', text: '' },
+            {
+              width: 'auto',
+              table: {
+                body: [
+                  [{ text: 'Total Amount:', alignment: 'right', bold: true }, { text: `INR ${data.total_amount}`, alignment: 'right', bold: true }],
+                ]
+              },
+              layout: 'noBorders',
+            }
+          ],
+          margin: [0, 10, 0, 10]
+        },
+        {
+          columns: [
+            [
+              { text: 'Delivery Info:', bold: true },
+              { text: `Total Amount: INR ${data.total_amount}` },
+              { text: 'Signature:', bold: true, margin: [0, 20, 0, 0], },
+              { text: `${data.signature_name}` },
+            ],
+            [
+              { text: 'Terms & Conditions:', bold: true },
+              { text: data.terms_conditions || 'Not Available' },
+            ]
+          ],
+          margin: [0, 20, 0, 0]
+        },
+        { text: 'Thanks for trusting our service!', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Delivery_Challan.pdf');
+  }
 }
