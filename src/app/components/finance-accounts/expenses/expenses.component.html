@@ -2,23 +2,19 @@
 
     <!-- Page Header -->
     <div class="page-header">
-        <div class="content-page-header">
+        <div class="content-page-header ">
             <h5>Expenses</h5>
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-filters w-auto popup-toggle" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Filter"><span class="me-2"><img
-                                    src="assets/img/icons/filter-icon.svg" alt="Filter"></span>Filter </a>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('Expenses')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
                     </li>
                     <li>
-                        <a class="btn-filters" href="javascript:void(0);" data-bs-toggle="tooltip"
-                            data-bs-placement="bottom" title="Settings"><span><i class="fas fa-settings"></i></span> </a>
-                    </li>
-                    <li>
-                        <a class="btn btn-primary" href="javascript:void(0);" data-bs-toggle="modal"
-                            data-bs-target="#add_expenses"><i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add
-                            Expenses</a>
+                        <a class="btn btn-primary" routerLink="/admin/finance-account/expenses-add">
+                            <i class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add Expenses
+                        </a>
                     </li>
                 </ul>
             </div>
@@ -32,257 +28,68 @@
             <div class="card-table">
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-stripped table-hover datatable">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Expense ID</th>
-                                    <th>Reference</th>
-                                    <th>Amount</th>
-                                    <th>Attachment</th>
-                                    <th>Payment Mode</th>
-                                    <th>Notes</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148061</a>
-                                    </td>
-                                    <td>#25689825</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cash</td>
-                                    <td>Lorem ipsum dolor sit consectetur </td>
-                                    <td><span class="badge bg-success-light text-success-light">Paid</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148062</a>
-                                    </td>
-                                    <td>#25689826</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cheque</td>
-                                    <td>Ut enim minim veniam, quis nostrud </td>
-                                    <td><span class="badge bg-warning-light text-warning-light">Pending</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148063</a>
-                                    </td>
-                                    <td>#25689827</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cheque</td>
-                                    <td>Duis aute irure dolor in reprehenderit in </td>
-                                    <td><span class="badge bg-danger-light">Cancelled</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148064</a>
-                                    </td>
-                                    <td>#25689828</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cash</td>
-                                    <td>Excepteur occaecat cupidatat non </td>
-                                    <td><span class="badge bg-success-light text-success-light">Paid</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148065</a>
-                                    </td>
-                                    <td>#25689829</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cheque</td>
-                                    <td>Sed ut perspiciatis unde omnis iste </td>
-                                    <td><span class="badge bg-warning-light text-warning-light">Pending</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>
-                                        <a href="invoice-details.html" class="invoice-link">EXP-148066</a>
-                                    </td>
-                                    <td>#25689830</td>
-                                    <td>₹0.00</td>
-                                    <td>
-                                        <h2 class="table-avatar">
-                                            <img class="avatar-img rounded" width="30" height="30"
-                                                src="assets/img/category/expenses-01.jpg" alt="User Image">
-                                        </h2>
-                                    </td>
-                                    <td>Cheque</td>
-                                    <td>Nemo enim ipsam voluptatem voluptas </td>
-                                    <td><span class="badge bg-danger-light">Cancelled</span></td>
-                                    <td class="d-flex align-items-center">
-                                        <a class=" btn-action-icon me-2" href="javascript:void(0);" download><i
-                                                class="fas fa-download"></i></a>
-                                        <div class="dropdown dropdown-action">
-                                            <a href="#" class=" btn-action-icon " data-bs-toggle="dropdown"
-                                                aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
-                                            <div class="dropdown-menu dropdown-menu-right">
-                                                <ul>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#edit_expenses"><i
-                                                                class="far fa-edit me-2"></i>Edit</a>
-                                                    </li>
-                                                    <li>
-                                                        <a class="dropdown-item" href="javascript:void(0);"
-                                                            data-bs-toggle="modal" data-bs-target="#delete_modal"><i
-                                                                class="far fa-trash-alt me-2"></i>Delete</a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
+                        <div class="input-block mb-3">
+                            <label>Search <span class="text-danger">*</span></label>
+                            <input type="text" (keyup)="applyFilter($event)" placeholder="Search ..."
+                                class="form-control">
+                        </div>
+
+                        <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
+
+                            <!-- Index Column -->
+                            <ng-container matColumnDef="index">
+                                <th mat-header-cell *matHeaderCellDef> # </th>
+                                <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+                            </ng-container>
+
+                            <!-- Reference Column -->
+                            <ng-container matColumnDef="reference">
+                                <th mat-header-cell *matHeaderCellDef> Expenses Name </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.reference }} </td>
+                            </ng-container>
+
+                            <!-- Amount Column -->
+                            <ng-container matColumnDef="amount">
+                                <th mat-header-cell *matHeaderCellDef> Amount </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.amount }} </td>
+                            </ng-container>
+
+                            <!-- Payment Mode Column -->
+                            <ng-container matColumnDef="payment_mode">
+                                <th mat-header-cell *matHeaderCellDef> Payment Mode </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.payment_mode }} </td>
+                            </ng-container>
+
+                            <!-- Expense Date Column -->
+                            <ng-container matColumnDef="expense_date">
+                                <th mat-header-cell *matHeaderCellDef> Expense Date </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.expense_date | date }} </td>
+                            </ng-container>
+
+                            <!-- Payment Status Column -->
+                            <ng-container matColumnDef="payment_status">
+                                <th mat-header-cell *matHeaderCellDef> Payment Status </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.payment_status }} </td>
+                            </ng-container>
+
+                            <!-- Actions Column -->
+                            <ng-container matColumnDef="actions">
+                                <th mat-header-cell *matHeaderCellDef> Actions </th>
+                                <td mat-cell *matCellDef="let element" class="d-flex">
+                                    <a class="btn-action-icon me-2" (click)="openEditExpenses(element)">
+                                        <i class="far fa-edit me-2"></i>
+                                    </a>
+                                    <a class="btn-action-icon" (click)="DeleteExpenses(element.expense_id)"><i
+                                            class="far fa-trash-alt me-2"></i>
+                                    </a>
+                                </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                         </table>
+                        <mat-paginator [length]="ExpensesList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"
+                            showFirstLastButtons></mat-paginator>
                     </div>
                 </div>
             </div>
@@ -291,108 +98,3 @@
     <!-- /Table -->
 
 </div>
-<!-- Add Expenses Modal -->
-<div class="modal custom-modal modal-lg fade" id="add_expenses" role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-md">
-        <div class="modal-content">
-            <div class="modal-header border-0 pb-0">
-                <div class="form-header modal-header-title text-start mb-0">
-                    <h4 class="mb-0">Add Expenses</h4>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
-
-                </button>
-            </div>
-            <form action="#">
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="card-body">
-                                <div class="border-0 pb-0">
-                                    <div class="row">
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label>Expense ID</label>
-                                                <input type="text" class="form-control" placeholder="Enter Expense ID">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label>Reference</label>
-                                                <input type="text" class="form-control"
-                                                    placeholder="Enter Reference No">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label>Amount </label>
-                                                <input type="number" class="form-control" placeholder="Enter Amount">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label for="paymentModeSelect">Payment Mode</label>
-                                                <select id="paymentModeSelect" class="form-control">
-                                                    <option value="" disabled selected>Select Payment Mode</option>
-                                                    <option value="cash">Cash</option>
-                                                    <option value="cheque">Cheque</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label>Expense Date </label>
-                                                <input type="text" class="form-control datetimepicker"
-                                                    placeholder="Select Expense Date">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-4 col-md-6 col-sm-12">
-                                            <div class="input-block mb-3">
-                                                <label for="paymentStatusSelect">Payment Status</label>
-                                                <select id="paymentStatusSelect" class="form-control">
-                                                    <option value="" disabled selected>Select Payment Status</option>
-                                                    <option value="paid">Paid</option>
-                                                    <option value="pending">Pending</option>
-                                                    <option value="cancelled">Cancelled</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        <div class="col-lg-12 col-md-12 description-box">
-                                            <div class="input-block mb-3" id="summernote_container">
-                                                <label class="form-control-label">Description</label>
-                                                <textarea class="summernote form-control"
-                                                    placeholder="Type your message"></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-12 col-md-12">
-                                            <div class="input-block">
-                                                <label>Attachment</label>
-                                                <div class="input-block service-upload mb-0">
-                                                    <span><img src="assets/img/icons/drop-icon.svg" alt="upload"></span>
-                                                    <h6 class="drop-browse align-center">Drop your files here or<span
-                                                            class="text-primary ms-1">browse</span></h6>
-                                                    <p class="text-muted">Maximum size: 50MB</p>
-                                                    <input type="file" multiple="" id="image_sign">
-                                                    <div id="frames"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" data-bs-dismiss="modal" class="btn btn-back cancel-btn me-2">Cancel</button>
-                    <button type="submit" data-bs-dismiss="modal" class="btn btn-primary paid-continue-btn">Add
-                        Expenses</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<!-- /Add Expenses Modal -->

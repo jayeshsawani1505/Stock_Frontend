@@ -21,7 +21,6 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 })
 export class InvoicesListComponent implements OnInit {
   invoiceList: any[] = []; // Define invoiceList to store invoice data
-  invoiceIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   InvoiceTotal: any;
   dataForExcel: any[] = [];
