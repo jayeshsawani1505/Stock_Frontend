@@ -25,7 +25,7 @@ export class InvoicesListComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   InvoiceTotal: any;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['id', 'invoice_number', 'category_name', 'customer_name', 'total_amount', 'due_date', 'status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['id', 'invoice_number', 'customer_name', 'total_amount', 'due_date', 'status', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -156,7 +156,6 @@ export class InvoicesListComponent implements OnInit {
       notes: x.notes,
       terms_conditions: x.terms_conditions,
       created_at: x.created_at,
-      category_name: x.category_name,
     }));
 
     // Prepare the data to export by converting each row to its values
@@ -185,6 +184,8 @@ export class InvoicesListComponent implements OnInit {
   }
 
   async generatePDF(data: any) {
+    const invoiceDetails = data.invoice_details;
+
     let docDefinition: any = {
       content: [
         {
@@ -254,9 +255,16 @@ export class InvoicesListComponent implements OnInit {
                 { text: 'Unit Price', bold: true },
                 { text: 'Amount', bold: true },
               ],
-              ['1', `${data.product_name} - ${data.subproduct_name || ''}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
-            ]
-          }
+              // Dynamically add rows here
+              ...invoiceDetails.map((item: any, index: number) => [
+                { text: index + 1, alignment: 'center' },
+                { text: `${item.product_name} - ${item.subproduct_name || ''}` },
+                { text: item.quantity },
+                { text: `INR ${item.rate}`, alignment: 'right' },
+                { text: `INR ${item.total_amount}`, alignment: 'right' },
+              ]),
+            ],
+          },
         },
         {
           columns: [
