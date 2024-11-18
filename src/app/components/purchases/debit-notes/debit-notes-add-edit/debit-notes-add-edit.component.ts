@@ -12,12 +12,13 @@ import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './debit-notes-add-edit.component.html',
   styleUrl: './debit-notes-add-edit.component.css'
@@ -39,7 +40,7 @@ export class DebitNotesAddEditComponent implements OnInit {
     private productService: ProductService,
     private SubProductService: SubProductService,
     private ReturnDebitNotesPurchaseService: ReturnDebitNotesPurchaseService,
-    private SignatureService: SignatureService,
+    private SignatureService: SignatureService, private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.purchaseForm = this.fb.group({
@@ -195,9 +196,11 @@ export class DebitNotesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Purchase added successfully:', response);
         this.router.navigate(['/admin/purchases/debit-notes']);  // Redirect to Purchase list page after adding
+        this.openSnackBar('error', 'Close');
       },
       error: (error) => {
         console.error('Error adding Purchase:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -207,15 +210,24 @@ export class DebitNotesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Purchase updated successfully:', response);
         this.router.navigate(['/admin/purchases/debit-notes']);  // Redirect to Purchase list page after updating
+        this.openSnackBar('error', 'Close');
       },
       error: (error) => {
         console.error('Error updating Purchase:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
-
   onReset(): void {
     this.purchaseForm.reset();
+  }
+  
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

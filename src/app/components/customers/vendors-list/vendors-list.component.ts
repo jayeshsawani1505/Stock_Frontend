@@ -8,12 +8,13 @@ import { ExcelService } from '../../../services/excel.service';
 import { VendorService } from '../../../services/vendors.service';
 import { DeleteVendorComponent } from './delete-vendor/delete-vendor.component';
 import { VendorsAddEditComponent } from './vendors-add-edit/vendors-add-edit.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vendors-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   providers: [VendorService],
   templateUrl: './vendors-list.component.html',
@@ -29,7 +30,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private VendorService: VendorService,
-    private ExcelService: ExcelService,
+    private ExcelService: ExcelService, private snackBar: MatSnackBar,
     public dialog: MatDialog) {
   }
 
@@ -52,6 +53,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
         }
       },
       error: (err: any) => {
+        this.openSnackBar('error', 'Close');
         console.error('Error fetching vendors:', err);
       }
     });
@@ -76,8 +78,10 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
         response => {
           this.GetVendors();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Upload Successfully', 'Close');
         },
         error => {
+          this.openSnackBar('error', 'Close');
           console.error('File upload failed', error);
         }
       );
@@ -154,5 +158,12 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-
+  
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

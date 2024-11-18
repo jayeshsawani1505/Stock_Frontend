@@ -8,12 +8,13 @@ import { ExcelService } from '../../../services/excel.service';
 import { InvoiceService } from '../../../services/invoice.service';
 import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoices-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   providers: [InvoiceService],
   templateUrl: './invoices-list.component.html',
@@ -24,12 +25,13 @@ export class InvoicesListComponent implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   InvoiceTotal: any;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['invoice_number', 'category_name', 'customer_name', 'total_amount', 'due_date', 'status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['id', 'invoice_number', 'category_name', 'customer_name', 'total_amount', 'due_date', 'status', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private invoiceService: InvoiceService,
     private ExcelService: ExcelService, public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -52,6 +54,7 @@ export class InvoicesListComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error fetching invoices:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -97,9 +100,11 @@ export class InvoicesListComponent implements OnInit {
         response => {
           this.GetInvoices();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Upload Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -299,5 +304,12 @@ export class InvoicesListComponent implements OnInit {
 
     pdfMake.createPdf(docDefinition).open();
     // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

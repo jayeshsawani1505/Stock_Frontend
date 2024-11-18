@@ -7,12 +7,13 @@ import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
 import { PurchaseService } from '../../../services/purchases.service';
 import { DeletePurchasesComponent } from './delete-purchases/delete-purchases.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-purchases-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './purchases-list.component.html',
   styleUrl: './purchases-list.component.css'
@@ -27,7 +28,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(private PurchaseService: PurchaseService,
-    private ExcelService: ExcelService, public dialog: MatDialog,
+    private ExcelService: ExcelService, public dialog: MatDialog, private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -49,6 +50,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Error fetching Purchases:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -72,9 +74,11 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
         response => {
           this.getPurchases();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Uploaded Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -146,5 +150,12 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
 
     // Clear the data after exporting
     this.dataForExcel = [];
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

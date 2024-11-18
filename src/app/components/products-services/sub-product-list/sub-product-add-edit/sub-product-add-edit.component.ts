@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { ProductService } from '../../../../services/products.service';
 import { SubProductService } from '../../../../services/subProduct.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sub-product-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule, MatSnackBarModule],
   providers: [SubProductService, ProductService],
   templateUrl: './sub-product-add-edit.component.html',
   styleUrl: './sub-product-add-edit.component.css'
@@ -23,6 +24,7 @@ export class SubProductAddEditComponent implements OnInit {
     private router: Router,
     private productService: ProductService,
     private SubProductService: SubProductService,
+    private snackBar: MatSnackBar
   ) {
     this.productForm = this.fb.group({
       product_id: ['', Validators.required],
@@ -52,6 +54,7 @@ export class SubProductAddEditComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error fetching categories:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -94,9 +97,11 @@ export class SubProductAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Product added successfully:', response);
         this.router.navigate(['/admin/productsServices/subProduct-list']);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding product:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -106,10 +111,19 @@ export class SubProductAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Product updated successfully:', response);
         this.router.navigate(['/admin/productsServices/subProduct-list']);
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating product:', error);
+        this.openSnackBar('error', 'Close');
       }
+    });
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
     });
   }
 }

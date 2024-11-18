@@ -183,9 +183,15 @@
                         <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
 
                             <!-- Invoice ID -->
-                            <ng-container matColumnDef="invoice_number">
+                            <ng-container matColumnDef="id">
                                 <th mat-header-cell *matHeaderCellDef>Invoice ID</th>
-                                <td mat-cell *matCellDef="let invoice">#{{ invoice.invoice_number }}</td>
+                                <td mat-cell *matCellDef="let invoice">{{ invoice.id }}</td>
+                            </ng-container>
+
+                            <!-- Invoice ID -->
+                            <ng-container matColumnDef="invoice_number">
+                                <th mat-header-cell *matHeaderCellDef>Invoice Number</th>
+                                <td mat-cell *matCellDef="let invoice">{{ invoice.invoice_number }}</td>
                             </ng-container>
 
                             <!-- Category -->

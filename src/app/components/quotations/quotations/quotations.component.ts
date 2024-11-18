@@ -7,12 +7,13 @@ import { Router, RouterModule } from '@angular/router';
 import { QuotationService } from '../../../services/quotation.service';
 import { ExcelService } from '../../../services/excel.service';
 import { DeleteQuatationComponent } from './delete-quatation/delete-quatation.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-quotations',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './quotations.component.html',
   styleUrl: './quotations.component.css'
@@ -21,6 +22,7 @@ export class QuotationsComponent implements OnInit {
   quotationsList: any[] = []; // Define quotationsList to store invoice data
   dataForExcel: any[] = [];
   displayedColumns: string[] = [
+    'id',
     'quotation_number',
     'category_name',
     'customer_id',
@@ -35,7 +37,7 @@ export class QuotationsComponent implements OnInit {
 
   constructor(private QuotationService: QuotationService,
     private ExcelService: ExcelService,
-    public dialog: MatDialog,
+    public dialog: MatDialog, private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -57,6 +59,7 @@ export class QuotationsComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error fetching invoices:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -138,5 +141,11 @@ export class QuotationsComponent implements OnInit {
     // Clear data after export
     this.dataForExcel = [];
   }
-
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

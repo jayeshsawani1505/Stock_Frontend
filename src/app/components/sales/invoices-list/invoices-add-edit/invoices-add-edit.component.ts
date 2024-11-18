@@ -12,12 +12,13 @@ import { ProductService } from '../../../../services/products.service';
 import { SubProductService } from '../../../../services/subProduct.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-invoices-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './invoices-add-edit.component.html',
   styleUrl: './invoices-add-edit.component.css'
@@ -40,6 +41,7 @@ export class InvoicesAddEditComponent implements OnInit {
     private SubProductService: SubProductService,
     private invoiceService: InvoiceService,
     private SignatureService: SignatureService,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.invoiceForm = this.fb.group({
@@ -233,6 +235,7 @@ export class InvoicesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Invoice added successfully:', response);
         this.router.navigate(['/admin/sales/invoices']);  // Redirect to invoice list page after adding
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding invoice:', error);
@@ -245,6 +248,7 @@ export class InvoicesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Invoice updated successfully:', response);
         this.router.navigate(['/admin/sales/invoices']);  // Redirect to invoice list page after updating
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating invoice:', error);
@@ -252,8 +256,14 @@ export class InvoicesAddEditComponent implements OnInit {
     });
   }
 
-
   onReset(): void {
     this.invoiceForm.reset();
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

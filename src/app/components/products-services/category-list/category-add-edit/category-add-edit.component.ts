@@ -1,15 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { Router, RouterModule } from '@angular/router';
-import { CategoryService } from '../../../../services/Category.service';
+import { RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import { CategoryService } from '../../../../services/Category.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-category-add-edit',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule,
+    MatDialogModule, MatSnackBarModule],
   providers: [CategoryService],
   templateUrl: './category-add-edit.component.html',
   styleUrl: './category-add-edit.component.css'
@@ -24,7 +26,7 @@ export class CategoryAddEditComponent implements OnInit {
   constructor(private categoryService: CategoryService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<CategoryAddEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any, private snackBar: MatSnackBar,
     private fb: FormBuilder) {
 
     this.categoryForm = this.fb.group({
@@ -90,7 +92,7 @@ export class CategoryAddEditComponent implements OnInit {
       category_photo: category.category_photo
     });
     this.imageUrl = this.imgURL + category.category_photo,
-    this.selectedFile = category.category_photo
+      this.selectedFile = category.category_photo
   }
 
   addCategory() {
@@ -110,9 +112,11 @@ export class CategoryAddEditComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('category added successfully:', response);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -134,14 +138,24 @@ export class CategoryAddEditComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('category update successfully:', response);
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

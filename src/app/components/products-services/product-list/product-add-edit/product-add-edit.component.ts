@@ -5,11 +5,12 @@ import { Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../../services/Category.service';
 import { ProductService } from '../../../../services/products.service';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule, MatSnackBarModule],
   providers: [CategoryService, ProductService],
   templateUrl: './product-add-edit.component.html',
   styleUrl: './product-add-edit.component.css'
@@ -27,7 +28,9 @@ export class ProductAddEditComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private router: Router,
     private categoryService: CategoryService,
-    private productService: ProductService,) {
+    private productService: ProductService,
+    private snackBar: MatSnackBar
+  ) {
     this.productForm = this.fb.group({
       item_type: ['Product', Validators.required],
       product_name: ['', Validators.required],
@@ -147,9 +150,11 @@ export class ProductAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Product added successfully:', response);
         this.router.navigate(['/admin/productsServices/product-list']);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding product:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -159,10 +164,20 @@ export class ProductAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Product updated successfully:', response);
         this.router.navigate(['/admin/productsServices/product-list']);
+        this.openSnackBar('Updated Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating product:', error);
+        this.openSnackBar('error', 'Close');
       }
+    });
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
     });
   }
 }

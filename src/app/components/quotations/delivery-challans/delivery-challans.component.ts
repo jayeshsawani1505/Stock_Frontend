@@ -8,12 +8,13 @@ import { QuotationService } from '../../../services/quotation.service';
 import { ExcelService } from '../../../services/excel.service';
 import { DeleteChallanComponent } from './delete-challan/delete-challan.component';
 import * as pdfMake from 'pdfmake/build/pdfmake';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-delivery-challans',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './delivery-challans.component.html',
   styleUrl: './delivery-challans.component.css'
@@ -22,6 +23,7 @@ export class DeliveryChallansComponent implements OnInit {
   quotationsList: any[] = []; // Define quotationsList to store invoice data
   dataForExcel: any[] = [];
   displayedColumns: string[] = [
+    'id',
     'delivery_number',
     'category_name',
     'customer_id',
@@ -36,7 +38,7 @@ export class DeliveryChallansComponent implements OnInit {
 
   constructor(private QuotationService: QuotationService,
     private ExcelService: ExcelService,
-    public dialog: MatDialog,
+    public dialog: MatDialog, private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -58,6 +60,7 @@ export class DeliveryChallansComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error fetching invoices:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -271,5 +274,13 @@ export class DeliveryChallansComponent implements OnInit {
 
     pdfMake.createPdf(docDefinition).open();
     // pdfMake.createPdf(docDefinition).download('Delivery_Challan.pdf');
+  }
+  
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

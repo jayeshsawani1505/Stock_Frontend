@@ -6,12 +6,13 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angu
 import { RouterModule } from '@angular/router';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-edit-signature',
   standalone: true,
   imports: [RouterModule, CommonModule, ReactiveFormsModule,
-    FormsModule, MatDialogModule, MatCheckboxModule],
+    FormsModule, MatDialogModule, MatCheckboxModule, MatSnackBarModule],
   templateUrl: './add-edit-signature.component.html',
   styleUrl: './add-edit-signature.component.css'
 })
@@ -26,6 +27,7 @@ export class AddEditSignatureComponent implements OnInit {
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<AddEditSignatureComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
+    private snackBar: MatSnackBar,
     private fb: FormBuilder) {
 
     this.signatureForm = this.fb.group({
@@ -111,9 +113,11 @@ export class AddEditSignatureComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('Signature added successfully:', response);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -135,14 +139,24 @@ export class AddEditSignatureComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('signature update successfully:', response);
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

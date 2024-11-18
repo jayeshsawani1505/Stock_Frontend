@@ -7,12 +7,13 @@ import { Router, RouterModule } from '@angular/router';
 import { CreditNotesService } from '../../../../services/CreditNote.serivce';
 import { ExcelService } from '../../../../services/excel.service';
 import { DeleteCreditNotesComponent } from './delete-credit-notes/delete-credit-notes.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-credit-notes',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './credit-notes.component.html',
   styleUrl: './credit-notes.component.css'
@@ -28,6 +29,7 @@ export class CreditNotesComponent implements OnInit, AfterViewInit {
 
   constructor(private creditNotesService: CreditNotesService,
     private ExcelService: ExcelService, public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -50,6 +52,7 @@ export class CreditNotesComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Error fetching credit notes:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -157,5 +160,11 @@ export class CreditNotesComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

@@ -12,12 +12,13 @@ import { ProductService } from '../../../../../services/products.service';
 import { SubProductService } from '../../../../../services/subProduct.service';
 import { SignatureService } from '../../../../../services/signature.srvice';
 import { environment } from '../../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-credit-notes-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './credit-notes-add-edit.component.html',
   styleUrl: './credit-notes-add-edit.component.css'
@@ -39,7 +40,7 @@ export class CreditNotesAddEditComponent implements OnInit {
     private CreditNotesService: CreditNotesService,
     private SubProductService: SubProductService,
     private SignatureService: SignatureService,
-    private router: Router
+    private router: Router, private snackBar: MatSnackBar,
   ) {
     this.creditNoteForm = this.fb.group({
       customer_id: ['', Validators.required],
@@ -173,7 +174,7 @@ export class CreditNotesAddEditComponent implements OnInit {
       console.log('Signature Photo:', this.signature_photo);
     }
   }
-  
+
   onSubmit(): void {
     if (this.creditNoteForm.valid) {
       // Check if history state has invoice data for update
@@ -194,9 +195,11 @@ export class CreditNotesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Invoice added successfully:', response);
         this.router.navigate(['/admin/sales/credit-notes']);  // Redirect to invoice list page after adding
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding invoice:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -206,9 +209,11 @@ export class CreditNotesAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Invoice updated successfully:', response);
         this.router.navigate(['/admin/sales/credit-notes']);  // Redirect to invoice list page after updating
+        this.openSnackBar('Updated Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating invoice:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -216,5 +221,12 @@ export class CreditNotesAddEditComponent implements OnInit {
 
   onReset(): void {
     this.creditNoteForm.reset();
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

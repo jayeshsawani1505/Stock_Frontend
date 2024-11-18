@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { CustomerService } from '../../../../services/Customer.service';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-customers-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule, MatSnackBarModule],
   templateUrl: './customers-add-edit.component.html',
   styleUrl: './customers-add-edit.component.css'
 })
@@ -24,6 +25,7 @@ export class CustomersAddEditComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private customerService: CustomerService,
     private router: Router,
+    private snackBar: MatSnackBar
   ) {
     this.customerForm = this.fb.group({
       profile_photo: [],
@@ -182,9 +184,11 @@ export class CustomersAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Customer added successfully:', response);
         this.router.navigate(['/admin/customers/customers-list']);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding customer:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -194,10 +198,19 @@ export class CustomersAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Customer updated successfully:', response);
         this.router.navigate(['/admin/customers/customers-list']);
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating customer:', error);
+        this.openSnackBar('error', 'Close');
       }
+    });
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
     });
   }
 }

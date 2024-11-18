@@ -9,12 +9,13 @@ import { ProductService } from '../../../services/products.service';
 import { DeleteProductComponent } from './delete-product/delete-product.component';
 import { environment } from '../../../../environments/environment';
 import { InOutStockProductComponent } from './in-out-stock-product/in-out-stock-product.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   providers: [ProductService],
   templateUrl: './product-list.component.html',
@@ -32,6 +33,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
 
   constructor(private productService: ProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -54,6 +56,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Error fetching products:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -82,9 +85,11 @@ export class ProductListComponent implements OnInit, AfterViewInit {
         response => {
           this.GetProducts();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Upload Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -111,7 +116,7 @@ export class ProductListComponent implements OnInit, AfterViewInit {
       this.GetProducts();
     });
   }
-  
+
   onDelete(productId: number) {
     const dialogRef = this.dialog.open(DeleteProductComponent, {
       data: productId,
@@ -121,17 +126,6 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(() => {
       this.GetProducts();
     });
-    // if (confirm('Are you sure you want to delete this product?')) {
-    //   this.productService.DeleteProduct(productId).subscribe({
-    //     next: () => {
-    //       this.productList = this.productList.filter(product => product.product_id !== productId);
-    //       console.log(`Product with ID ${productId} deleted successfully.`);
-    //     },
-    //     error: (err: any) => {
-    //       console.error('Error deleting product:', err);
-    //     }
-    //   });
-    // }
   }
 
   excelDownload(title: string) {
@@ -177,5 +171,11 @@ export class ProductListComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

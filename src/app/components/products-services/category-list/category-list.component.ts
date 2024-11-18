@@ -9,12 +9,13 @@ import { ExcelService } from '../../../services/excel.service';
 import { CategoryAddEditComponent } from './category-add-edit/category-add-edit.component';
 import { DeleteCategoryComponent } from './delete-category/delete-category.component';
 import { environment } from '../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-category-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   providers: [CategoryService],
   templateUrl: './category-list.component.html',
@@ -30,7 +31,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
   imgURL = environment.ImageUrl
 
   constructor(private categoryService: CategoryService,
-    private ExcelService: ExcelService,
+    private ExcelService: ExcelService, private snackBar: MatSnackBar,
     public dialog: MatDialog) {
   }
 
@@ -54,6 +55,7 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Error fetching categories:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -77,9 +79,11 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
         response => {
           this.GetCategories();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Uploaded Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -163,4 +167,11 @@ export class CategoryListComponent implements OnInit, AfterViewInit {
     this.dataForExcel = [];
   }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

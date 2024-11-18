@@ -8,12 +8,13 @@ import { CustomerService } from '../../../services/Customer.service';
 import { ExcelService } from '../../../services/excel.service';
 import { DeleteCustomerComponent } from './delete-customer/delete-customer.component';
 import { environment } from '../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-customers-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   providers: [CustomerService],
   templateUrl: './customers-list.component.html',
@@ -28,11 +29,11 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   imgURL = environment.ImageUrl
-  
+
   constructor(
     private CustomerService: CustomerService,
     private ExcelService: ExcelService,
-    private router: Router,
+    private router: Router, private snackBar: MatSnackBar,
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -52,6 +53,9 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
           this.dataSource.data = res.customers;
           this.customerList = res.customers;
         }
+      },
+      error: (err) => {
+        this.openSnackBar('error', 'Close');
       },
     });
   }
@@ -75,9 +79,11 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
         response => {
           this.GetCustomers();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Upload Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -162,5 +168,13 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
 
     // Clear the data after exporting
     this.dataForExcel = [];
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

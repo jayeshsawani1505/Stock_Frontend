@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { ProductService } from '../../../../services/products.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-in-out-stock-product',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule,
+    FormsModule, MatDialogModule, MatSnackBarModule],
   templateUrl: './in-out-stock-product.component.html',
   styleUrl: './in-out-stock-product.component.css'
 })
@@ -21,7 +23,7 @@ export class InOutStockProductComponent {
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<InOutStockProductComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private ProductService: ProductService
+    private ProductService: ProductService, private snackBar: MatSnackBar
   ) {
     this.isAddMode = data.isAddMode;
     this.stockData = data.stockData;
@@ -47,9 +49,11 @@ export class InOutStockProductComponent {
         next: (response) => {
           console.log(this.isAddMode ? 'Stock added successfully:' : 'Stock removed successfully:', response);
           this.dialogRef.close(true); // Close dialog on success
+          this.openSnackBar(this.isAddMode ? 'Stock added successfully:' : 'Stock removed successfully:', 'Close');
         },
         error: (error) => {
           console.error('Error:', error);
+          this.openSnackBar('error', 'Close');
         }
       });
     }
@@ -57,6 +61,14 @@ export class InOutStockProductComponent {
 
   onCancel(): void {
     this.dialogRef.close();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }
 

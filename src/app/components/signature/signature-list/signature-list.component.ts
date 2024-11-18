@@ -7,12 +7,13 @@ import { RouterModule } from '@angular/router';
 import { SignatureService } from '../../../services/signature.srvice';
 import { AddEditSignatureComponent } from './add-edit-signature/add-edit-signature.component';
 import { DeleteSignatureComponent } from './delete-signature/delete-signature.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-signature-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './signature-list.component.html',
   styleUrl: './signature-list.component.css'
@@ -25,6 +26,7 @@ export class SignatureListComponent implements OnInit, AfterViewInit {
 
   constructor(
     private SignatureService: SignatureService,
+    private snackBar: MatSnackBar,
     public dialog: MatDialog) {
   }
 
@@ -48,6 +50,7 @@ export class SignatureListComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Error fetching signatures:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -95,6 +98,13 @@ export class SignatureListComponent implements OnInit, AfterViewInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.GetSignatures();
+    });
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
     });
   }
 }

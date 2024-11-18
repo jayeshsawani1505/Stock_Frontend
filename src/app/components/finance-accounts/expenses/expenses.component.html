@@ -38,8 +38,8 @@
 
                             <!-- Index Column -->
                             <ng-container matColumnDef="index">
-                                <th mat-header-cell *matHeaderCellDef> # </th>
-                                <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+                                <th mat-header-cell *matHeaderCellDef> Expense Id </th>
+                                <td mat-cell *matCellDef="let element; let i = index"> {{ element?.expense_id}} </td>
                             </ng-container>
 
                             <!-- Reference Column -->

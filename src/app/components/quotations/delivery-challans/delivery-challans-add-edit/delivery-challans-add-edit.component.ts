@@ -12,12 +12,13 @@ import { SubProductService } from '../../../../services/subProduct.service';
 import { QuotationService } from '../../../../services/quotation.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-delivery-challans-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './delivery-challans-add-edit.component.html',
   styleUrl: './delivery-challans-add-edit.component.css'
@@ -40,7 +41,7 @@ export class DeliveryChallansAddEditComponent {
     private SubProductService: SubProductService,
     private QuotationService: QuotationService,
     private SignatureService: SignatureService,
-    private router: Router
+    private router: Router, private snackBar: MatSnackBar,
   ) {
     this.QuotationForm = this.fb.group({
       delivery_number: ['', Validators.required],
@@ -228,9 +229,11 @@ export class DeliveryChallansAddEditComponent {
       next: (response) => {
         console.log('Q added successfully:', response);
         this.router.navigate(['/admin/quotations/delivery-challans']);  // Redirect to quotation list page after adding
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding quotation:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -240,14 +243,23 @@ export class DeliveryChallansAddEditComponent {
       next: (response) => {
         console.log('quotation updated successfully:', response);
         this.router.navigate(['/admin/quotations/delivery-challans']);  // Redirect to quotation list page after updating
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating invoice:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
   onReset(): void {
     this.QuotationForm.reset();
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

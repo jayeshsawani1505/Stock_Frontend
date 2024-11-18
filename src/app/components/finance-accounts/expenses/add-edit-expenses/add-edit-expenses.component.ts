@@ -4,11 +4,13 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { ExpensesService } from '../../../../services/Expenses.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-add-edit-expenses',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule],
+  imports: [ReactiveFormsModule, CommonModule, FormsModule,
+    RouterModule, MatSnackBarModule],
   templateUrl: './add-edit-expenses.component.html',
   styleUrl: './add-edit-expenses.component.css'
 })
@@ -23,7 +25,7 @@ export class AddEditExpensesComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
     private ExpensesService: ExpensesService,
-    private router: Router,
+    private router: Router, private snackBar: MatSnackBar,
   ) {
     this.expenseForm = this.fb.group({
       reference: ['', [Validators.required]],
@@ -127,9 +129,11 @@ export class AddEditExpensesComponent implements OnInit {
       next: (response) => {
         console.log('Expenses added successfully:', response);
         this.router.navigate(['/admin/finance-account/expenses']);
+        this.openSnackBar('Add Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding Expenses:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -139,14 +143,23 @@ export class AddEditExpensesComponent implements OnInit {
       next: (response) => {
         console.log('Expenses updated successfully:', response);
         this.router.navigate(['/admin/finance-account/expenses']);
+        this.openSnackBar('Update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating Expenses:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
   onClose(): void {
     this.expenseForm.reset()
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

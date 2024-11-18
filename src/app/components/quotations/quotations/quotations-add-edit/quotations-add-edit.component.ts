@@ -12,12 +12,13 @@ import { ProductService } from '../../../../services/products.service';
 import { QuotationService } from '../../../../services/quotation.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { SubProductService } from '../../../../services/subProduct.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-quotations-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './quotations-add-edit.component.html',
   styleUrl: './quotations-add-edit.component.css'
@@ -40,7 +41,8 @@ export class QuotationsAddEditComponent implements OnInit {
     private SubProductService: SubProductService,
     private QuotationService: QuotationService,
     private SignatureService: SignatureService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
   ) {
     this.QuotationForm = this.fb.group({
       quotation_number: ['', Validators.required],
@@ -228,9 +230,11 @@ export class QuotationsAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Q added successfully:', response);
         this.router.navigate(['/admin/quotations/list']);  // Redirect to quotation list page after adding
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding quotation:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -240,14 +244,23 @@ export class QuotationsAddEditComponent implements OnInit {
       next: (response) => {
         console.log('quotation updated successfully:', response);
         this.router.navigate(['/admin/quotations/list']);  // Redirect to quotation list page after updating
+        this.openSnackBar('Updated Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating invoice:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
 
   onReset(): void {
     this.QuotationForm.reset();
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

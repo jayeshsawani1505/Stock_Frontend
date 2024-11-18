@@ -12,12 +12,13 @@ import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { environment } from '../../../../../environments/environment';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-purchase-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './purchase-add-edit.component.html',
   styleUrl: './purchase-add-edit.component.css'
@@ -40,7 +41,7 @@ export class PurchaseAddEditComponent implements OnInit {
     private PurchaseService: PurchaseService,
     private SubProductService: SubProductService,
     private SignatureService: SignatureService,
-    private router: Router
+    private router: Router, private snackBar: MatSnackBar,
   ) {
     this.purchaseForm = this.fb.group({
       vendor_id: ['', Validators.required],
@@ -180,7 +181,7 @@ export class PurchaseAddEditComponent implements OnInit {
       console.log('Signature Photo:', this.signature_photo);
     }
   }
-  
+
   onSubmit(): void {
     if (this.purchaseForm.valid) {
       // Check if history state has Purchase data for update
@@ -201,6 +202,7 @@ export class PurchaseAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Purchase added successfully:', response);
         this.router.navigate(['/admin/purchases/list']);  // Redirect to Purchase list page after adding
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding Purchase:', error);
@@ -213,6 +215,7 @@ export class PurchaseAddEditComponent implements OnInit {
       next: (response) => {
         console.log('Purchase updated successfully:', response);
         this.router.navigate(['/admin/purchases/list']);  // Redirect to Purchase list page after updating
+        this.openSnackBar('Delete Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating Purchase:', error);
@@ -223,5 +226,12 @@ export class PurchaseAddEditComponent implements OnInit {
 
   onReset(): void {
     this.purchaseForm.reset();
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

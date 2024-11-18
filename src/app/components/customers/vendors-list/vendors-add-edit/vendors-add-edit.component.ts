@@ -4,11 +4,13 @@ import { ReactiveFormsModule, FormsModule, FormGroup, FormBuilder, Validators } 
 import { MatDialogModule, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { RouterModule } from '@angular/router';
 import { VendorService } from '../../../../services/vendors.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vendors-add-edit',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule, MatDialogModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule,
+    FormsModule, MatDialogModule, MatSnackBarModule],
   providers: [VendorService],
   templateUrl: './vendors-add-edit.component.html',
   styleUrl: './vendors-add-edit.component.css'
@@ -20,7 +22,7 @@ export class VendorsAddEditComponent implements OnInit {
     private vendorService: VendorService,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<VendorsAddEditComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: any, private snackBar: MatSnackBar,
     private fb: FormBuilder
   ) {
     this.vendorForm = this.fb.group({
@@ -69,9 +71,11 @@ export class VendorsAddEditComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('Vendor added successfully:', response);
+        this.openSnackBar('Added Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error adding vendor:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -83,9 +87,11 @@ export class VendorsAddEditComponent implements OnInit {
       next: (response) => {
         this.onClose();
         console.log('Vendor updated successfully:', response);
+        this.openSnackBar('update Successfully', 'Close');
       },
       error: (error) => {
         console.error('Error updating vendor:', error);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -93,5 +99,13 @@ export class VendorsAddEditComponent implements OnInit {
   // Close the dialog
   onClose(): void {
     this.dialogRef.close();
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

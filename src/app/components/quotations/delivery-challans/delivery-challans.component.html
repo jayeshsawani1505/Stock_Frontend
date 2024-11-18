@@ -34,8 +34,12 @@
                         </div>
 
                         <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
+                            <ng-container matColumnDef="id">
+                                <th mat-header-cell *matHeaderCellDef> Challan Id</th>
+                                <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+                            </ng-container>
                             <ng-container matColumnDef="delivery_number">
-                                <th mat-header-cell *matHeaderCellDef> Challan # </th>
+                                <th mat-header-cell *matHeaderCellDef> Challan Number </th>
                                 <td mat-cell *matCellDef="let element"> {{ element.delivery_number }} </td>
                             </ng-container>
 

@@ -1,13 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule, MatSnackBarModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -17,7 +18,8 @@ export class LoginComponent {
 
   constructor(private fb: FormBuilder,
     private router: Router,
-    private AuthService: AuthService
+    private AuthService: AuthService,
+    private snackBar: MatSnackBar
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -38,14 +40,23 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login successful:', response);
         this.router.navigate(['/admin/dashboard']);
+        this.openSnackBar('Login successful!', 'Close');
       },
       error: (error) => {
         console.error('Error:', error);
+        this.openSnackBar('Login failed. Please try again.', 'Close');
       }
     });
   }
 
   togglePasswordVisibility() {
     this.showPassword = !this.showPassword; // Toggle password visibility
+  }
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
   }
 }

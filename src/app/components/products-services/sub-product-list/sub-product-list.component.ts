@@ -8,12 +8,13 @@ import { ExcelService } from '../../../services/excel.service';
 import { SubProductService } from '../../../services/subProduct.service';
 import { DeleteProductComponent } from '../product-list/delete-product/delete-product.component';
 import { InOutStockSubProductComponent } from './in-out-stock-sub-product/in-out-stock-sub-product.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sub-product-list',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ], templateUrl: './sub-product-list.component.html',
   styleUrl: './sub-product-list.component.css'
 })
@@ -28,6 +29,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
 
   constructor(private SubProductService: SubProductService,
     private ExcelService: ExcelService, public dialog: MatDialog,
+    private snackBar: MatSnackBar,
     private router: Router) { }
 
   ngOnInit(): void {
@@ -50,6 +52,7 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Error fetching products:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -73,9 +76,11 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
         response => {
           this.GetSubProducts();
           console.log('File uploaded successfully', response);
+          this.openSnackBar('Uploaded Successfully', 'Close');
         },
         error => {
           console.error('File upload failed', error);
+          this.openSnackBar('error', 'Close');
         }
       );
     } else {
@@ -154,5 +159,11 @@ export class SubProductListComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }

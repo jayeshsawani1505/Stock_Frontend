@@ -8,12 +8,13 @@ import { ExpensesService } from '../../../services/Expenses.service';
 import { ExcelService } from '../../../services/excel.service';
 import { AddEditExpensesComponent } from './add-edit-expenses/add-edit-expenses.component';
 import { DeleteExpensesComponent } from './delete-expenses/delete-expenses.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
   imports: [RouterModule, CommonModule, MatDialogModule,
-    MatPaginatorModule, MatTableModule
+    MatPaginatorModule, MatTableModule, MatSnackBarModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
@@ -29,7 +30,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     private ExpensesService: ExpensesService,
     private ExcelService: ExcelService,
     public dialog: MatDialog,
-    private router: Router,
+    private router: Router, private snackBar: MatSnackBar,
   ) {
   }
 
@@ -53,6 +54,7 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
       },
       error: (err: any) => {
         console.error('Error fetching Expensess:', err);
+        this.openSnackBar('error', 'Close');
       }
     });
   }
@@ -131,4 +133,11 @@ export class ExpensesComponent implements OnInit, AfterViewInit {
     this.dataForExcel = [];
   }
 
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 3000, // Snackbar will auto-dismiss after 3 seconds
+      horizontalPosition: 'center', // Center horizontally
+      verticalPosition: 'bottom' // Show on top
+    });
+  }
 }
