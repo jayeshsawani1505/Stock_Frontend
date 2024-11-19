@@ -79,9 +79,9 @@
 
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Reference Number</label>
-                                        <input type="text" formControlName="reference_number" class="form-control"
-                                            placeholder="Enter Reference Number">
+                                        <label>Transpoter Name</label>
+                                        <input type="text" formControlName="transpoter_name" class="form-control"
+                                            placeholder="Enter Transpoter Name">
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -144,8 +144,13 @@
                                                             class="form-control" (input)="updateAmount(i)">
                                                     </td>
                                                     <td>
-                                                        <input type="text" formControlName="unit" class="form-control"
-                                                            value="box" readonly>
+                                                        <select formControlName="unit" class="form-control">
+                                                            <option value="piece">Piece</option>
+                                                            <option value="box">Box</option>
+                                                            <option value="cartoon">Cartoon</option>
+                                                            <option value="meter">Meter</option>
+                                                            <option value="liter">Liter</option>
+                                                        </select>
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="rate" class="form-control"

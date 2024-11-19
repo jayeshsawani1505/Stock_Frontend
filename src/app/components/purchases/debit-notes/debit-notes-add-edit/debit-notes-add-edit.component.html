@@ -72,8 +72,15 @@
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Payment Method</label>
-                                        <input type="text" formControlName="payment_mode" class="form-control"
-                                            placeholder="Enter Payment Method">
+                                        <select formControlName="payment_mode" class="form-control">
+                                            <option value="" disabled selected>Select Payment Method</option>
+                                            <option value="credit_card">Credit Card</option>
+                                            <option value="debit_card">Debit Card</option>
+                                            <option value="paypal">UPI</option>
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                            <option value="cash">Cash</option>
+                                            <option value="other">Other</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-4">
@@ -136,8 +143,13 @@
                                                             class="form-control" (input)="updateAmount(i)">
                                                     </td>
                                                     <td>
-                                                        <input type="text" formControlName="unit" class="form-control"
-                                                            value="box" readonly>
+                                                        <select formControlName="unit" class="form-control">
+                                                            <option value="piece">Piece</option>
+                                                            <option value="box">Box</option>
+                                                            <option value="cartoon">Cartoon</option>
+                                                            <option value="meter">Meter</option>
+                                                            <option value="liter">Liter</option>
+                                                        </select>
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="rate" class="form-control"

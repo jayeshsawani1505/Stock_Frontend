@@ -48,8 +48,8 @@ export class PurchaseAddEditComponent implements OnInit {
     this.purchaseForm = this.fb.group({
       vendor_id: ['', Validators.required],
       purchase_date: ['', Validators.required],
-      due_date: ['', Validators.required],
-      reference_no: ['', Validators.required],
+      due_date: [new Date(), Validators.required],
+      reference_no: ['00', Validators.required],
       status: ['Pending', Validators.required],
       supplier_invoice_serial_no: ['', Validators.required],
       payment_mode: ['', Validators.required],
