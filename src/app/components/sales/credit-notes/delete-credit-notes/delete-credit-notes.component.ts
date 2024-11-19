@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
-import { CreditNotesService } from '../../../../../services/CreditNote.serivce';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { CreditNotesService } from '../../../../services/CreditNote.serivce';
 
 @Component({
   selector: 'app-delete-credit-notes',

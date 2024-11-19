@@ -1,0 +1,38 @@
+<div class="p-5">
+    <h4 class="mb-0">Change Invoice Status</h4>
+
+    <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-lg-12 col-md-12">
+                    <div class="input-block mb-3">
+                        <label>Invoice Number</label>
+                        <input type="text" formControlName="invoice_number" class="form-control"
+                            placeholder="Enter Invoice Number" readonly>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12">
+                    <div class="input-block mb-3">
+                        <label for="statusSelect">Status</label>
+                        <select id="statusSelect" formControlName="status" class="form-control">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="partially_paid">Partially Paid</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer mt-3">
+            <button type="button" class="btn btn-back cancel-btn me-2" (click)="onCancel()">Cancel</button>
+            <button type="submit" class="btn btn-primary">
+                Update
+            </button>
+        </div>
+    </form>
+</div>

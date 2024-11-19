@@ -95,7 +95,7 @@ export class InvoicesAddEditComponent implements OnInit {
     this.invoiceForm.get('total_amount')?.setValue(total)
     console.log('Total Amount:', total);
   }
-  
+
   GetCustomers() {
     this.CustomerService.GetCustomers().subscribe({
       next: (res: any) => {
@@ -209,6 +209,8 @@ export class InvoicesAddEditComponent implements OnInit {
 
     // Ensure it's an array and populate the FormArray
     if (Array.isArray(invoiceDetails)) {
+      const productIds = [...new Set(invoiceDetails.map(detail => detail.product_id))];
+      this.invoiceForm.get('product_id')?.setValue(productIds)
       invoiceDetails.forEach((detail: any) => {
         this.productFormArray.push(
           this.fb.group({

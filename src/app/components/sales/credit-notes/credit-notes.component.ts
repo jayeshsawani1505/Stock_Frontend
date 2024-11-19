@@ -4,10 +4,10 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
-import { CreditNotesService } from '../../../../services/CreditNote.serivce';
-import { ExcelService } from '../../../../services/excel.service';
 import { DeleteCreditNotesComponent } from './delete-credit-notes/delete-credit-notes.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ExcelService } from '../../../services/excel.service';
+import { CreditNotesService } from '../../../services/CreditNote.serivce';
 
 @Component({
   selector: 'app-credit-notes',

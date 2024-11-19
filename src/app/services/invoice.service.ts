@@ -62,6 +62,12 @@ export class InvoiceService {
             .pipe(catchError(this.handleError));
     }
 
+    ChangeInvoiceStatus(invoiceId: any, statusPayload: { status: any }): Observable<any> {
+        return this.httpClient
+            .put(`${environment.baseURL}/invoices/status/${invoiceId}`, statusPayload)
+            .pipe(catchError(this.handleError));
+    }
+
     // Delete an invoice
     DeleteInvoice(invoiceId: any): Observable<any> {
         return this.httpClient

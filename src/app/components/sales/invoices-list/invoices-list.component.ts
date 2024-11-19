@@ -9,6 +9,7 @@ import { InvoiceService } from '../../../services/invoice.service';
 import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ChangeInvoiceStatusComponent } from './change-invoice-status/change-invoice-status.component';
 
 @Component({
   selector: 'app-invoices-list',
@@ -99,6 +100,7 @@ export class InvoicesListComponent implements OnInit {
       this.invoiceService.UploadExcel(file).subscribe(
         response => {
           this.GetInvoices();
+          this.getInvoiceTotalsByStatus();
           console.log('File uploaded successfully', response);
           this.openSnackBar('Upload Successfully', 'Close');
         },
@@ -133,6 +135,19 @@ export class InvoicesListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(() => {
       this.GetInvoices();
+      this.getInvoiceTotalsByStatus();
+    });
+  }
+
+  openChangeStatus(data: number): void {
+    const dialogRef = this.dialog.open(ChangeInvoiceStatusComponent, {
+      data: data,
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.GetInvoices();
+      this.getInvoiceTotalsByStatus()
     });
   }
 
