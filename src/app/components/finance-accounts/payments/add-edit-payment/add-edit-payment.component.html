@@ -1,0 +1,105 @@
+<div class="p-5">
+    <h4 class="mb-0">{{ paymentForm.value.payment_id ? 'Edit Payment' : 'Add Payment' }}</h4>
+    <form [formGroup]="paymentForm" (ngSubmit)="paymentForm.value.payment_id ? editPayment() : addPayment()">
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="input-block mt-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Select Customer</mat-label>
+                            <input matInput placeholder="Search Customer" [formControl]="customerControl"
+                                [matAutocomplete]="auto">
+
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
+                                <mat-option *ngFor="let invoice of filteredCustomers | async" [value]="invoice">
+                                    {{ invoice.customer_name }} ({{ invoice.invoice_number }})
+                                </mat-option>
+                            </mat-autocomplete>
+
+                            <mat-error
+                                *ngIf="paymentForm.get('invoice_id')?.invalid && paymentForm.get('invoice_id')?.touched">
+                                Customer ID is required.
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Payable Amount <span class="text-danger">*</span></label>
+                        <input formControlName="total_amount" type="number" class="form-control" readonly>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Amount <span class="text-danger">*</span></label>
+                        <input formControlName="amount" type="number" class="form-control" placeholder="Enter Amount"
+                            min="0">
+                        <div *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched"
+                            class="text-danger">
+                            Amount is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Payment Mode <span class="text-danger">*</span></label>
+                        <select formControlName="payment_mode" class="form-control">
+                            <option value="" disabled selected>Select Payment Method</option>
+                            <option value="credit_card">Credit Card</option>
+                            <option value="debit_card">Debit Card</option>
+                            <option value="paypal">UPI</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                            <option value="cash">Cash</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <div *ngIf="paymentForm.get('payment_mode')?.invalid && paymentForm.get('payment_mode')?.touched"
+                            class="text-danger">
+                            Payment mode is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Payment Date <span class="text-danger">*</span></label>
+                        <input formControlName="payment_date" type="date" class="form-control">
+                        <div *ngIf="paymentForm.get('payment_date')?.invalid && paymentForm.get('payment_date')?.touched"
+                            class="text-danger">
+                            Payment date is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Payment Status <span class="text-danger">*</span></label>
+                        <select formControlName="payment_status" class="form-control">
+                            <option value="" disabled selected>Select Status</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="partially_paid">Partially Paid</option>
+                            <option value="paid">Paid</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="refunded">Refunded</option>
+                            <option value="draft">Draft</option>
+                        </select>
+                        <div *ngIf="paymentForm.get('payment_status')?.invalid && paymentForm.get('payment_status')?.touched"
+                            class="text-danger">
+                            Payment status is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Description</label>
+                        <input formControlName="description" type="text" class="form-control"
+                            placeholder="Enter Description">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" (click)="onClose()" class="btn btn-back cancel-btn me-2">Cancel</button>
+            <button type="submit" class="btn btn-primary">
+                {{ paymentForm.value.payment_id ? 'Update Payment' : 'Add Payment' }}</button>
+        </div>
+    </form>
+</div>
