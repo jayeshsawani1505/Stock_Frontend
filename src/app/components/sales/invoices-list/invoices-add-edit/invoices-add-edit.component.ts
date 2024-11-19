@@ -53,8 +53,6 @@ export class InvoicesAddEditComponent implements OnInit {
       due_date: ['', Validators.required],
       reference_number: ['', Validators.required],
       status: ['Pending', Validators.required],
-      // recurring: [0, Validators.required],
-      recurring_cycle: [''],
       product_id: [[]],
       subproduct_id: [[]],
       notes: ['', Validators.required],

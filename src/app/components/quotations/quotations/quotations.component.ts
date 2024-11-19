@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
-import { QuotationService } from '../../../services/quotation.service';
 import { ExcelService } from '../../../services/excel.service';
+import { QuotationService } from '../../../services/quotation.service';
 import { DeleteQuatationComponent } from './delete-quatation/delete-quatation.component';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-quotations',
@@ -24,7 +24,6 @@ export class QuotationsComponent implements OnInit {
   displayedColumns: string[] = [
     'id',
     'quotation_number',
-    'category_name',
     'customer_id',
     'total_amount',
     'due_date',

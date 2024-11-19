@@ -2,14 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ExcelService } from '../../../services/excel.service';
 import { InvoiceService } from '../../../services/invoice.service';
-import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChangeInvoiceStatusComponent } from './change-invoice-status/change-invoice-status.component';
+import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
 
 @Component({
   selector: 'app-invoices-list',
@@ -212,11 +212,6 @@ export class InvoicesListComponent implements OnInit {
                 bold: true,
                 color: '#4e50d3',
                 margin: [0, 0, 0, 10],
-              },
-              {
-                text: 'Address: 15 Hodges Mews, High Wycombe HP12 3JL, United Kingdom',
-                fontSize: 10,
-                margin: [0, 0, 0, 30],
               },
             ],
             [

@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
-import { QuotationService } from '../../../services/quotation.service';
-import { ExcelService } from '../../../services/excel.service';
-import { DeleteChallanComponent } from './delete-challan/delete-challan.component';
 import * as pdfMake from 'pdfmake/build/pdfmake';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ExcelService } from '../../../services/excel.service';
+import { QuotationService } from '../../../services/quotation.service';
+import { DeleteChallanComponent } from './delete-challan/delete-challan.component';
 
 @Component({
   selector: 'app-delivery-challans',
@@ -25,7 +25,6 @@ export class DeliveryChallansComponent implements OnInit {
   displayedColumns: string[] = [
     'id',
     'delivery_number',
-    'category_name',
     'customer_id',
     'total_amount',
     'due_date',
@@ -155,6 +154,7 @@ export class DeliveryChallansComponent implements OnInit {
   }
 
   async generateDeliveryChallanPDF(data: any) {
+    const invoiceDetails = data.invoice_details;
     let docDefinition: any = {
       content: [
         {
@@ -167,11 +167,6 @@ export class DeliveryChallansComponent implements OnInit {
                 color: '#4e50d3',
                 margin: [0, 0, 0, 10],
               },
-              {
-                text: 'Address: 15 Hodges Mews, High Wycombe HP12 3JL, United Kingdom',
-                fontSize: 10,
-                margin: [0, 0, 0, 30],
-              },
             ],
             [
               {
@@ -182,7 +177,7 @@ export class DeliveryChallansComponent implements OnInit {
                 color: '#4e50d3',
               },
               {
-                text: `Challan No: ${data.challan_number}\nChallan Date: ${data.challan_date || 'Not Available'}`,
+                text: `Challan No: ${data.delivery_number}\nChallan Date: ${data.delivery_date || 'Not Available'}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -197,7 +192,7 @@ export class DeliveryChallansComponent implements OnInit {
               { text: 'Customer Details:', bold: true },
               { text: data.name },
               { text: `GSTIN: ${data.gstin || 'Not Available'}` },
-              { text: `Status: ${data.status}`, color: data.status === 'delivered' ? 'green' : 'red' },
+              { text: `Payment Status: ${data.status}`, color: data.status === 'paid' ? 'green' : 'red' },
             ],
             [
               { text: 'Billing Address:', bold: true },
@@ -224,9 +219,16 @@ export class DeliveryChallansComponent implements OnInit {
                 { text: 'Unit Price', bold: true },
                 { text: 'Amount', bold: true },
               ],
-              ['1', `${data.product_name} - ${data.subproduct_name || ''}`, data.quantity, `INR ${data.rate}`, `INR ${data.total_amount}`],
-            ]
-          }
+              // Dynamically add rows here
+              ...invoiceDetails.map((item: any, index: number) => [
+                { text: index + 1, alignment: 'center' },
+                { text: `${item.product_name} - ${item.subproduct_name || ''}` },
+                { text: item.quantity },
+                { text: `INR ${item.rate}`, alignment: 'right' },
+                { text: `INR ${item.total_amount}`, alignment: 'right' },
+              ]),
+            ],
+          },
         },
         {
           columns: [

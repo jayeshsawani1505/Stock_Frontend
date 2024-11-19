@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import { CustomerService } from '../../../../services/Customer.service';
@@ -12,13 +14,13 @@ import { ProductService } from '../../../../services/products.service';
 import { QuotationService } from '../../../../services/quotation.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { SubProductService } from '../../../../services/subProduct.service';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-quotations-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
-    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule],
+    RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule,
+    MatSelectModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './quotations-add-edit.component.html',
   styleUrl: './quotations-add-edit.component.css'
@@ -50,14 +52,13 @@ export class QuotationsAddEditComponent implements OnInit {
       customer_id: ['', Validators.required],
       due_date: ['', Validators.required],
       status: ['', Validators.required],
-      product_id: ['', Validators.required],
-      subproduct_id: [0],
-      quantity: ['', Validators.required],
-      rate: ['', [Validators.required, Validators.min(0)]],
+      product_id: [[]],
+      subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['', [Validators.required, Validators.min(0)]],
-      signature_id: [0]
+      total_amount: ['',],
+      signature_id: [0],
+      invoice_details: this.fb.array([])
     });
   }
 
@@ -69,7 +70,21 @@ export class QuotationsAddEditComponent implements OnInit {
     if (this.isAddMode === true) {
       this.generateQuotationNumber();
     }
+    this.productFormArray.valueChanges.subscribe(() => {
+      this.calculateTotalAmount();
+    });
   }
+
+  calculateTotalAmount() {
+    // Sum up the total_amount from the FormArray
+    const total = this.productFormArray.controls.reduce((sum, control) => {
+      return sum + (control.get('total_amount')?.value || 0);
+    }, 0);
+    this.QuotationForm.get('total_amount')?.setValue(total)
+    // Log the total to the console
+    console.log('Total Amount:', total);
+  }
+
 
   GetCustomers() {
     this.CustomerService.GetCustomers().subscribe({
@@ -171,35 +186,117 @@ export class QuotationsAddEditComponent implements OnInit {
       total_amount: quotation.total_amount,
       signature_id: quotation.signature_id
     });
-  }
 
-  onProductChange(event: Event): void {
-    // Parse the selected product ID as an integer
-    const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
-    this.GetSubProductsByProductId(selectedProductId);
-    console.log('Selected Product ID:', selectedProductId);
+    // Clear the existing FormArray
+    this.productFormArray.clear();
 
-    // Find the selected product from the productList
-    const selectedProduct = this.productList.find(product => product.product_id === selectedProductId);
-    if (selectedProduct) {
-      this.product_name = selectedProduct?.product_name
-      console.log('Selected Product:', selectedProduct);
+    // Parse and populate the `invoice_details` array
+    let invoiceDetails: any[] = [];
+    try {
+      invoiceDetails = JSON.parse(quotation.invoice_details); // Parse the JSON string
+    } catch (error) {
+      console.error('Error parsing invoice_details:', error);
+    }
+
+    // Ensure it's an array and populate the FormArray
+    if (Array.isArray(invoiceDetails)) {
+      const productIds = [...new Set(invoiceDetails.map(detail => detail.product_id))];
+      this.QuotationForm.get('product_id')?.setValue(productIds)
+      invoiceDetails.forEach((detail: any) => {
+        this.productFormArray.push(
+          this.fb.group({
+            product_id: [detail.product_id],
+            subproduct_id: [detail.subproduct_id],
+            quantity: [detail.quantity],
+            unit: [detail.unit],
+            rate: [detail.rate],
+            total_amount: [detail.total_amount],
+          })
+        );
+      });
+      const totalAmounts = this.productFormArray.controls.map((control) =>
+        control.get('total_amount')?.value || 0
+      );
+      const totalOfTotalAmounts = totalAmounts.reduce((acc, value) => acc + value, 0);
+      this.QuotationForm.get('total_amount')?.setValue(totalOfTotalAmounts)
+      console.log('Sum of Total Amounts:', totalOfTotalAmounts)
+    } else {
+      console.warn('invoice_details is not an array:', invoiceDetails);
     }
   }
 
-  onSubProductChange(event: Event): void {
-    // Parse the selected product ID as an integer
-    const selectedProductId = parseInt((event.target as HTMLSelectElement).value, 10);
-    this.GetSubProductsByProductId(selectedProductId);
-    console.log('Selected SubProduct ID:', selectedProductId);
-
-    // Find the selected product from the productList
-    const selectedProduct = this.subProductList.find(product => product.subproduct_id === selectedProductId);
-    if (selectedProduct) {
-      this.subproduct_name = selectedProduct?.subproduct_name
-      console.log('Selected Product:', selectedProduct);
-    }
+  get productFormArray(): FormArray {
+    return this.QuotationForm.get('invoice_details') as FormArray;
   }
+
+  onProductChange(event: any): void {
+    const selectedProductIds = event.value; // Assuming this is an array of selected product IDs
+
+    const selectedProducts = this.productList.filter(product =>
+      selectedProductIds.includes(product.product_id)
+    );
+
+    // Clear the existing form array and add new form groups for each selected product
+    this.productFormArray.clear();
+
+    selectedProducts.forEach(product => {
+      this.productFormArray.push(
+        this.fb.group({
+          product_id: [product.product_id],
+          subproduct_id: [null], // Or set a default subproduct value
+          quantity: [0],
+          unit: ['box'],
+          rate: [0],
+          total_amount: [0],
+        })
+      );
+    });
+  }
+
+  onSubProductChange(event: any): void {
+    const selectedSubProductIds = event.value;
+    const selectedSubProducts = this.subProductList.filter(product =>
+      selectedSubProductIds.includes(product.subproduct_id)
+    );
+    this.productFormArray.clear();
+    selectedSubProducts.forEach(subProduct => {
+      this.productFormArray.push(
+        this.fb.group({
+          subproduct_id: [subProduct.subproduct_id],
+          product_id: [subProduct.product_id],
+          quantity: [0],
+          unit: ['box'],
+          rate: [0],
+          total_amount: [0],
+        })
+      );
+    });
+  }
+
+  updateAmount(index: number): void {
+    const row = this.productFormArray.at(index);
+    const quantity = row.get('quantity')?.value || 0;
+    const rate = row.get('rate')?.value || 0;
+    const totalAmount = quantity * rate;
+
+    // Update total_amount and trigger total calculation
+    row.get('total_amount')?.setValue(totalAmount, { emitEvent: false });
+
+    // Manually recalculate the total after updating the row
+    this.calculateTotalAmount();
+  }
+
+
+  getProductName(product_id: number): string {
+    const product = this.productList.find(prod => prod.product_id === product_id);
+    return product ? product.product_name : '';
+  }
+
+  getSubProductName(subproduct_id: number): string {
+    const subProduct = this.subProductList.find(product => product.subproduct_id === subproduct_id);
+    return subProduct ? subProduct.subproduct_name : '';
+  }
+
 
   onSignatureSelect(event: Event): void {
     const selectedId = (event.target as HTMLSelectElement).value;
