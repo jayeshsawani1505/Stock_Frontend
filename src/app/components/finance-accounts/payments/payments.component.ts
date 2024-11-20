@@ -146,7 +146,7 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
   async generatePDF(data: any) {
     console.log(data);
 
-    const invoiceDetails = JSON.parse(data.invoice_details || "[]");
+    const invoiceDetails = data.invoice_details || [];
 
     let docDefinition: any = {
       content: [
