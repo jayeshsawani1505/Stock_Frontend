@@ -94,7 +94,7 @@
                                                     <mat-option value="" disabled>Select Product</mat-option>
                                                     <mat-option *ngFor="let product of productList"
                                                         [value]="product.product_id">
-                                                        {{ product.product_name }}
+                                                        {{ product.product_name }} - (AVL:{{ product.quantity}})
                                                     </mat-option>
                                                 </mat-select>
                                             </mat-form-field>
