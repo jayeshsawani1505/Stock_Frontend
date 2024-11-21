@@ -70,7 +70,7 @@ export class InvoicesAddEditComponent implements OnInit {
     this.fetchinvoiceData();
     if (this.isAddMode === true) {
       this.generateInvoiceNumber();
-    }
+    } 
     this.productFormArray.controls.forEach((control, index) => {
       // Watch for changes in 'quantity' and 'rate'
       control.get('quantity')?.valueChanges.subscribe(() => {
@@ -286,6 +286,7 @@ export class InvoicesAddEditComponent implements OnInit {
     const rate = row.get('rate')?.value || 0;
     const totalAmount = quantity * rate;
     row.get('total_amount')?.setValue(totalAmount, { emitEvent: false });
+    this.calculateTotalAmount();
   }
 
   getProductName(product_id: number): string {
