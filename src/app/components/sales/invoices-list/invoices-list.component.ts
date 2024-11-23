@@ -268,7 +268,7 @@ export class InvoicesListComponent implements OnInit {
               // Dynamically add rows here
               ...invoiceDetails.map((item: any, index: number) => [
                 { text: index + 1, alignment: 'center' },
-                { text: `${item.product_name} - ${item.subproduct_name || ''}` },
+                { text: `${data.category_name} - ${item.product_name}` },
                 { text: item.quantity },
                 { text: `INR ${item.rate}`, alignment: 'right' },
                 { text: `INR ${item.total_amount}`, alignment: 'right' },

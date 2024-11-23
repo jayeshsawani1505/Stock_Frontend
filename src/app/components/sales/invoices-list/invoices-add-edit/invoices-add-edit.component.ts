@@ -14,6 +14,7 @@ import { InvoiceService } from '../../../../services/invoice.service';
 import { ProductService } from '../../../../services/products.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { SubProductService } from '../../../../services/subProduct.service';
+import { CategoryService } from '../../../../services/Category.service';
 
 @Component({
   selector: 'app-invoices-add-edit',
@@ -31,6 +32,7 @@ export class InvoicesAddEditComponent implements OnInit {
   productList: any[] = []; // Define productList to store product dataX
   subProductList: any[] = []; // Define subProductList to store product dataX
   signatureList: any[] = [];
+  categoryList: any[] = [];
   invoiceData: any;
   product_name: any;
   subproduct_name: any;
@@ -43,6 +45,7 @@ export class InvoicesAddEditComponent implements OnInit {
     private SubProductService: SubProductService,
     private invoiceService: InvoiceService,
     private SignatureService: SignatureService,
+    private categoryService: CategoryService,
     private snackBar: MatSnackBar,
     private router: Router
   ) {
@@ -53,6 +56,7 @@ export class InvoicesAddEditComponent implements OnInit {
       due_date: ['', Validators.required],
       transpoter_name: ['', Validators.required],
       status: ['Pending', Validators.required],
+      category_id: [''],
       product_id: [[]],
       subproduct_id: [[]],
       notes: ['', Validators.required],
@@ -65,12 +69,12 @@ export class InvoicesAddEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.GetCustomers();
-    this.GetProducts();
+    this.GetCategories();
     this.GetSignatures();
     this.fetchinvoiceData();
     if (this.isAddMode === true) {
       this.generateInvoiceNumber();
-    } 
+    }
     this.productFormArray.controls.forEach((control, index) => {
       // Watch for changes in 'quantity' and 'rate'
       control.get('quantity')?.valueChanges.subscribe(() => {
@@ -105,6 +109,17 @@ export class InvoicesAddEditComponent implements OnInit {
     });
   }
 
+  GetCategories(): void {
+    this.categoryService.GetCategories().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.data) {
+          this.categoryList = res.data;
+        }
+      }
+    })
+  }
+
   generateInvoiceNumber() {
     this.invoiceService.generateInvoiceNumber().subscribe({
       next: (res: any) => {
@@ -119,8 +134,8 @@ export class InvoicesAddEditComponent implements OnInit {
   }
 
   // GetProducts method
-  GetProducts() {
-    this.productService.GetProducts().subscribe({
+  GetProductsByCategoryId(category_id: any) {
+    this.productService.GetProductsByCategoryId(category_id).subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.products) {
@@ -178,13 +193,15 @@ export class InvoicesAddEditComponent implements OnInit {
 
   // Populate the form with the invoice data
   populateForm(invoice: any): void {
-    this.GetSubProductsByProductId(invoice.product_id,)
+    this.GetProductsByCategoryId(invoice.category_id,)
+    // this.GetSubProductsByProductId(invoice.product_id,)
     this.invoiceForm.patchValue({
       invoice_number: invoice.invoice_number,
       customer_id: invoice.customer_id,
       invoice_date: new Date(invoice.invoice_date),
       due_date: new Date(invoice.due_date),
       transpoter_name: invoice.transpoter_name,
+      category_id: invoice.category_id,
       status: invoice.status,
       recurring_cycle: invoice.recurring_cycle,
       product_id: invoice.product_id,
@@ -234,6 +251,12 @@ export class InvoicesAddEditComponent implements OnInit {
 
   get productFormArray(): FormArray {
     return this.invoiceForm.get('invoice_details') as FormArray;
+  }
+
+  onCategoryChange(event: any): void {
+    const selectedCategoryId = event.value;
+    console.log(selectedCategoryId);
+    this.GetProductsByCategoryId(selectedCategoryId)
   }
 
   onProductChange(event: any): void {

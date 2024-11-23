@@ -21,6 +21,13 @@ export class ProductService {
             .pipe(catchError(this.handleError));
     }
 
+    // Get all products
+    GetProductsByCategoryId(categoryId: any): Observable<any> {
+        return this.httpClient
+            .get(environment.baseURL + `/products/category/${categoryId}`)
+            .pipe(catchError(this.handleError));
+    }
+
     // Add a new product
     AddProduct(productData: any, file?: File): Observable<any> {
         const formData = new FormData();
