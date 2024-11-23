@@ -10,6 +10,7 @@ import { ExcelService } from '../../../services/excel.service';
 import { InvoiceService } from '../../../services/invoice.service';
 import { ChangeInvoiceStatusComponent } from './change-invoice-status/change-invoice-status.component';
 import { DeleteInvoiceComponent } from './delete-invoice/delete-invoice.component';
+import moment from 'moment';
 
 @Component({
   selector: 'app-invoices-list',
@@ -223,7 +224,7 @@ export class InvoicesListComponent implements OnInit {
                 color: '#4e50d3',
               },
               {
-                text: `Invoice No: ${data.invoice_number}\nInvoice Date: ${data.invoice_date || 'Not Available'}\nDue Date: ${data.due_date || 'Not Available'}`,
+                text: `Invoice No: ${data.invoice_number}\nInvoice Date: ${formatDate(data.invoice_date) || 'Not Available'}\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -330,4 +331,8 @@ export class InvoicesListComponent implements OnInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD-MMM-YYYY') : null;
 }
