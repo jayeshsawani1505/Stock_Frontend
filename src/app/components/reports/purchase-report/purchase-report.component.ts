@@ -13,11 +13,11 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import moment from 'moment';
 import { ExcelService } from '../../../services/excel.service';
-import { PaymentService } from '../../../services/payments.service';
-import { CustomerService } from '../../../services/Customer.service';
+import { PurchaseService } from '../../../services/purchases.service';
+import { VendorService } from '../../../services/vendors.service';
 
 @Component({
-  selector: 'app-payment-summary',
+  selector: 'app-purchase-report',
   standalone: true,
   imports: [CommonModule, MatDialogModule,
     MatPaginatorModule, MatTableModule, MatSnackBarModule,
@@ -25,78 +25,79 @@ import { CustomerService } from '../../../services/Customer.service';
     MatFormFieldModule, MatDatepickerModule, MatButtonModule, MatSelectModule
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './payment-summary.component.html',
-  styleUrl: './payment-summary.component.css'
+  templateUrl: './purchase-report.component.html',
+  styleUrl: './purchase-report.component.css'
 })
-export class PaymentSummaryComponent implements OnInit, AfterViewInit {
+export class PurchaseReportComponent implements OnInit, AfterViewInit {
   range: FormGroup;
-  paymentsList: any[] = [];
+  PurchaseList: any[] = []; // Define PurchaseList to store Purchase data
+  PurchaseIdToDelete: number | null = null;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'customer_id', 'customer_name', 'amount', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
+  displayedColumns: string[] = ['vendor_id', 'vendor_name', 'total_amount', 'payment_mode', 'status', 'created_at'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};
-  customerList: any[] = [];
+  vendorList: any[] = [];
 
-  constructor(
-    private PaymentService: PaymentService,
-    private CustomerService: CustomerService,
+  constructor(private PurchaseService: PurchaseService,
     private ExcelService: ExcelService,
+    private VendorService: VendorService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog, private fb: FormBuilder) {
+    private fb: FormBuilder) {
     this.range = this.fb.group({
       start: [null],
       end: [null],
-      customer_id: [null],
+      vendor_id: [null],
     });
   }
 
   ngOnInit(): void {
-    this.GetCustomers();
-    this.GetPayments();
+    this.GetVendors();
+    this.getPurchases();
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator!; // Assign paginator to data source after view initialization
+    this.dataSource.paginator = this.paginator!;
   }
-  GetCustomers() {
-    this.CustomerService.GetCustomers().subscribe({
+
+  // Fetch vendors
+  GetVendors(): void {
+    this.VendorService.GetVendors().subscribe({
       next: (res: any) => {
         console.log(res);
-        if (res && res.customers) {
-          this.customerList = res.customers; // Assign customers data to customerList
+        if (res && res.vendors) {
+          this.vendorList = res.vendors;
         }
       },
     });
   }
-  GetPayments(): void {
+  // Fetch Purchase data
+  getPurchases(): void {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PaymentService.getFilteredPayments(filters).subscribe({
+    this.PurchaseService.getFilteredPurchases(filters).subscribe({
       next: (res: any) => {
-        console.log(res);
         if (res && res.data) {
-          this.paymentsList = res.data; // Assign the Payment data to paymentsList
-          this.dataSource.data = this.paymentsList; // Assign the data to MatTableDataSource
+          this.PurchaseList = res.data;
+          this.dataSource.data = this.PurchaseList;
         }
       },
-      error: (err: any) => {
-        console.error('Error fetching categories:', err);
+      error: (err) => {
+        console.error('Error fetching Purchases:', err);
         this.openSnackBar('error', 'Close');
       }
     });
   }
 
-  // Apply filter to search
+  // Apply filter based on search input
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
-
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+      this.dataSource.paginator.firstPage();
     }
   }
-
 
   getFormattedDateRange(): string {
     const start = this.range.value.start
@@ -115,33 +116,42 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
     const end = this.range.value.end
       ? moment(this.range.value.end).format('YYYY-MM-DD')
       : null;
-    const customer_id = this.range.value.customer_id
-    if (start && end || customer_id) {
+    const vendor_id = this.range.value.vendor_id
+    if (start && end || vendor_id) {
       this.filters = {
         startDate: start,
         endDate: end,
-        customerId: customer_id
+        vendorId: vendor_id
       };
-      this.GetPayments();
+      this.getPurchases();
     }
   }
   FilterReset() {
     this.range.reset();
     this.filters = {};
-    this.GetPayments();
+    this.getPurchases();
   }
 
   excelDownload(title: string) {
-    // Assuming categoryList contains the list of categories
-    let dataToExport = this.paymentsList.map((x: any) => ({
-      payment_id: x.payment_id,
-      customer_name: x.customer_name,
-      amount: x.amount,
-      payment_mode: x.payment_mode || 'N/A', // Provide default value if payment_mode is empty
-      payment_date: x.payment_date,
-      payment_status: x.payment_status,
-      description: x.description,
+    // Assuming purchaseList contains the list of purchase records
+    let dataToExport = this.PurchaseList.map((x: any) => ({
+      vendor_id: x.vendor_id,
+      purchase_date: x.purchase_date,
+      due_date: x.due_date,
+      reference_no: x.reference_no,
+      supplier_invoice_serial_no: x.supplier_invoice_serial_no,
+      product_id: x.product_id,
+      quantity: x.quantity,
+      unit: x.unit,
+      rate: x.rate,
+      notes: x.notes,
+      terms_conditions: x.terms_conditions,
+      total_amount: x.total_amount,
+      signature_image: x.signature_image,
       created_at: x.created_at,
+      payment_mode: x.payment_mode,
+      status: x.status,
+      vendor_name: x.vendor_name
     }));
 
     // Prepare the data to export by converting each row to its values
@@ -168,7 +178,6 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

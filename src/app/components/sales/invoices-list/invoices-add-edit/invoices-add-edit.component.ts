@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,19 +10,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import { CategoryService } from '../../../../services/Category.service';
 import { CustomerService } from '../../../../services/Customer.service';
 import { InvoiceService } from '../../../../services/invoice.service';
 import { ProductService } from '../../../../services/products.service';
 import { SignatureService } from '../../../../services/signature.srvice';
-import { SubProductService } from '../../../../services/subProduct.service';
-import { CategoryService } from '../../../../services/Category.service';
 
 @Component({
   selector: 'app-invoices-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
     RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule,
-    MatSelectModule],
+    MatSelectModule, MatAutocompleteModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './invoices-add-edit.component.html',
   styleUrl: './invoices-add-edit.component.css'
@@ -30,19 +30,19 @@ export class InvoicesAddEditComponent implements OnInit {
   invoiceForm!: FormGroup;
   customerList: any[] = []; // Define customerList to store customer data
   productList: any[] = []; // Define productList to store product dataX
-  subProductList: any[] = []; // Define subProductList to store product dataX
   signatureList: any[] = [];
   categoryList: any[] = [];
   invoiceData: any;
   product_name: any;
   subproduct_name: any;
   isAddMode: boolean = true;
-  signature_photo: any
+  signature_photo: any;
+  filteredCategories: any[] = [];
+  filteredProducts: any[] = [];
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
     private productService: ProductService,
-    private SubProductService: SubProductService,
     private invoiceService: InvoiceService,
     private SignatureService: SignatureService,
     private categoryService: CategoryService,
@@ -57,11 +57,14 @@ export class InvoicesAddEditComponent implements OnInit {
       transpoter_name: ['', Validators.required],
       status: ['Pending', Validators.required],
       category_id: [''],
-      product_id: [[]],
+      product_id: [''],
       subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['',],
+      adjustmentType: ['add'],
+      adjustmentValue: [0],
+      subtotal_amount: [''],
+      total_amount: [0],
       signature_id: [0],
       invoice_details: this.fb.array([]), // FormArray for the table rows
     });
@@ -75,6 +78,8 @@ export class InvoicesAddEditComponent implements OnInit {
     if (this.isAddMode === true) {
       this.generateInvoiceNumber();
     }
+    this.addRow();
+    // this.addDefaultRows(5); // Add 5 default rows
     this.productFormArray.controls.forEach((control, index) => {
       // Watch for changes in 'quantity' and 'rate'
       control.get('quantity')?.valueChanges.subscribe(() => {
@@ -89,12 +94,28 @@ export class InvoicesAddEditComponent implements OnInit {
     });
     this.calculateTotalAmount();
   }
+  calculateAdjustedTotal(): number {
+    const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
+    const adjustmentType = this.invoiceForm.get('adjustmentType')?.value;
+    const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
+
+    // Calculate the adjusted total
+    const totalAmount =
+      adjustmentType === 'add'
+        ? subtotalAmount + adjustmentValue
+        : subtotalAmount - adjustmentValue;
+
+    // Set the total_amount in the form
+    this.invoiceForm.patchValue({ total_amount: totalAmount });
+
+    return totalAmount;
+  }
 
   calculateTotalAmount() {
     const total = this.productFormArray.controls.reduce((sum, control) => {
-      return sum + (control.get('total_amount')?.value || 0);
+      return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
-    this.invoiceForm.get('total_amount')?.setValue(total)
+    this.invoiceForm.get('subtotal_amount')?.setValue(total)
     console.log('Total Amount:', total);
   }
 
@@ -112,6 +133,7 @@ export class InvoicesAddEditComponent implements OnInit {
   GetCategories(): void {
     this.categoryService.GetCategories().subscribe({
       next: (res: any) => {
+        this.GetProducts()
         console.log(res);
         if (res && res.data) {
           this.categoryList = res.data;
@@ -134,8 +156,8 @@ export class InvoicesAddEditComponent implements OnInit {
   }
 
   // GetProducts method
-  GetProductsByCategoryId(category_id: any) {
-    this.productService.GetProductsByCategoryId(category_id).subscribe({
+  GetProducts() {
+    this.productService.GetProducts().subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.products) {
@@ -164,19 +186,6 @@ export class InvoicesAddEditComponent implements OnInit {
     })
   }
 
-  GetSubProductsByProductId(productId: any) {
-    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        this.subProductList = res.subproducts; // Assign products data to productList
-        if (this.isAddMode === false) {
-          const selectedProduct = this.subProductList.find(product => product.subproduct_id === +this.invoiceData?.signature_id);
-          this.subproduct_name = selectedProduct?.subproduct_name
-        }
-      }
-    });
-  }
-
   // Method to fetch customer data, either from route state or API
   fetchinvoiceData() {
     // Get customer data from history state (if available)
@@ -193,7 +202,6 @@ export class InvoicesAddEditComponent implements OnInit {
 
   // Populate the form with the invoice data
   populateForm(invoice: any): void {
-    this.GetProductsByCategoryId(invoice.category_id,)
     // this.GetSubProductsByProductId(invoice.product_id,)
     this.invoiceForm.patchValue({
       invoice_number: invoice.invoice_number,
@@ -207,7 +215,7 @@ export class InvoicesAddEditComponent implements OnInit {
       product_id: invoice.product_id,
       notes: invoice.notes,
       terms_conditions: invoice.terms_conditions,
-      total_amount: invoice.total_amount,
+      subtotal_amount: invoice.subtotal_amount,
       signature_id: invoice.signature_id,
     });
 
@@ -234,15 +242,15 @@ export class InvoicesAddEditComponent implements OnInit {
             quantity: [detail.quantity],
             unit: [detail.unit],
             rate: [detail.rate],
-            total_amount: [detail.total_amount],
+            subtotal_amount: [detail.subtotal_amount],
           })
         );
       });
       const totalAmounts = this.productFormArray.controls.map((control) =>
-        control.get('total_amount')?.value || 0
+        control.get('subtotal_amount')?.value || 0
       );
       const totalOfTotalAmounts = totalAmounts.reduce((acc, value) => acc + value, 0);
-      this.invoiceForm.get('total_amount')?.setValue(totalOfTotalAmounts)
+      this.invoiceForm.get('subtotal_amount')?.setValue(totalOfTotalAmounts)
       console.log('Sum of Total Amounts:', totalOfTotalAmounts)
     } else {
       console.warn('invoice_details is not an array:', invoiceDetails);
@@ -256,51 +264,50 @@ export class InvoicesAddEditComponent implements OnInit {
   onCategoryChange(event: any): void {
     const selectedCategoryId = event.value;
     console.log(selectedCategoryId);
-    this.GetProductsByCategoryId(selectedCategoryId)
   }
 
-  onProductChange(event: any): void {
-    const selectedProductIds = event.value; // Assuming this is an array of selected product IDs
-
-    const selectedProducts = this.productList.filter(product =>
-      selectedProductIds.includes(product.product_id)
-    );
-
-    // Clear the existing form array and add new form groups for each selected product
-    this.productFormArray.clear();
-
-    selectedProducts.forEach(product => {
-      this.productFormArray.push(
-        this.fb.group({
-          product_id: [product.product_id],
-          subproduct_id: [null], // Or set a default subproduct value
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
-      );
+  addRow(): void {
+    const newRow = this.fb.group({
+      category_name: [null],
+      product_name: [null],
+      quantity: [0],
+      unit: ['piece'],
+      rate: [0],
+      subtotal_amount: [0],
     });
+    this.productFormArray.push(newRow);
+    this.filteredCategories.push(this.categoryList);
+    this.filteredProducts.push([]);
   }
 
-  onSubProductChange(event: any): void {
-    const selectedSubProductIds = event.value;
-    const selectedSubProducts = this.subProductList.filter(product =>
-      selectedSubProductIds.includes(product.subproduct_id)
+
+  filterCategory(i: number): void {
+    const categoryControl = this.productFormArray.at(i).get('category_name');
+    const searchTerm = categoryControl?.value;
+    this.filteredCategories[i] = this.categoryList.filter(category =>
+      category.category_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '')
     );
-    this.productFormArray.clear();
-    selectedSubProducts.forEach(subProduct => {
-      this.productFormArray.push(
-        this.fb.group({
-          subproduct_id: [subProduct.subproduct_id],
-          product_id: [subProduct.product_id],
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
+
+    // Reset product_name field when category changes
+    this.productFormArray.at(i).get('product_name')?.reset();
+    this.filteredProducts[i] = [];
+  }
+
+  filterProduct(i: number): void {
+    const productControl = this.productFormArray.at(i).get('product_name');
+    const searchTerm = productControl?.value;
+
+    const categoryName = this.productFormArray.at(i).get('category_name')?.value;
+    const selectedCategory = this.categoryList.find(category => category.category_name === categoryName);
+
+    if (selectedCategory) {
+      this.filteredProducts[i] = this.productList.filter(product =>
+        product.product_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '') &&
+        product.category_id === selectedCategory.category_id
       );
-    });
+    } else {
+      this.filteredProducts[i] = [];
+    }
   }
 
   updateAmount(index: number): void {
@@ -308,18 +315,8 @@ export class InvoicesAddEditComponent implements OnInit {
     const quantity = row.get('quantity')?.value || 0;
     const rate = row.get('rate')?.value || 0;
     const totalAmount = quantity * rate;
-    row.get('total_amount')?.setValue(totalAmount, { emitEvent: false });
+    row.get('subtotal_amount')?.setValue(totalAmount, { emitEvent: false });
     this.calculateTotalAmount();
-  }
-
-  getProductName(product_id: number): string {
-    const product = this.productList.find(prod => prod.product_id === product_id);
-    return product ? product.product_name : '';
-  }
-
-  getSubProductName(subproduct_id: number): string {
-    const subProduct = this.subProductList.find(product => product.subproduct_id === subproduct_id);
-    return subProduct ? subProduct.subproduct_name : '';
   }
 
   onSignatureSelect(event: Event): void {

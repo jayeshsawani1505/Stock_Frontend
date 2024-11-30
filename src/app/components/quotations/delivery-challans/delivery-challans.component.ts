@@ -210,22 +210,24 @@ export class DeliveryChallansComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: [20, '*', 60, 50, 60],
+            widths: [20, '*', 60, 60, 60, 60],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
                 { text: 'Item', bold: true },
                 { text: 'Quantity', bold: true },
+                { text: 'Unit', bold: true },
                 { text: 'Unit Price', bold: true },
                 { text: 'Amount', bold: true },
               ],
               // Dynamically add rows here
               ...invoiceDetails.map((item: any, index: number) => [
                 { text: index + 1, alignment: 'center' },
-                { text: `${item.product_name} - ${item.subproduct_name || ''}` },
+                { text: `${item.category_name} - ${item.product_name}` },
                 { text: item.quantity },
-                { text: `INR ${item.rate}`, alignment: 'right' },
-                { text: `INR ${item.total_amount}`, alignment: 'right' },
+                { text: item.unit },
+                { text: ` ${item.rate}`, alignment: 'right' },
+                { text: ` ${item.total_amount}`, alignment: 'right' },
               ]),
             ],
           },
@@ -277,7 +279,7 @@ export class DeliveryChallansComponent implements OnInit {
     pdfMake.createPdf(docDefinition).open();
     // pdfMake.createPdf(docDefinition).download('Delivery_Challan.pdf');
   }
-  
+
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

@@ -1,0 +1,132 @@
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="content-page-header">
+            <h5>Quotations Report</h5>
+            <div class="list-btn">
+                <ul class="filter-list">
+                    <li>
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('quotations')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Page Header -->
+    <!-- Table -->
+    <div class="row">
+        <div class="col-sm-12">
+            <form [formGroup]="range">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Enter a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate formControlName="start" placeholder="Start date">
+                                <input matEndDate formControlName="end" placeholder="End date">
+                            </mat-date-range-input>
+                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+
+                            <mat-error *ngIf="range.get('start')?.hasError('matStartDateInvalid')">
+                                Invalid start date
+                            </mat-error>
+                            <mat-error *ngIf="range.get('end')?.hasError('matEndDateInvalid')">
+                                Invalid end date
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Choose Customer</mat-label>
+                            <mat-select formControlName="customer_id">
+                                <mat-option value="" disabled>Choose Customer</mat-option>
+                                <mat-option *ngFor="let customer of customerList" [value]="customer.customer_id">
+                                    {{ customer.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <!-- Search Input -->
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Search</mat-label>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Search purchases" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12 mt-2">
+                        <button mat-stroked-button color="primary" style="margin-right: 10px;"
+                            (click)="applyDateFilter()">
+                            Apply Filter</button>
+
+                        <button mat-stroked-button color="primary" (click)="FilterReset()">
+                            Filter Reset</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
+                            <ng-container matColumnDef="id">
+                                <th mat-header-cell *matHeaderCellDef> Quotation Id</th>
+                                <td mat-cell *matCellDef="let element"> {{ element.id }} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="quotation_number">
+                                <th mat-header-cell *matHeaderCellDef> Quotation Number</th>
+                                <td mat-cell *matCellDef="let element"> {{ element.quotation_number }} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="customer_id">
+                                <th mat-header-cell *matHeaderCellDef> Customer Name </th>
+                                <td mat-cell *matCellDef="let element">
+                                    <span>{{ element.customer_name }}</span><br>
+                                    <span>{{element.customer_phone}}</span>
+                                </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="total_amount">
+                                <th mat-header-cell *matHeaderCellDef> Total Amount </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.total_amount }} </td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="due_date">
+                                <th mat-header-cell *matHeaderCellDef> Due Date </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.due_date | date:'d MMM y' }} </td>
+                            </ng-container>
+                            <!-- Status -->
+                            <ng-container matColumnDef="status">
+                                <th mat-header-cell *matHeaderCellDef>Status</th>
+                                <td mat-cell *matCellDef="let invoice"><span class="badge" [ngClass]="{
+                                    'bg-success-light': invoice.status === 'paid',
+                                    'bg-warning-light': invoice.status === 'pending' || invoice.status === 'partially_paid' || invoice.status === 'unpaid' || invoice.status === 'draft',
+                                    'bg-danger-light': invoice.status === 'overdue',
+                                    'bg-secondary-light': invoice.status === 'cancelled',
+                                    'bg-info-light': invoice.status === 'refunded'
+                                }">{{ invoice.status }}</span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="created_at">
+                                <th mat-header-cell *matHeaderCellDef> Created Date </th>
+                                <td mat-cell *matCellDef="let element"> {{ element.created_at | date:'d MMM y' }} </td>
+                            </ng-container>
+
+                            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        </table>
+
+                        <mat-paginator [length]="quotationsList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 25]"
+                            showFirstLastButtons></mat-paginator>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Table -->
+</div>

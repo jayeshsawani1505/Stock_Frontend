@@ -12,8 +12,8 @@ import { environment } from '../../../../../environments/environment';
 import { ProductService } from '../../../../services/products.service';
 import { ReturnDebitNotesPurchaseService } from '../../../../services/return-debit-notes-purchases.service';
 import { SignatureService } from '../../../../services/signature.srvice';
-import { SubProductService } from '../../../../services/subProduct.service';
 import { VendorService } from '../../../../services/vendors.service';
+import { CategoryService } from '../../../../services/Category.service';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
@@ -30,9 +30,9 @@ export class DebitNotesAddEditComponent implements OnInit {
   vendorList: any[] = [];
   productList: any[] = [];
   signatureList: any[] = [];
+  categoryList: any[] = [];
   purchaseData: any;
   product_name: any;
-  subProductList: any[] = []; // Define subProductList to store product dataX
   isAddMode: boolean = true;
   signature_photo: any
 
@@ -40,16 +40,17 @@ export class DebitNotesAddEditComponent implements OnInit {
     private fb: FormBuilder,
     private VendorService: VendorService,
     private productService: ProductService,
-    private SubProductService: SubProductService,
     private ReturnDebitNotesPurchaseService: ReturnDebitNotesPurchaseService,
-    private SignatureService: SignatureService, private snackBar: MatSnackBar,
+    private categoryService: CategoryService,
+    private SignatureService: SignatureService,
+    private snackBar: MatSnackBar,
     private router: Router
   ) {
     this.purchaseForm = this.fb.group({
       vendor_id: ['', Validators.required],
       purchase_order_date: ['', Validators.required],
       due_date: ['', Validators.required],
-      reference_no: ['', Validators.required],
+      reference_no: ['00', Validators.required],
       status: ['Pending', Validators.required],
       payment_mode: ['', Validators.required],
       product_id: [[]],
@@ -64,6 +65,7 @@ export class DebitNotesAddEditComponent implements OnInit {
 
   ngOnInit(): void {
     this.GetVendors();
+    this.GetCategories();
     this.GetProducts();
     this.GetSignatures();
     this.fetchPurchaseData();
@@ -94,6 +96,16 @@ export class DebitNotesAddEditComponent implements OnInit {
     });
   }
 
+  GetCategories(): void {
+    this.categoryService.GetCategories().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.data) {
+          this.categoryList = res.data;
+        }
+      }
+    })
+  }
   // GetProducts method
   GetProducts() {
     this.productService.GetProducts().subscribe({
@@ -125,14 +137,6 @@ export class DebitNotesAddEditComponent implements OnInit {
     })
   }
 
-  GetSubProductsByProductId(productId: any) {
-    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        this.subProductList = res.subproducts; // Assign products data to productList
-      }
-    });
-  }
 
   // Method to fetch Purchase data, either from route state or API
   fetchPurchaseData() {
@@ -149,7 +153,6 @@ export class DebitNotesAddEditComponent implements OnInit {
   }
   // Populate the form with the purchase data
   populateForm(purchase: any): void {
-    this.GetSubProductsByProductId(purchase.product_id,)
     this.purchaseForm.patchValue({
       vendor_id: purchase.vendor_id || '',
       purchase_order_date: purchase.purchase_order_date,
@@ -185,6 +188,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       invoiceDetails.forEach((detail: any) => {
         this.productFormArray.push(
           this.fb.group({
+            category_id: [detail.category_id],
             product_id: [detail.product_id],
             subproduct_id: [detail.subproduct_id],
             quantity: [detail.quantity],
@@ -209,48 +213,21 @@ export class DebitNotesAddEditComponent implements OnInit {
     return this.purchaseForm.get('invoice_details') as FormArray;
   }
 
-  onProductChange(event: any): void {
-    const selectedProductIds = event.value; // Assuming this is an array of selected product IDs
-
-    const selectedProducts = this.productList.filter(product =>
-      selectedProductIds.includes(product.product_id)
-    );
-
-    // Clear the existing form array and add new form groups for each selected product
-    this.productFormArray.clear();
-
-    selectedProducts.forEach(product => {
-      this.productFormArray.push(
-        this.fb.group({
-          product_id: [product.product_id],
-          subproduct_id: [null], // Or set a default subproduct value
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
-      );
-    });
+  onCategoryChange(event: any): void {
+    const selectedCategoryId = event.value;
+    console.log(selectedCategoryId);
   }
 
-  onSubProductChange(event: any): void {
-    const selectedSubProductIds = event.value;
-    const selectedSubProducts = this.subProductList.filter(product =>
-      selectedSubProductIds.includes(product.subproduct_id)
-    );
-    this.productFormArray.clear();
-    selectedSubProducts.forEach(subProduct => {
-      this.productFormArray.push(
-        this.fb.group({
-          subproduct_id: [subProduct.subproduct_id],
-          product_id: [subProduct.product_id],
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
-      );
+  addRow(): void {
+    const newRow = this.fb.group({
+      category_id: [null, Validators.required],
+      product_id: [null, Validators.required],
+      quantity: [0, [Validators.required, Validators.min(1)]],
+      unit: ['piece', Validators.required],
+      rate: [0, [Validators.required, Validators.min(0)]],
+      total_amount: [0],
     });
+    this.productFormArray.push(newRow);
   }
 
   updateAmount(index: number): void {
@@ -264,17 +241,6 @@ export class DebitNotesAddEditComponent implements OnInit {
 
     // Manually recalculate the total after updating the row
     this.calculateTotalAmount();
-  }
-
-
-  getProductName(product_id: number): string {
-    const product = this.productList.find(prod => prod.product_id === product_id);
-    return product ? product.product_name : '';
-  }
-
-  getSubProductName(subproduct_id: number): string {
-    const subProduct = this.subProductList.find(product => product.subproduct_id === subproduct_id);
-    return subProduct ? subProduct.subproduct_name : '';
   }
 
   onSignatureSelect(event: Event): void {

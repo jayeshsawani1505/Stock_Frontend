@@ -1,23 +1,24 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { provideNativeDateAdapter } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import moment from 'moment';
+import { Router, RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
-import { PaymentService } from '../../../services/payments.service';
+import { QuotationService } from '../../../services/quotation.service';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import moment from 'moment';
 import { CustomerService } from '../../../services/Customer.service';
 
 @Component({
-  selector: 'app-payment-summary',
+  selector: 'app-quotation-report',
   standalone: true,
   imports: [CommonModule, MatDialogModule,
     MatPaginatorModule, MatTableModule, MatSnackBarModule,
@@ -25,25 +26,33 @@ import { CustomerService } from '../../../services/Customer.service';
     MatFormFieldModule, MatDatepickerModule, MatButtonModule, MatSelectModule
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './payment-summary.component.html',
-  styleUrl: './payment-summary.component.css'
+  templateUrl: './quotation-report.component.html',
+  styleUrl: './quotation-report.component.css'
 })
-export class PaymentSummaryComponent implements OnInit, AfterViewInit {
+export class QuotationReportComponent implements OnInit {
   range: FormGroup;
-  paymentsList: any[] = [];
+  quotationsList: any[] = []; // Define quotationsList to store invoice data
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'customer_id', 'customer_name', 'amount', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
+  displayedColumns: string[] = [
+    'id',
+    'quotation_number',
+    'customer_id',
+    'total_amount',
+    'due_date',
+    'status',
+    'created_at'
+  ];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};
   customerList: any[] = [];
 
   constructor(
-    private PaymentService: PaymentService,
+    private QuotationService: QuotationService,
     private CustomerService: CustomerService,
     private ExcelService: ExcelService,
-    private snackBar: MatSnackBar,
-    public dialog: MatDialog, private fb: FormBuilder) {
+    public dialog: MatDialog, private snackBar: MatSnackBar,
+    private router: Router, private fb: FormBuilder) {
     this.range = this.fb.group({
       start: [null],
       end: [null],
@@ -53,12 +62,13 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.GetCustomers();
-    this.GetPayments();
+    this.getQuotations();
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator!; // Assign paginator to data source after view initialization
+    this.dataSource.paginator = this.paginator!;
   }
+
   GetCustomers() {
     this.CustomerService.GetCustomers().subscribe({
       next: (res: any) => {
@@ -69,34 +79,33 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
       },
     });
   }
-  GetPayments(): void {
+
+  getQuotations() {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PaymentService.getFilteredPayments(filters).subscribe({
+    this.QuotationService.getFilteredQuotations(filters).subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.data) {
-          this.paymentsList = res.data; // Assign the Payment data to paymentsList
-          this.dataSource.data = this.paymentsList; // Assign the data to MatTableDataSource
+          this.quotationsList = res.data; // Assign invoice data to quotationsList
+          this.dataSource.data = this.quotationsList;
         }
       },
       error: (err: any) => {
-        console.error('Error fetching categories:', err);
+        console.error('Error fetching invoices:', err);
         this.openSnackBar('error', 'Close');
       }
     });
   }
 
-  // Apply filter to search
+  // Apply the filter for invoice search
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
-
     if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
+      this.dataSource.paginator.firstPage();
     }
   }
-
 
   getFormattedDateRange(): string {
     const start = this.range.value.start
@@ -122,53 +131,59 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
         endDate: end,
         customerId: customer_id
       };
-      this.GetPayments();
+      this.getQuotations();
     }
   }
   FilterReset() {
     this.range.reset();
     this.filters = {};
-    this.GetPayments();
+    this.getQuotations();
   }
 
   excelDownload(title: string) {
-    // Assuming categoryList contains the list of categories
-    let dataToExport = this.paymentsList.map((x: any) => ({
-      payment_id: x.payment_id,
-      customer_name: x.customer_name,
-      amount: x.amount,
-      payment_mode: x.payment_mode || 'N/A', // Provide default value if payment_mode is empty
-      payment_date: x.payment_date,
-      payment_status: x.payment_status,
-      description: x.description,
-      created_at: x.created_at,
+    // Assuming quotationsList contains the list of invoices
+    let dataToExport = this.quotationsList.map((x: any) => ({
+      quotation_number: x.quotation_number,
+      customer_name: x.customer_name || 'N/A',
+      customer_phone: x.customer_phone || 'N/A',
+      quotation_date: new Date(x.quotation_date).toLocaleDateString(),
+      due_date: new Date(x.due_date).toLocaleDateString(),
+      product_name: x.product_id,
+      quantity: x.quantity || 0,
+      unit: x.unit || 'N/A',
+      rate: x.rate || 0,
+      total_amount: x.total_amount || 0,
+      notes: x.notes || 'N/A',
+      terms_conditions: x.terms_conditions || 'N/A',
+      created_at: new Date(x.created_at).toLocaleDateString(),
+      category_name: x.category_name || 'N/A',
     }));
 
+
     // Prepare the data to export by converting each row to its values
-    this.dataForExcel = []; // Make sure to clear previous data
+    this.dataForExcel = []; // Clear previous data
     dataToExport.forEach((row: any) => {
       this.dataForExcel.push(Object.values(row));
     });
 
     console.log(this.dataForExcel);
 
-    // Extract the header names dynamically from the keys of the first object
+    // Extract header names dynamically from the keys of the first object
     let headers = Object.keys(dataToExport[0]);
 
-    // Define the report data with the headers and corresponding data
+    // Define the report data with headers and data
     let reportData = {
       data: this.dataForExcel,
-      headers: headers, // Dynamically use the keys as headers
+      headers: headers, // Use keys as headers
       title: title
     };
 
     // Call the Excel service to generate the excel file
     this.ExcelService.generateExcel(reportData);
 
-    // Clear the data after exporting
+    // Clear data after export
     this.dataForExcel = [];
   }
-
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

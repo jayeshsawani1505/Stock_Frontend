@@ -24,7 +24,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
   vendorList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'created', 'actions'];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'total_amount', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -158,7 +158,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
-  
+
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

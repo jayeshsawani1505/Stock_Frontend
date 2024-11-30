@@ -13,7 +13,7 @@ import { CustomerService } from '../../../../services/Customer.service';
 import { ProductService } from '../../../../services/products.service';
 import { QuotationService } from '../../../../services/quotation.service';
 import { SignatureService } from '../../../../services/signature.srvice';
-import { SubProductService } from '../../../../services/subProduct.service';
+import { CategoryService } from '../../../../services/Category.service';
 
 @Component({
   selector: 'app-quotations-add-edit',
@@ -29,7 +29,7 @@ export class QuotationsAddEditComponent implements OnInit {
   QuotationForm!: FormGroup;
   customerList: any[] = []; // Define customerList to store customer data
   productList: any[] = []; // Define productList to store product dataX
-  subProductList: any[] = []; // Define subProductList to store product dataX
+  categoryList: any[] = [];
   signatureList: any[] = [];
   QuotationData: any;
   product_name: any;
@@ -40,7 +40,7 @@ export class QuotationsAddEditComponent implements OnInit {
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
     private productService: ProductService,
-    private SubProductService: SubProductService,
+    private categoryService: CategoryService,
     private QuotationService: QuotationService,
     private SignatureService: SignatureService,
     private router: Router,
@@ -110,6 +110,16 @@ export class QuotationsAddEditComponent implements OnInit {
     });
   }
 
+  GetCategories(): void {
+    this.categoryService.GetCategories().subscribe({
+      next: (res: any) => {
+        console.log(res);
+        if (res && res.data) {
+          this.categoryList = res.data;
+        }
+      }
+    })
+  }
   // GetProducts method
   GetProducts() {
     this.productService.GetProducts().subscribe({
@@ -141,19 +151,6 @@ export class QuotationsAddEditComponent implements OnInit {
     })
   }
 
-  GetSubProductsByProductId(productId: any) {
-    this.SubProductService.GetSubProductsByProductId(productId).subscribe({
-      next: (res: any) => {
-        console.log(res);
-        this.subProductList = res.subproducts; // Assign products data to productList
-        if (this.isAddMode === false) {
-          const selectedProduct = this.subProductList.find(product => product.subproduct_id === +this.QuotationData?.signature_id);
-          this.subproduct_name = selectedProduct?.subproduct_name
-        }
-      }
-    });
-  }
-
   // Method to fetch customer data, either from route state or API
   fetchQuotationData() {
     // Get customer data from history state (if available)
@@ -170,7 +167,6 @@ export class QuotationsAddEditComponent implements OnInit {
 
   // Populate the form with the quotation data
   populateForm(quotation: any): void {
-    this.GetSubProductsByProductId(quotation.product_id,)
     this.QuotationForm.patchValue({
       quotation_number: quotation.quotation_number,
       customer_id: quotation.customer_id,
@@ -205,6 +201,7 @@ export class QuotationsAddEditComponent implements OnInit {
       invoiceDetails.forEach((detail: any) => {
         this.productFormArray.push(
           this.fb.group({
+            category_id: [detail.category_id],
             product_id: [detail.product_id],
             subproduct_id: [detail.subproduct_id],
             quantity: [detail.quantity],
@@ -229,48 +226,21 @@ export class QuotationsAddEditComponent implements OnInit {
     return this.QuotationForm.get('invoice_details') as FormArray;
   }
 
-  onProductChange(event: any): void {
-    const selectedProductIds = event.value; // Assuming this is an array of selected product IDs
-
-    const selectedProducts = this.productList.filter(product =>
-      selectedProductIds.includes(product.product_id)
-    );
-
-    // Clear the existing form array and add new form groups for each selected product
-    this.productFormArray.clear();
-
-    selectedProducts.forEach(product => {
-      this.productFormArray.push(
-        this.fb.group({
-          product_id: [product.product_id],
-          subproduct_id: [null], // Or set a default subproduct value
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
-      );
-    });
+  onCategoryChange(event: any): void {
+    const selectedCategoryId = event.value;
+    console.log(selectedCategoryId);
   }
 
-  onSubProductChange(event: any): void {
-    const selectedSubProductIds = event.value;
-    const selectedSubProducts = this.subProductList.filter(product =>
-      selectedSubProductIds.includes(product.subproduct_id)
-    );
-    this.productFormArray.clear();
-    selectedSubProducts.forEach(subProduct => {
-      this.productFormArray.push(
-        this.fb.group({
-          subproduct_id: [subProduct.subproduct_id],
-          product_id: [subProduct.product_id],
-          quantity: [0],
-          unit: ['box'],
-          rate: [0],
-          total_amount: [0],
-        })
-      );
+  addRow(): void {
+    const newRow = this.fb.group({
+      category_id: [null, Validators.required],
+      product_id: [null, Validators.required],
+      quantity: [0, [Validators.required, Validators.min(1)]],
+      unit: ['piece', Validators.required],
+      rate: [0, [Validators.required, Validators.min(0)]],
+      total_amount: [0],
     });
+    this.productFormArray.push(newRow);
   }
 
   updateAmount(index: number): void {
@@ -285,18 +255,6 @@ export class QuotationsAddEditComponent implements OnInit {
     // Manually recalculate the total after updating the row
     this.calculateTotalAmount();
   }
-
-
-  getProductName(product_id: number): string {
-    const product = this.productList.find(prod => prod.product_id === product_id);
-    return product ? product.product_name : '';
-  }
-
-  getSubProductName(subproduct_id: number): string {
-    const subProduct = this.subProductList.find(product => product.subproduct_id === subproduct_id);
-    return subProduct ? subProduct.subproduct_name : '';
-  }
-
 
   onSignatureSelect(event: Event): void {
     const selectedId = (event.target as HTMLSelectElement).value;

@@ -26,6 +26,25 @@ export class QuotationService {
             .pipe(catchError(this.handleError));
     }
 
+    getFilteredQuotations(filters: { startDate?: string; endDate?: string; customerId?: number }): Observable<any> {
+        const params: any = {};
+
+        // Add query parameters only if they exist
+        if (filters.startDate) {
+            params.startDate = filters.startDate;
+        }
+        if (filters.endDate) {
+            params.endDate = filters.endDate;
+        }
+        if (filters.customerId) {
+            params.customerId = filters.customerId;
+        }
+
+        return this.httpClient
+            .get(this.baseUrl + `/report/filter`, { params })
+            .pipe(catchError(this.handleError));
+    }
+
     // Generate a quotation number
     generateQuotationNumber(): Observable<any> {
         return this.httpClient

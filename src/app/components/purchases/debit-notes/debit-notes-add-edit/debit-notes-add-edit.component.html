@@ -2,7 +2,7 @@
     <div class="card mb-0">
         <div class="card-body">
             <div class="content-page-header">
-                <h5>{{ isAddMode ? 'Add' : 'Edit' }} Return Debit Notes</h5>
+                <h5>{{ isAddMode ? 'Add' : 'Edit' }} Stock Replace</h5>
             </div>
             <form [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
                 <div class="row">
@@ -19,7 +19,11 @@
                                                     {{ vendor.vendor_name }}
                                                 </option>
                                             </select>
+                                            <a class="btn btn-primary form-plus-btn"
+                                                routerLink="/admin/customers/vendors-list"><i
+                                                    class="fas fa-plus-circle"></i></a>
                                         </div>
+
                                     </div>
                                 </div>
 
@@ -64,13 +68,6 @@
                                 </div>
                                 <div class="col-lg-4 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
-                                        <label>Reference Number</label>
-                                        <input type="text" formControlName="reference_no" class="form-control"
-                                            placeholder="Enter Reference Number">
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="input-block mb-3">
                                         <label>Payment Method</label>
                                         <select formControlName="payment_mode" class="form-control">
                                             <option value="" disabled selected>Select Payment Method</option>
@@ -83,49 +80,17 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
-                                    <div class="input-block mb-3">
-                                        <label for="productSelect">Products</label>
-                                        <div class="d-flex align-items-center">
-                                            <mat-form-field appearance="outline" class="w-100">
-                                                <mat-select formControlName="product_id"
-                                                    (selectionChange)="onProductChange($event)" multiple>
-                                                    <mat-option value="" disabled>Select Product</mat-option>
-                                                    <mat-option *ngFor="let product of productList"
-                                                        [value]="product.product_id">
-                                                        {{ product.product_name }}
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- <div class="col-lg-4">
-                                    <div class="input-block mb-3">
-                                        <label for="productSelect">Sub Products</label>
-                                        <div class="d-flex align-items-center">
-                                            <mat-form-field appearance="outline" class="w-100">
-                                                <mat-select formControlName="subproduct_id"
-                                                    (selectionChange)="onSubProductChange($event)" multiple>
-                                                    <mat-option value="" disabled>Select Sub Product</mat-option>
-                                                    <mat-option *ngFor="let product of subProductList"
-                                                        [value]="product.subproduct_id">
-                                                        {{ product.subproduct_name }}
-                                                    </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </div>
-                                    </div>
-                                </div> -->
                             </div>
                         </div>
                         <div class="form-group-item mt-3">
                             <div class="card-table">
+                                <button type="button" class="btn btn-primary mb-2" (click)="addRow()">Add Row</button>
                                 <div class="card-body">
                                     <div class="table-responsive no-pagination">
                                         <table class="table table-center table-hover datatable">
                                             <thead class="thead-light">
                                                 <tr>
+                                                    <th>Category</th>
                                                     <th>Product</th>
                                                     <th>Quantity</th>
                                                     <th>Unit</th>
@@ -136,8 +101,32 @@
                                             <tbody formArrayName="invoice_details">
                                                 <tr *ngFor="let product of productFormArray.controls; let i = index"
                                                     [formGroupName]="i">
-                                                    <td>{{ getSubProductName(product.value.subproduct_id) ||
-                                                        getProductName(product.value.product_id) }}</td>
+                                                    <td>
+                                                        <mat-form-field appearance="outline" class="w-100">
+                                                            <mat-select formControlName="category_id"
+                                                                (selectionChange)="onCategoryChange($event)">
+                                                                <mat-option value="" disabled>Select
+                                                                    category</mat-option>
+                                                                <mat-option *ngFor="let category of categoryList"
+                                                                    [value]="category.category_id">
+                                                                    {{ category.category_name }}
+                                                                </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </td>
+                                                    <td>
+                                                        <mat-form-field appearance="outline" class="w-100">
+                                                            <mat-select formControlName="product_id">
+                                                                <mat-option value="" disabled>Select
+                                                                    Product</mat-option>
+                                                                <mat-option *ngFor="let product of productList"
+                                                                    [value]="product.product_id">
+                                                                    {{ product.product_name }} - (AVL: {{
+                                                                    product.quantity }})
+                                                                </mat-option>
+                                                            </mat-select>
+                                                        </mat-form-field>
+                                                    </td>
                                                     <td>
                                                         <input type="number" formControlName="quantity"
                                                             class="form-control" (input)="updateAmount(i)">

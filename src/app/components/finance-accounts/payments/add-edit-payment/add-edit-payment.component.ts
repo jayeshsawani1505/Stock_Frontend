@@ -28,7 +28,8 @@ export class AddEditPaymentComponent implements OnInit {
     private invoiceService: InvoiceService,
     private PaymentService: PaymentService,
     public dialogRef: MatDialogRef<AddEditPaymentComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any, private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private snackBar: MatSnackBar,
   ) {
     console.log(data);
 
@@ -36,7 +37,8 @@ export class AddEditPaymentComponent implements OnInit {
       payment_id: [''], // For edit scenarios
       invoice_id: ['', Validators.required],
       total_amount: [''],
-      amount: ['', [Validators.required, Validators.min(0)]],
+      receiveAmount: ['', [Validators.required, Validators.min(0)]],
+      pendingAmount: ['', [Validators.required, Validators.min(0)]],
       payment_mode: ['', Validators.required],
       payment_date: ['', Validators.required],
       payment_status: ['', Validators.required],
@@ -93,6 +95,11 @@ export class AddEditPaymentComponent implements OnInit {
     this.paymentForm.get('invoice_id')?.setValue(selectedInvoice.id); // Set the invoice_id to the selected invoice's id
     this.customerControl.setValue(selectedInvoice.customer_name); // Update the customer name field
   }
+  calculateTotal(){
+    const total = this.paymentForm.get('total_amount')?.value - this.paymentForm.get('receiveAmount')?.value;
+    console.log(total);
+    this.paymentForm.get('pendingAmount')?.setValue(total)
+  }
 
   fetchData(payment: any) {
     const formattedDate = payment.payment_date
@@ -101,7 +108,8 @@ export class AddEditPaymentComponent implements OnInit {
     this.paymentForm.patchValue({
       payment_id: payment.payment_id || '',
       invoice_id: payment.invoice_id || '',
-      amount: payment.amount || '',
+      receiveAmount: payment.receiveAmount || '',
+      pendingAmount: payment.pendingAmount || '',
       payment_mode: payment.payment_mode || '',
       payment_date: formattedDate || '',
       payment_status: payment.payment_status || '',
@@ -131,8 +139,6 @@ export class AddEditPaymentComponent implements OnInit {
       },
     });
   }
-
-
 
   editPayment(): void {
     if (this.paymentForm.invalid) {

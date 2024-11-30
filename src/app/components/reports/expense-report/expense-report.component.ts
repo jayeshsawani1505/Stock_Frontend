@@ -13,11 +13,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import moment from 'moment';
 import { ExcelService } from '../../../services/excel.service';
-import { PaymentService } from '../../../services/payments.service';
-import { CustomerService } from '../../../services/Customer.service';
+import { ExpensesService } from '../../../services/Expenses.service';
 
 @Component({
-  selector: 'app-payment-summary',
+  selector: 'app-expense-report',
   standalone: true,
   imports: [CommonModule, MatDialogModule,
     MatPaginatorModule, MatTableModule, MatSnackBarModule,
@@ -25,25 +24,24 @@ import { CustomerService } from '../../../services/Customer.service';
     MatFormFieldModule, MatDatepickerModule, MatButtonModule, MatSelectModule
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './payment-summary.component.html',
-  styleUrl: './payment-summary.component.css'
+  templateUrl: './expense-report.component.html',
+  styleUrl: './expense-report.component.css'
 })
-export class PaymentSummaryComponent implements OnInit, AfterViewInit {
+export class ExpenseReportComponent implements OnInit, AfterViewInit {
   range: FormGroup;
-  paymentsList: any[] = [];
+  ExpensesList: any[] = [];
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'customer_id', 'customer_name', 'amount', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
+  displayedColumns: string[] = ['index', 'reference', 'amount', 'payment_mode', 'expense_date', 'payment_status'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};
-  customerList: any[] = [];
 
   constructor(
-    private PaymentService: PaymentService,
-    private CustomerService: CustomerService,
+    private ExpensesService: ExpensesService,
     private ExcelService: ExcelService,
+    public dialog: MatDialog,
     private snackBar: MatSnackBar,
-    public dialog: MatDialog, private fb: FormBuilder) {
+    private fb: FormBuilder) {
     this.range = this.fb.group({
       start: [null],
       end: [null],
@@ -52,42 +50,32 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.GetCustomers();
-    this.GetPayments();
+    this.GetExpenses();
   }
 
   ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator!; // Assign paginator to data source after view initialization
+    this.dataSource.paginator = this.paginator!;
   }
-  GetCustomers() {
-    this.CustomerService.GetCustomers().subscribe({
-      next: (res: any) => {
-        console.log(res);
-        if (res && res.customers) {
-          this.customerList = res.customers; // Assign customers data to customerList
-        }
-      },
-    });
-  }
-  GetPayments(): void {
+
+  // Fetch expenses
+  GetExpenses(): void {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PaymentService.getFilteredPayments(filters).subscribe({
+    this.ExpensesService.getFilteredExpenses(filters).subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.data) {
-          this.paymentsList = res.data; // Assign the Payment data to paymentsList
-          this.dataSource.data = this.paymentsList; // Assign the data to MatTableDataSource
+          this.dataSource.data = res.data; // Assign Expensess data to data source
+          this.ExpensesList = res.data; // Assign the Expenses data to ExpensesList
         }
       },
       error: (err: any) => {
-        console.error('Error fetching categories:', err);
+        console.error('Error fetching Expensess:', err);
         this.openSnackBar('error', 'Close');
       }
     });
   }
 
-  // Apply filter to search
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
@@ -96,7 +84,6 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
       this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
     }
   }
-
 
   getFormattedDateRange(): string {
     const start = this.range.value.start
@@ -115,33 +102,30 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
     const end = this.range.value.end
       ? moment(this.range.value.end).format('YYYY-MM-DD')
       : null;
-    const customer_id = this.range.value.customer_id
-    if (start && end || customer_id) {
+    if (start && end) {
       this.filters = {
         startDate: start,
         endDate: end,
-        customerId: customer_id
       };
-      this.GetPayments();
+      this.GetExpenses();
     }
   }
   FilterReset() {
     this.range.reset();
     this.filters = {};
-    this.GetPayments();
+    this.GetExpenses();
   }
-
+  // Excel Download
   excelDownload(title: string) {
-    // Assuming categoryList contains the list of categories
-    let dataToExport = this.paymentsList.map((x: any) => ({
-      payment_id: x.payment_id,
-      customer_name: x.customer_name,
-      amount: x.amount,
-      payment_mode: x.payment_mode || 'N/A', // Provide default value if payment_mode is empty
-      payment_date: x.payment_date,
-      payment_status: x.payment_status,
-      description: x.description,
-      created_at: x.created_at,
+    // Assuming ExpensesList contains the list of Expensess
+    let dataToExport = this.ExpensesList.map((x: any) => ({
+      Reference: x.reference,
+      Amount: x.amount,
+      Payment_Mode: x.payment_mode,
+      Expense_Date: x.expense_date,
+      Payment_Status: x.payment_status,
+      Description: x.description,
+      Created_At: x.created_at,
     }));
 
     // Prepare the data to export by converting each row to its values
@@ -177,3 +161,4 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
     });
   }
 }
+

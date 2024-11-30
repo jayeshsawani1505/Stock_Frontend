@@ -24,12 +24,13 @@ export class AdminDashboardComponent implements OnInit {
   invoiceColorScheme: Color;
   displayedColumns: string[] = ['invoice_number', 'category_name', 'customer_name'];
   dataSource = new MatTableDataSource<any>();
+  InvoiceTotal: any;
 
   constructor(
     private CustomerService: CustomerService,
     private InvoiceService: InvoiceService,
     private CommonService: CommonService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {
     // Product chart color scheme
     this.productColorScheme = {
@@ -54,6 +55,7 @@ export class AdminDashboardComponent implements OnInit {
     this.GetProductChartData();
     this.getInvoiceStatusData();
     this.GetInvoices();
+    this.getInvoiceTotalsByStatus();
   }
 
   GetCustomersCount() {
@@ -126,7 +128,15 @@ export class AdminDashboardComponent implements OnInit {
       }
     });
   }
-
+  // getInvoiceTotalsByStatus method
+  getInvoiceTotalsByStatus() {
+    this.InvoiceService.getInvoiceTotalsByStatus().subscribe({
+      next: (res: any) => {
+        this.InvoiceTotal = res.data;
+        console.log(res);
+      },
+    });
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

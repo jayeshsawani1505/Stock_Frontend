@@ -1,5 +1,5 @@
 <div class="p-5">
-    <h4 class="mb-0">{{ paymentForm.value.payment_id ? 'Edit Payment' : 'Add Payment' }}</h4>
+    <h4 class="mb-0">{{ paymentForm.value.payment_id ? 'Edit Sales Payment' : 'Add Sales Payment' }}</h4>
     <form [formGroup]="paymentForm" (ngSubmit)="paymentForm.value.payment_id ? editPayment() : addPayment()">
         <div class="modal-body">
             <div class="row">
@@ -26,15 +26,26 @@
                 <div class="col-md-6">
                     <div class="input-block mb-3">
                         <label>Payable Amount <span class="text-danger">*</span></label>
-                        <input formControlName="total_amount" type="number" class="form-control" readonly>
+                        <input formControlName="total_amount" type="number" class="form-control" placeholder="Payable Amonut" readonly>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="input-block mb-3">
-                        <label>Amount <span class="text-danger">*</span></label>
-                        <input formControlName="amount" type="number" class="form-control" placeholder="Enter Amount"
+                        <label>Receive Amount <span class="text-danger">*</span></label>
+                        <input formControlName="receiveAmount" type="number" class="form-control" placeholder="Enter Amount"
+                            min="0" (keyup)="calculateTotal()">
+                        <div *ngIf="paymentForm.get('receiveAmount')?.invalid && paymentForm.get('receiveAmount')?.touched"
+                            class="text-danger">
+                            Amount is required.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="input-block mb-3">
+                        <label>Pending Amount <span class="text-danger">*</span></label>
+                        <input formControlName="pendingAmount" type="number" class="form-control" placeholder="Enter Amount"
                             min="0">
-                        <div *ngIf="paymentForm.get('amount')?.invalid && paymentForm.get('amount')?.touched"
+                        <div *ngIf="paymentForm.get('pendingAmount')?.invalid && paymentForm.get('pendingAmount')?.touched"
                             class="text-danger">
                             Amount is required.
                         </div>

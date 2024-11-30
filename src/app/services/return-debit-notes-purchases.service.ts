@@ -14,7 +14,7 @@ export class ReturnDebitNotesPurchaseService {
         return throwError(error);
     }
 
-    // Get all return debit notes for purchases
+    // Get all Stock Replace for purchases
     getReturnDebitNotesPurchases(): Observable<any> {
         return this.httpClient
             .get(environment.baseURL + `/return-debit-notes-purchases`)
@@ -42,7 +42,7 @@ export class ReturnDebitNotesPurchaseService {
             .pipe(catchError(this.handleError));
     }
 
-    // Upload Excel file to add multiple return debit notes for purchases
+    // Upload Excel file to add multiple Stock Replace for purchases
     uploadExcel(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);

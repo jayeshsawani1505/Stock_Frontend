@@ -21,6 +21,25 @@ export class ExpensesService {
             .pipe(catchError(this.handleError));
     }
 
+    getFilteredExpenses(filters: { startDate?: string; endDate?: string; vendorId?: number }): Observable<any> {
+        const params: any = {};
+
+        // Add query parameters only if they exist
+        if (filters.startDate) {
+            params.startDate = filters.startDate;
+        }
+        if (filters.endDate) {
+            params.endDate = filters.endDate;
+        }
+        if (filters.vendorId) {
+            params.vendorId = filters.vendorId;
+        }
+
+        return this.httpClient
+            .get(environment.baseURL + `/expenses/report2/filter`, { params })
+            .pipe(catchError(this.handleError));
+    }
+
     // Add Expenses
     AddExpenses(expensesData: any, file?: File): Observable<any> {
         const formData = new FormData();

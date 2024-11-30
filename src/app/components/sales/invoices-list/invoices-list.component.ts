@@ -257,22 +257,24 @@ export class InvoicesListComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: [20, '*', 60, 50, 60],
+            widths: [20, '*', 60, 60, 60, 60],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
                 { text: 'Item', bold: true },
                 { text: 'Quantity', bold: true },
+                { text: 'Unit', bold: true },
                 { text: 'Unit Price', bold: true },
                 { text: 'Amount', bold: true },
               ],
               // Dynamically add rows here
               ...invoiceDetails.map((item: any, index: number) => [
                 { text: index + 1, alignment: 'center' },
-                { text: `${data.category_name} - ${item.product_name}` },
+                { text: `${item.category_name} - ${item.product_name}` },
                 { text: item.quantity },
-                { text: `INR ${item.rate}`, alignment: 'right' },
-                { text: `INR ${item.total_amount}`, alignment: 'right' },
+                { text: item.unit },
+                { text: ` ${item.rate}`, alignment: 'right' },
+                { text: ` ${item.subtotal_amount}`, alignment: 'right' },
               ]),
             ],
           },
@@ -284,7 +286,18 @@ export class InvoicesListComponent implements OnInit {
               width: 'auto',
               table: {
                 body: [
-                  [{ text: 'Total Amount:', alignment: 'right', bold: true }, { text: `INR ${data.total_amount}`, alignment: 'right', bold: true }],
+                  [
+                    { text: 'Total Amount:', alignment: 'right', bold: true },
+                    { text: `${data.subtotal_amount}`, alignment: 'right', bold: true }
+                  ],
+                  [
+                    { text: 'Adjustment Value:', alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue}`, alignment: 'right', bold: true }
+                  ],
+                  [
+                    { text: 'Grand Total:', alignment: 'right', bold: true },
+                    { text: `${data.total_amount}`, alignment: 'right', bold: true }
+                  ]
                 ]
               },
               layout: 'noBorders',
@@ -294,12 +307,6 @@ export class InvoicesListComponent implements OnInit {
         },
         {
           columns: [
-            [
-              { text: 'Payment Info:', bold: true },
-              { text: `Amount: INR ${data.total_amount}` },
-              { text: 'Signature:', bold: true, margin: [0, 20, 0, 0], },
-              { text: `${data.signature_name}` },
-            ],
             [
               { text: 'Terms & Conditions:', bold: true },
               { text: data.terms_conditions || 'Not Available' },

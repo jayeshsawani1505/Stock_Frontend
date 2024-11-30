@@ -1,22 +1,6 @@
 <div class="content container-fluid">
     <div class="row">
-        <div class="col-xl-3 col-sm-6 col-12">
-            <div class="card">
-                <div class="card-body p-2">
-                    <div class="dash-widget-header m-0">
-                        <span class="dash-widget-icon bg-1">
-                            <i class="fas fa-rupee-sign"></i> </span>
-                        <div class="dash-count">
-                            <div class="dash-title">Amount Due</div>
-                            <div class="dash-counts">
-                                <p>0.00</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-3 col-sm-6 col-12">
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/customers/customers-list">
             <div class="card">
                 <div class="card-body p-2">
                     <div class="dash-widget-header m-0">
@@ -33,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 col-12">
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
             <div class="card">
                 <div class="card-body p-2">
                     <div class="dash-widget-header m-0">
@@ -50,17 +34,136 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-sm-6 col-12">
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
             <div class="card">
                 <div class="card-body p-2">
                     <div class="dash-widget-header m-0">
-                        <span class="dash-widget-icon bg-4">
-                            <i class="far fa-file"></i>
+                        <span class="dash-widget-icon bg-2">
+                            <img src="assets/img/icons/receipt-item.svg" alt="invoice">
                         </span>
                         <div class="dash-count">
-                            <div class="dash-title">Estimates</div>
+                            <div class="dash-title">Total Invoice</div>
                             <div class="dash-counts">
-                                <p>0</p>
+                                <p>₹{{InvoiceTotal?.total_all_statuses}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-3">
+                            <img src="assets/img/icons/receipt-item.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Total Paid</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_paid_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-2">
+                            <img src="assets/img/icons/transaction-minus.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Partially Paid</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_partially_paid_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-1">
+                            <img src="assets/img/icons/archive-book.svg" alt="archivebook">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Total Overdue</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_overdue_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-2">
+                            <img src="assets/img/icons/clipboard-close.svg" alt="clipboard">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Cancelled</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_cancelled_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-3">
+                            <img src="assets/img/icons/message-edit.svg" alt="message">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Draft</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_draft_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-1">
+                            <img src="assets/img/icons/3d-rotate.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Unpaid</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_unpaid_amount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6 col-12 cursor" routerLink="/admin/sales/invoices">
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="dash-widget-header m-0">
+                        <span class="dash-widget-icon bg-1">
+                            <img src="assets/img/icons/3d-rotate.svg" alt="invoice">
+                        </span>
+                        <div class="dash-count">
+                            <div class="dash-title">Refund</div>
+                            <div class="dash-counts">
+                                <p>₹{{InvoiceTotal?.total_refunded_amount}}</p>
                             </div>
                         </div>
                     </div>
@@ -68,12 +171,10 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <!-- Product Category Distribution Chart -->
+    <!-- /Inovices card -->
+    <!-- <div class="row">
         <div class="col-xl-6">
             <div class="card">
-                <!-- Title for the Pie Chart -->
                 <div class="chart-title" style="text-align: center; font-weight: bold;">
                     <h5 class="m-0">Product Category Distribution</h5>
                 </div>
@@ -85,11 +186,8 @@
                 </div>
             </div>
         </div>
-
-        <!-- Invoice Analytics Chart -->
         <div class="col-xl-6">
             <div class="card">
-                <!-- Title for the Pie Chart -->
                 <div class="chart-title" style="text-align: center; font-weight: bold;">
                     <h5 class="m-0">Invoice Analytics</h5>
                 </div>
@@ -103,11 +201,9 @@
                 </div>
             </div>
         </div>
-    </div>
-
-
+    </div> -->
     <div class="row">
-        <div class="col-md-6 col-sm-6">
+        <div class="col-md-12 col-sm-12">
             <div class="card mb-0">
                 <div class="card-header">
                     <div class="row align-center">
@@ -121,7 +217,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body p-2">
                     <div class="table-responsive">
 
                         <table mat-table [dataSource]="dataSource" class="table table-stripped table-hover">
@@ -148,58 +244,6 @@
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                             <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6 col-sm-6">
-            <div class="card mb-0">
-                <div class="card-header">
-                    <div class="row align-center">
-                        <div class="col">
-                            <h5 class="card-title">Recent Estimates</h5>
-                        </div>
-                        <div class="col-auto">
-                            <a href="invoice-details.html" class="btn-right btn btn-sm btn-outline-primary">
-                                View All
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <div class="progress progress-md rounded-pill mb-3">
-                            <div class="progress-bar bg-success" role="progressbar" style="width: 39%"
-                                aria-valuenow="39" aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="progress-bar bg-danger" role="progressbar" style="width: 35%" aria-valuenow="35"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                            <div class="progress-bar bg-warning" role="progressbar" style="width: 26%"
-                                aria-valuenow="26" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto">
-                                <i class="fas fa-circle text-success me-1"></i> Sent
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-circle text-warning me-1"></i> Draft
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-circle text-danger me-1"></i> Expired
-                            </div>
-                        </div>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="thead-light">
-                                <tr>
-                                    <th>Customer</th>
-                                    <th>Expiry Date</th>
-                                    <th>Amount</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
                         </table>
                     </div>
                 </div>
