@@ -21,7 +21,7 @@ export class PaymentService {
             .pipe(catchError(this.handleError));
     }
 
-    getFilteredPayments(filters: { startDate?: string; endDate?: string; vendorId?: number }): Observable<any> {
+    getFilteredPayments(filters: { startDate?: string; endDate?: string; customerId?: number }): Observable<any> {
         const params: any = {};
 
         // Add query parameters only if they exist
@@ -31,8 +31,8 @@ export class PaymentService {
         if (filters.endDate) {
             params.endDate = filters.endDate;
         }
-        if (filters.vendorId) {
-            params.vendorId = filters.vendorId;
+        if (filters.customerId) {
+            params.customerId = filters.customerId;
         }
 
         return this.httpClient
