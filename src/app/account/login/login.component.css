@@ -1,0 +1,4 @@
+.drop-shadow-image {
+    border-radius: 5px;
+    filter: drop-shadow(10px 10px 5px #808080);
+}
