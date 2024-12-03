@@ -130,7 +130,8 @@
                                                                 (input)="filterProduct(i)">
                                                             <mat-autocomplete #autoProduct="matAutocomplete">
                                                                 <mat-option *ngFor="let product of filteredProducts[i]"
-                                                                    [value]="product.product_name">
+                                                                    [value]="product.product_name"
+                                                                    (onSelectionChange)="onProductChange(product, $event, i)">
                                                                     {{ product.product_name }}
                                                                 </mat-option>
                                                             </mat-autocomplete>
@@ -138,7 +139,7 @@
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="quantity"
-                                                            class="form-control" (input)="updateAmount(i)" />
+                                                            class="form-control" (input)="validateQuantity(i)" />
                                                     </td>
                                                     <td>
                                                         <select formControlName="unit" class="form-control">

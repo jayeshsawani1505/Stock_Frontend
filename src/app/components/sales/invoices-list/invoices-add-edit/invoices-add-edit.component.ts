@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatOptionSelectionChange, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -39,6 +39,7 @@ export class InvoicesAddEditComponent implements OnInit {
   signature_photo: any;
   filteredCategories: any[] = [];
   filteredProducts: any[] = [];
+  selectedProducts: { quantity: number; product_name: string }[] = []; // Stores selected product details per row
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -278,6 +279,7 @@ export class InvoicesAddEditComponent implements OnInit {
     this.productFormArray.push(newRow);
     this.filteredCategories.push(this.categoryList);
     this.filteredProducts.push([]);
+    this.selectedProducts.push({ quantity: 0, product_name: '' }); // Add placeholder for selected product
   }
 
 
@@ -309,7 +311,41 @@ export class InvoicesAddEditComponent implements OnInit {
       this.filteredProducts[i] = [];
     }
   }
+  onProductChange(product: any, event: MatOptionSelectionChange, index: number): void {
+    if (event.isUserInput) {
+      const productDetails = this.productList.find(p => p.product_id === product.product_id);
 
+      if (productDetails) {
+        // Store the selected product's details
+        this.selectedProducts[index] = {
+          quantity: productDetails.quantity,
+          product_name: productDetails.product_name
+        };
+
+        // Optionally reset the quantity to 0 when the product is changed
+        this.productFormArray.at(index).get('quantity')?.setValue(0);
+      }
+    }
+  }
+
+  // Validate the entered quantity
+  validateQuantity(index: number): void {
+    const selectedProduct = this.selectedProducts[index]; // Get the selected product for the row
+    const quantityControl = this.productFormArray.at(index).get('quantity');
+
+    if (quantityControl && selectedProduct) {
+      const enteredQuantity = quantityControl.value;
+
+      if (enteredQuantity > selectedProduct.quantity) {
+        // If the entered quantity exceeds the available quantity
+        quantityControl.setValue(selectedProduct.quantity); // Reset to the maximum available quantity
+        alert(`Maximum available quantity for ${selectedProduct.product_name} is ${selectedProduct.quantity}`);
+      } else if (enteredQuantity < 0) {
+        // Prevent negative quantities
+        quantityControl.setValue(0);
+      }
+    }
+  }
   updateAmount(index: number): void {
     const row = this.productFormArray.at(index);
     const quantity = row.get('quantity')?.value || 0;
