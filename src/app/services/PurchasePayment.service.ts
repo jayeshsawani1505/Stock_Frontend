@@ -1,27 +1,28 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { throwError, Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../environments/environment.prod';
 
 @Injectable({
     providedIn: 'root'
 })
-export class PurchaseService {
+export class PurchasePaymentsService {
     constructor(private httpClient: HttpClient) { }
 
     private handleError(error: any) {
         return throwError(error);
     }
 
-    // Get all purchases
-    getPurchases(): Observable<any> {
+    // Get all purchase payments
+    getPurchasePayments(): Observable<any> {
         return this.httpClient
-            .get(environment.baseURL + `/purchases`)
+            .get(environment.baseURL + `/purchase-payments`)
             .pipe(catchError(this.handleError));
     }
 
-    getFilteredPurchases(filters: { startDate?: string; endDate?: string; vendorId?: number }): Observable<any> {
+    // Get filtered purchase payments
+    getFilteredPurchasePayments(filters: { startDate?: string; endDate?: string; vendorId?: number }): Observable<any> {
         const params: any = {};
 
         // Add query parameters only if they exist
@@ -36,44 +37,38 @@ export class PurchaseService {
         }
 
         return this.httpClient
-            .get(environment.baseURL + `/purchases/report/filter`, { params })
+            .get(environment.baseURL + `/purchase-payments/report/filter`, { params })
             .pipe(catchError(this.handleError));
     }
 
-    // Add a new purchase
-    addPurchase(purchaseData: any): Observable<any> {
+    // Add a new purchase payment
+    addPurchasePayment(paymentData: any): Observable<any> {
         return this.httpClient
-            .post(environment.baseURL + `/purchases`, purchaseData)
+            .post(environment.baseURL + `/purchase-payments`, paymentData)
             .pipe(catchError(this.handleError));
     }
 
-    // Update a purchase
-    updatePurchase(purchaseId: any, purchaseData: any): Observable<any> {
+    // Update a purchase payment
+    updatePurchasePayment(paymentId: any, paymentData: any): Observable<any> {
         return this.httpClient
-            .put(environment.baseURL + `/purchases/${purchaseId}`, purchaseData)
+            .put(environment.baseURL + `/purchase-payments/${paymentId}`, paymentData)
             .pipe(catchError(this.handleError));
     }
 
-    // Delete a purchase
-    deletePurchase(purchaseId: any): Observable<any> {
+    // Delete a purchase payment
+    deletePurchasePayment(paymentId: any): Observable<any> {
         return this.httpClient
-            .delete(environment.baseURL + `/purchases/${purchaseId}`)
+            .delete(environment.baseURL + `/purchase-payments/${paymentId}`)
             .pipe(catchError(this.handleError));
     }
 
-    // Upload Excel file to add multiple purchases
+    // Upload Excel file to add multiple purchase payments
     uploadExcel(file: File): Observable<any> {
         const formData = new FormData();
         formData.append('file', file);
 
         return this.httpClient
-            .post(environment.baseURL + `/purchases/upload-excel`, formData)
-            .pipe(catchError(this.handleError));
-    }
-    
-    ChangePurchaseStatus(PurchaseId: any, statusPayload: { status: any }): Observable<any> {
-        return this.httpClient
-            .put(`${environment.baseURL}/purchases/status/${PurchaseId}`, statusPayload)
+            .post(environment.baseURL + `/purchase-payments/upload-excel`, formData)
             .pipe(catchError(this.handleError));
     }
 }

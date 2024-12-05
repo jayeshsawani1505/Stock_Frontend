@@ -8,6 +8,7 @@ import { ExcelService } from '../../../services/excel.service';
 import { PurchaseService } from '../../../services/purchases.service';
 import { DeletePurchasesComponent } from './delete-purchases/delete-purchases.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { ChangePurchaseStatusComponent } from './change-purchase-status/change-purchase-status.component';
 
 @Component({
   selector: 'app-purchases-list',
@@ -97,6 +98,17 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
   openDeleteConfirmation(PurchaseId: number): void {
     const dialogRef = this.dialog.open(DeletePurchasesComponent, {
       data: PurchaseId,
+      width: '550px',
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.getPurchases();
+    });
+  }
+  
+  openChangeStatus(data: number): void {
+    const dialogRef = this.dialog.open(ChangePurchaseStatusComponent, {
+      data: data,
       width: '550px',
     });
 

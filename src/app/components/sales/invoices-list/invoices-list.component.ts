@@ -257,14 +257,15 @@ export class InvoicesListComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: [20, '*', 60, 60, 60, 60],
+            widths: [20, '*', 60, 60, 60, 60, 60],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
                 { text: 'Item', bold: true },
                 { text: 'Quantity', bold: true },
                 { text: 'Unit', bold: true },
-                { text: 'Unit Price', bold: true },
+                { text: 'Rate', bold: true },
+                { text: 'Discount', bold: true },
                 { text: 'Amount', bold: true },
               ],
               // Dynamically add rows here
@@ -274,6 +275,7 @@ export class InvoicesListComponent implements OnInit {
                 { text: item.quantity },
                 { text: item.unit },
                 { text: ` ${item.rate}`, alignment: 'right' },
+                { text: ` ${item.discount} %`, alignment: 'right' },
                 { text: ` ${item.subtotal_amount}`, alignment: 'right' },
               ]),
             ],
@@ -281,10 +283,26 @@ export class InvoicesListComponent implements OnInit {
         },
         {
           columns: [
-            { width: '*', text: '' },
             {
-              width: 'auto',
+              width: '50%',
               table: {
+                body: [
+                  [
+                    { text: 'Opening Balance:', alignment: 'left', bold: true },
+                    { text: `${data.opening_balance}`, alignment: 'left', bold: true }
+                  ],
+                  [
+                    { text: 'Closing Balance:', alignment: 'left', bold: true },
+                    { text: `${data.closing_balance}`, alignment: 'left', bold: true }
+                  ]
+                ]
+              },
+              layout: 'noBorders',
+            },
+            {
+              width: '50%',
+              table: {
+                widths: ['*', 'auto'], // Makes the second column align to the left of this section
                 body: [
                   [
                     { text: 'Total Amount:', alignment: 'right', bold: true },
@@ -304,7 +322,7 @@ export class InvoicesListComponent implements OnInit {
             }
           ],
           margin: [0, 10, 0, 10]
-        },
+        },        
         {
           columns: [
             [

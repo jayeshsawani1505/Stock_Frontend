@@ -103,6 +103,7 @@
                                                     <th>Quantity</th>
                                                     <th>Unit</th>
                                                     <th>Rate</th>
+                                                    <th>Discount(%)</th>
                                                     <th>Amount</th>
                                                 </tr>
                                             </thead>
@@ -153,6 +154,10 @@
                                                     <td>
                                                         <input type="number" formControlName="rate" class="form-control"
                                                             (input)="updateAmount(i)" />
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" formControlName="discount"
+                                                            class="form-control" min="0" (input)="updateAmount(i)" />
                                                     </td>
                                                     <td>
                                                         <input type="number" formControlName="subtotal_amount"

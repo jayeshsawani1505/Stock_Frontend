@@ -32,7 +32,7 @@ export class PaymentSummaryComponent implements OnInit, AfterViewInit {
   range: FormGroup;
   paymentsList: any[] = [];
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'customer_id', 'customer_name', 'amount', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
+  displayedColumns: string[] = ['index', 'payment_id', 'customer_name', 'amount', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};

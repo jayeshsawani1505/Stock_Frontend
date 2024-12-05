@@ -25,7 +25,7 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
   customerIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'name', 'phone', 'totalInvoice', 'created', 'actions'];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'opening_balance', 'totalInvoice', 'closing_balance', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   imgURL = environment.ImageUrl
@@ -143,6 +143,8 @@ export class CustomersListComponent implements OnInit, AfterViewInit {
       account_number: x.account_number,
       account_holder_name: x.account_holder_name,
       ifsc: x.ifsc,
+      opening_balance: x.opening_balance,
+      closing_balance: x.closing_balance,
       created_at: x.created_at,
     }));
 

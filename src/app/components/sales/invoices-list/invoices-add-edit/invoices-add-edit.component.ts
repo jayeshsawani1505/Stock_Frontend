@@ -80,20 +80,9 @@ export class InvoicesAddEditComponent implements OnInit {
       this.generateInvoiceNumber();
     }
     this.addRow();
-    // this.addDefaultRows(5); // Add 5 default rows
-    this.productFormArray.controls.forEach((control, index) => {
-      // Watch for changes in 'quantity' and 'rate'
-      control.get('quantity')?.valueChanges.subscribe(() => {
-        this.updateAmount(index);
-        this.calculateTotalAmount(); // Recalculate total after updating the row
-      });
-
-      control.get('rate')?.valueChanges.subscribe(() => {
-        this.updateAmount(index);
-        this.calculateTotalAmount(); // Recalculate total after updating the row
-      });
+    this.productFormArray.valueChanges.subscribe(() => {
+      this.calculateTotalAmount();
     });
-    this.calculateTotalAmount();
   }
   calculateAdjustedTotal(): number {
     const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
@@ -243,6 +232,7 @@ export class InvoicesAddEditComponent implements OnInit {
             quantity: [detail.quantity],
             unit: [detail.unit],
             rate: [detail.rate],
+            discount: [detail.discount],
             subtotal_amount: [detail.subtotal_amount],
           })
         );
@@ -274,6 +264,7 @@ export class InvoicesAddEditComponent implements OnInit {
       quantity: [0],
       unit: ['piece'],
       rate: [0],
+      discount: [0],
       subtotal_amount: [0],
     });
     this.productFormArray.push(newRow);
@@ -350,8 +341,11 @@ export class InvoicesAddEditComponent implements OnInit {
     const row = this.productFormArray.at(index);
     const quantity = row.get('quantity')?.value || 0;
     const rate = row.get('rate')?.value || 0;
+    const discount = row.get('discount')?.value || 0;
     const totalAmount = quantity * rate;
-    row.get('subtotal_amount')?.setValue(totalAmount, { emitEvent: false });
+    const discountedAmount = (totalAmount * discount) / 100;
+    const finalAmount = totalAmount - discountedAmount;
+    row.get('subtotal_amount')?.setValue(finalAmount, { emitEvent: false });
     this.calculateTotalAmount();
   }
 

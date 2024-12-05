@@ -15,6 +15,7 @@ import moment from 'moment';
 import { ExcelService } from '../../../services/excel.service';
 import { PurchaseService } from '../../../services/purchases.service';
 import { VendorService } from '../../../services/vendors.service';
+import { PurchasePaymentsService } from '../../../services/PurchasePayment.service';
 
 @Component({
   selector: 'app-purchase-report',
@@ -39,7 +40,7 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
   filters = {};
   vendorList: any[] = [];
 
-  constructor(private PurchaseService: PurchaseService,
+  constructor(private PurchasePaymentsService: PurchasePaymentsService,
     private ExcelService: ExcelService,
     private VendorService: VendorService,
     public dialog: MatDialog,
@@ -76,10 +77,11 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
   getPurchases(): void {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PurchaseService.getFilteredPurchases(filters).subscribe({
+    this.PurchasePaymentsService.getFilteredPurchasePayments(filters).subscribe({
       next: (res: any) => {
-        if (res && res.data) {
-          this.PurchaseList = res.data;
+        if (res && res) {
+          console.log(res);
+          this.PurchaseList = res;
           this.dataSource.data = this.PurchaseList;
         }
       },

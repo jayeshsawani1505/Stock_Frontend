@@ -14,13 +14,14 @@ import { ProductService } from '../../../../services/products.service';
 import { PurchaseService } from '../../../../services/purchases.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { VendorService } from '../../../../services/vendors.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-purchase-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
     RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule,
-    MatSelectModule],
+    MatSelectModule, MatAutocompleteModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './purchase-add-edit.component.html',
   styleUrl: './purchase-add-edit.component.css'
@@ -35,6 +36,8 @@ export class PurchaseAddEditComponent implements OnInit {
   isAddMode: boolean = true;
   signatureList: any[] = [];
   signature_photo: any
+  filteredCategories: any[] = [];
+  filteredProducts: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -58,7 +61,10 @@ export class PurchaseAddEditComponent implements OnInit {
       subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      total_amount: ['',],
+      adjustmentType: ['add'],
+      adjustmentValue: [0],
+      subtotal_amount: [''],
+      total_amount: [0],
       signature_id: [0],
       invoice_details: this.fb.array([]), // FormArray for the table rows
     })
@@ -73,15 +79,31 @@ export class PurchaseAddEditComponent implements OnInit {
     this.productFormArray.valueChanges.subscribe(() => {
       this.calculateTotalAmount();
     });
+    this.addRow();
+  }
+
+  calculateAdjustedTotal(): number {
+    const subtotalAmount = this.purchaseForm.get('subtotal_amount')?.value || 0;
+    const adjustmentType = this.purchaseForm.get('adjustmentType')?.value;
+    const adjustmentValue = this.purchaseForm.get('adjustmentValue')?.value || 0;
+
+    // Calculate the adjusted total
+    const totalAmount =
+      adjustmentType === 'add'
+        ? subtotalAmount + adjustmentValue
+        : subtotalAmount - adjustmentValue;
+
+    // Set the total_amount in the form
+    this.purchaseForm.patchValue({ total_amount: totalAmount });
+
+    return totalAmount;
   }
 
   calculateTotalAmount() {
-    // Sum up the total_amount from the FormArray
     const total = this.productFormArray.controls.reduce((sum, control) => {
-      return sum + (control.get('total_amount')?.value || 0);
+      return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
-    this.purchaseForm.get('total_amount')?.setValue(total)
-    // Log the total to the console
+    this.purchaseForm.get('subtotal_amount')?.setValue(total)
     console.log('Total Amount:', total);
   }
 
@@ -189,21 +211,20 @@ export class PurchaseAddEditComponent implements OnInit {
       invoiceDetails.forEach((detail: any) => {
         this.productFormArray.push(
           this.fb.group({
-            category_id: [detail.category_id],
             product_id: [detail.product_id],
             subproduct_id: [detail.subproduct_id],
             quantity: [detail.quantity],
             unit: [detail.unit],
             rate: [detail.rate],
-            total_amount: [detail.total_amount],
+            subtotal_amount: [detail.subtotal_amount],
           })
         );
       });
       const totalAmounts = this.productFormArray.controls.map((control) =>
-        control.get('total_amount')?.value || 0
+        control.get('subtotal_amount')?.value || 0
       );
       const totalOfTotalAmounts = totalAmounts.reduce((acc, value) => acc + value, 0);
-      this.purchaseForm.get('total_amount')?.setValue(totalOfTotalAmounts)
+      this.purchaseForm.get('subtotal_amount')?.setValue(totalOfTotalAmounts)
       console.log('Sum of Total Amounts:', totalOfTotalAmounts)
     } else {
       console.warn('invoice_details is not an array:', invoiceDetails);
@@ -221,14 +242,44 @@ export class PurchaseAddEditComponent implements OnInit {
 
   addRow(): void {
     const newRow = this.fb.group({
-      category_id: [null, Validators.required],
-      product_id: [null, Validators.required],
-      quantity: [0, [Validators.required, Validators.min(1)]],
-      unit: ['piece', Validators.required],
-      rate: [0, [Validators.required, Validators.min(0)]],
-      total_amount: [0],
+      category_name: [null],
+      product_name: [null],
+      quantity: [0],
+      unit: ['piece'],
+      rate: [0],
+      subtotal_amount: [0],
     });
     this.productFormArray.push(newRow);
+    this.filteredCategories.push(this.categoryList);
+    this.filteredProducts.push([]);
+  }
+  filterCategory(i: number): void {
+    const categoryControl = this.productFormArray.at(i).get('category_name');
+    const searchTerm = categoryControl?.value;
+    this.filteredCategories[i] = this.categoryList.filter(category =>
+      category.category_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '')
+    );
+
+    // Reset product_name field when category changes
+    this.productFormArray.at(i).get('product_name')?.reset();
+    this.filteredProducts[i] = [];
+  }
+
+  filterProduct(i: number): void {
+    const productControl = this.productFormArray.at(i).get('product_name');
+    const searchTerm = productControl?.value;
+
+    const categoryName = this.productFormArray.at(i).get('category_name')?.value;
+    const selectedCategory = this.categoryList.find(category => category.category_name === categoryName);
+
+    if (selectedCategory) {
+      this.filteredProducts[i] = this.productList.filter(product =>
+        product.product_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '') &&
+        product.category_id === selectedCategory.category_id
+      );
+    } else {
+      this.filteredProducts[i] = [];
+    }
   }
 
   updateAmount(index: number): void {
@@ -236,11 +287,7 @@ export class PurchaseAddEditComponent implements OnInit {
     const quantity = row.get('quantity')?.value || 0;
     const rate = row.get('rate')?.value || 0;
     const totalAmount = quantity * rate;
-
-    // Update total_amount and trigger total calculation
-    row.get('total_amount')?.setValue(totalAmount, { emitEvent: false });
-
-    // Manually recalculate the total after updating the row
+    row.get('subtotal_amount')?.setValue(totalAmount, { emitEvent: false });
     this.calculateTotalAmount();
   }
 
