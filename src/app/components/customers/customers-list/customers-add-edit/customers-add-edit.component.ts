@@ -32,7 +32,8 @@ export class CustomersAddEditComponent implements OnInit {
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', Validators.required],
-      currency: ['', Validators.required],
+      currency: ['rs', Validators.required],
+      opening_balance: ['', Validators.required],
       website: [''],
       notes: [''],
 
@@ -82,6 +83,7 @@ export class CustomersAddEditComponent implements OnInit {
       email: customer.email,
       phone: customer.phone,
       currency: customer.currency,
+      opening_balance: customer.opening_balance,
       website: customer.website,
       notes: customer.notes,
       billing_name: customer.billing_name,

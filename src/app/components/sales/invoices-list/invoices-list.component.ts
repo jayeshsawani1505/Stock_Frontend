@@ -257,26 +257,26 @@ export class InvoicesListComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: [20, '*', 60, 60, 60, 60, 60],
+            widths: [20, 180, 50, 50, 50, 50, 50],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
-                { text: 'Item', bold: true },
-                { text: 'Quantity', bold: true },
-                { text: 'Unit', bold: true },
-                { text: 'Rate', bold: true },
-                { text: 'Discount', bold: true },
-                { text: 'Amount', bold: true },
+                { text: 'Item', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Dis.', bold: true, alignment: 'center' },
+                { text: 'Amt.', bold: true, alignment: 'center' },
               ],
               // Dynamically add rows here
               ...invoiceDetails.map((item: any, index: number) => [
                 { text: index + 1, alignment: 'center' },
-                { text: `${item.category_name} - ${item.product_name}` },
-                { text: item.quantity },
-                { text: item.unit },
-                { text: ` ${item.rate}`, alignment: 'right' },
-                { text: ` ${item.discount} %`, alignment: 'right' },
-                { text: ` ${item.subtotal_amount}`, alignment: 'right' },
+                { text: `${item.category_name} - ${item.product_name}`, alignment: 'center' },
+                { text: item.quantity, alignment: 'center' },
+                { text: item.unit, alignment: 'center' },
+                { text: ` ${item.rate}`, alignment: 'center' },
+                { text: ` ${item.discount} %`, alignment: 'center' },
+                { text: ` ${item.subtotal_amount}`, alignment: 'center' },
               ]),
             ],
           },
@@ -322,7 +322,7 @@ export class InvoicesListComponent implements OnInit {
             }
           ],
           margin: [0, 10, 0, 10]
-        },        
+        },
         {
           columns: [
             [
