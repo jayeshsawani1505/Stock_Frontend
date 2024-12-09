@@ -1,0 +1,158 @@
+<div class="content container-fluid">
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="content-page-header">
+            <h5>Customer Ledger Report</h5>
+            <div class="list-btn">
+                <ul class="filter-list">
+                    <li>
+                        <a class="btn btn-import p-2" title="Export to Excel"
+                            (click)="excelDownload('customer-ledger')">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="row">
+        <div class="col-sm-12">
+            <form [formGroup]="range">
+                <div class="row">
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Enter a date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate formControlName="start" placeholder="Start date">
+                                <input matEndDate formControlName="end" placeholder="End date">
+                            </mat-date-range-input>
+                            <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                            <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+
+                            <mat-error *ngIf="range.get('start')?.hasError('matStartDateInvalid')">
+                                Invalid start date
+                            </mat-error>
+                            <mat-error *ngIf="range.get('end')?.hasError('matEndDateInvalid')">
+                                Invalid end date
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Choose Customer</mat-label>
+                            <mat-select formControlName="customer_id">
+                                <mat-option value="" disabled>Choose Customer</mat-option>
+                                <mat-option *ngFor="let customer of customerList" [value]="customer.customer_id">
+                                    {{ customer.name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12">
+                        <!-- Search Input -->
+                        <mat-form-field class="w-100" appearance="outline">
+                            <mat-label>Search</mat-label>
+                            <input matInput (keyup)="applyFilter($event)" placeholder="Search purchases" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-xl-3 col-md-6 col-sm-12 mt-2">
+                        <button mat-stroked-button color="primary" style="margin-right: 10px;"
+                            (click)="applyDateFilter()">
+                            Apply Filter</button>
+
+                        <button mat-stroked-button color="primary" (click)="FilterReset()">
+                            Filter Reset</button>
+                    </div>
+                </div>
+            </form>
+            <div class="card-table">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div class="mat-elevation-z8">
+                            <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
+                                <!-- Payment ID Column -->
+                                <ng-container matColumnDef="payment_id">
+                                    <th mat-header-cell *matHeaderCellDef>Payment ID</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.payment_id }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="invoice_number">
+                                    <th mat-header-cell *matHeaderCellDef>Invoice Number</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.invoice_number }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="customer_name">
+                                    <th mat-header-cell *matHeaderCellDef>Customer Name</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.customer_name }}</td>
+                                </ng-container>
+
+                                <!-- Amount Column -->
+                                <ng-container matColumnDef="amount">
+                                    <th mat-header-cell *matHeaderCellDef>Total Amount</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.total_amount }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="receiveAmount">
+                                    <th mat-header-cell *matHeaderCellDef>Receive Amount</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.receiveAmount }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="pendingAmount">
+                                    <th mat-header-cell *matHeaderCellDef>Pending Amount</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.pendingAmount }}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="customer_opening_balance">
+                                    <th mat-header-cell *matHeaderCellDef>Opening Balance</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.customer_opening_balance }}</td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="customer_closing_balance">
+                                    <th mat-header-cell *matHeaderCellDef>Closing Balance</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.customer_closing_balance }}</td>
+                                </ng-container>
+
+                                <!-- Payment Mode Column -->
+                                <ng-container matColumnDef="payment_mode">
+                                    <th mat-header-cell *matHeaderCellDef>Payment Mode</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.payment_mode || 'N/A' }}</td>
+                                </ng-container>
+
+                                <!-- Payment Date Column -->
+                                <ng-container matColumnDef="payment_date">
+                                    <th mat-header-cell *matHeaderCellDef>Payment Date</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.payment_date | date }}</td>
+                                </ng-container>
+
+                                <!-- Payment Status Column -->
+                                <ng-container matColumnDef="payment_status">
+                                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.payment_status }}</td>
+                                </ng-container>
+
+                                <!-- Created At Column -->
+                                <ng-container matColumnDef="created_at">
+                                    <th mat-header-cell *matHeaderCellDef>Created At</th>
+                                    <td mat-cell *matCellDef="let element">
+                                        {{ element.created_at | date: 'dd MMM yyyy, hh:mm a' }}</td>
+                                </ng-container>
+
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                            </table>
+                            <!-- MatPaginator for Pagination -->
+                            <mat-paginator [length]="paymentsList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"
+                                showFirstLastButtons></mat-paginator>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Table -->
+
+</div>
