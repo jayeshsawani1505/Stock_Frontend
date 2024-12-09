@@ -5,10 +5,11 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ExcelService } from '../../../services/excel.service';
+import { PurchasePaymentsService } from '../../../services/PurchasePayment.service';
 import { AddEditPurchasePaymentComponent } from './add-edit-purchase-payment/add-edit-purchase-payment.component';
 import { DeletePurchasePaymentComponent } from './delete-purchase-payment/delete-purchase-payment.component';
-import { PurchasePaymentsService } from '../../../services/PurchasePayment.service';
 
 @Component({
   selector: 'app-purchase-payment',
@@ -140,7 +141,143 @@ export class PurchasePaymentComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
+  generatePDF(data: any) {
+    const docDefinition: any = {
+      content: [
+        // Header Section
+        {
+          columns: [
+            {
+              text: 'PEC Trading Pvt Ltd',
+              fontSize: 20,
+              bold: true,
+              color: '#4e50d3',
+            },
+            {
+              text: 'PURCHASE SLIP',
+              fontSize: 24,
+              bold: true,
+              color: '#4e50d3',
+              alignment: 'right',
+            },
+          ],
+          margin: [0, 0, 0, 20],
+        },
 
+        // Divider Line
+        {
+          canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, color: '#4e50d3' }],
+          margin: [0, 0, 0, 10],
+        },
+
+        // Payment Details Section
+        {
+          text: 'Payment Details',
+          style: 'sectionHeader',
+          margin: [0, 10, 0, 10],
+        },
+        {
+          table: {
+            widths: ['35%', '65%'],
+            body: [
+              [
+                { text: 'Purchase ID:', bold: true, margin: [0, 5, 0, 5] },
+                { text: data.payment_id || 'Not Available', margin: [0, 5, 0, 5] },
+              ],
+              [
+                { text: 'Vendor Name:', bold: true, margin: [0, 5, 0, 5] },
+                { text: data.vendor_name || 'Not Available', margin: [0, 5, 0, 5] },
+              ],
+              [
+                { text: 'Payment Date:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: data.payment_date
+                    ? new Date(data.payment_date).toLocaleDateString()
+                    : 'Not Available',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
+              [
+                { text: 'Payment Status:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: data.payment_status || 'Not Available',
+                  color: data.payment_status === 'paid' ? 'green' : 'red',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
+            ],
+          },
+          layout: 'lightHorizontalLines',
+          margin: [0, 0, 0, 20],
+        },
+
+        // Invoice Details Section
+        {
+          text: 'Purchase Details',
+          style: 'sectionHeader',
+          margin: [0, 10, 0, 10],
+        },
+        {
+          table: {
+            widths: ['50%', '50%'],
+            body: [
+              [
+                { text: 'Received Amount:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: `INR ${data.receiveAmount || 0}`,
+                  alignment: 'right',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
+            ],
+          },
+          layout: {
+            hLineColor: () => '#4e50d3',
+            vLineColor: () => '#4e50d3',
+          },
+          margin: [0, 0, 0, 20],
+        },
+
+        // Description Section
+        {
+          text: 'Payment Description',
+          style: 'sectionHeader',
+          margin: [0, 10, 0, 10],
+        },
+        {
+          text: data.description || 'No Description Provided',
+          margin: [0, 0, 0, 10],
+          italics: true,
+        },
+
+        // Footer Section
+        {
+          text: 'Thank you for your Purchase!',
+          alignment: 'center',
+          margin: [0, 30, 0, 0],
+          fontSize: 14,
+          bold: true,
+          color: '#4e50d3',
+        },
+        {
+          text: 'For any queries, please contact us at support@pec-trading.com',
+          alignment: 'center',
+          fontSize: 10,
+          margin: [0, 5, 0, 0],
+        },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 16,
+          bold: true,
+          color: '#4e50d3',
+          margin: [0, 10, 0, 5],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds

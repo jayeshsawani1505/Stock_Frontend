@@ -7,8 +7,11 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('purchase')">
+                        <!-- <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('purchase')">
                             <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a> -->
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="generatePDF()">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To PDF
                         </a>
                     </li>
                 </ul>
@@ -52,15 +55,9 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-xl-3 col-md-6 col-sm-12">
-                        <!-- Search Input -->
-                        <mat-form-field class="w-100" appearance="outline">
-                            <mat-label>Search</mat-label>
-                            <input matInput (keyup)="applyFilter($event)" placeholder="Search purchases" />
-                        </mat-form-field>
-                    </div>
                     <div class="col-xl-3 col-md-6 col-sm-12 mt-2">
-                        <button mat-stroked-button color="primary" style="margin-right: 10px;" (click)="applyDateFilter()">
+                        <button mat-stroked-button color="primary" style="margin-right: 10px;"
+                            (click)="applyDateFilter()">
                             Apply Filter</button>
 
                         <button mat-stroked-button color="primary" (click)="FilterReset()">
@@ -74,53 +71,42 @@
                     <div class="table-responsive">
                         <!-- Table -->
                         <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
-                            <!-- Vendor ID -->
-                            <ng-container matColumnDef="vendor_id">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchases ID</th>
-                                <td mat-cell *matCellDef="let purchase">{{ purchase.id || 'Unknown Vendor' }}
-                                </td>
+                            <!-- Log ID -->
+                            <ng-container matColumnDef="log_id">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Log ID</th>
+                                <td mat-cell *matCellDef="let log">{{ log.log_id || 'Unknown' }}</td>
                             </ng-container>
 
                             <!-- Vendor Name -->
                             <ng-container matColumnDef="vendor_name">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendor Name</th>
-                                <td mat-cell *matCellDef="let purchase">{{ purchase.vendor_name || 'Unknown Vendor' }}
-                                </td>
+                                <td mat-cell *matCellDef="let log">{{ log.vendor_name || 'Unknown Vendor' }}</td>
+                            </ng-container>
+
+                            <!-- Transaction Type -->
+                            <ng-container matColumnDef="transaction_type">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Transaction Type</th>
+                                <td mat-cell *matCellDef="let log">{{ log.transaction_type || 'Unknown' }}</td>
                             </ng-container>
 
                             <!-- Amount -->
-                            <ng-container matColumnDef="total_amount">
+                            <ng-container matColumnDef="amount">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Amount</th>
-                                <td mat-cell *matCellDef="let purchase">₹{{ purchase.total_amount || '0.00' }}</td>
+                                <td mat-cell *matCellDef="let log">₹{{ log.amount || '0.00' }}</td>
                             </ng-container>
 
-                            <!-- Payment Mode -->
-                            <ng-container matColumnDef="payment_mode">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Payment Mode</th>
-                                <td mat-cell *matCellDef="let purchase">{{ purchase.payment_mode || 'N/A' }}</td>
-                            </ng-container>
-
-                            <!-- Status -->
-                            <ng-container matColumnDef="status">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
-                                <td mat-cell *matCellDef="let purchase">
-                                    <span class="badge" [ngClass]="{
-                                'bg-success-light': purchase.status === 'paid',
-                                'bg-warning-light': purchase.status === 'pending' || purchase.status === 'partially_paid' || purchase.status === 'unpaid' || purchase.status === 'draft',
-                                'bg-danger-light': purchase.status === 'overdue',
-                                'bg-secondary-light': purchase.status === 'cancelled',
-                                'bg-info-light': purchase.status === 'refunded'
-                              }">
-                                        {{ purchase.status }}
-                                    </span>
-                                </td>
+                            <!-- Balance After -->
+                            <ng-container matColumnDef="balance_after">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Balance After</th>
+                                <td mat-cell *matCellDef="let log">₹{{ log.balance_after || '0.00' }}</td>
                             </ng-container>
 
                             <!-- Date -->
                             <ng-container matColumnDef="created_at">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
-                                <td mat-cell *matCellDef="let purchase">
-                                    {{ purchase.created_at | date:'dd MMM yyyy, hh:mm a' }}</td>
+                                <td mat-cell *matCellDef="let log">
+                                    {{ log.created_at | date:'dd MMM yyyy, hh:mm a' }}
+                                </td>
                             </ng-container>
 
                             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

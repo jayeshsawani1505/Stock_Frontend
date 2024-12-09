@@ -2,13 +2,15 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Router, RouterModule } from '@angular/router';
+import moment from 'moment';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ExcelService } from '../../../services/excel.service';
 import { PurchaseService } from '../../../services/purchases.service';
-import { DeletePurchasesComponent } from './delete-purchases/delete-purchases.component';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChangePurchaseStatusComponent } from './change-purchase-status/change-purchase-status.component';
+import { DeletePurchasesComponent } from './delete-purchases/delete-purchases.component';
 
 @Component({
   selector: 'app-purchases-list',
@@ -52,6 +54,18 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
       error: (err) => {
         console.error('Error fetching Purchases:', err);
         this.openSnackBar('error', 'Close');
+      }
+    });
+  }
+
+  getPurchaseDetailsForPDF(invoiceId: number) {
+    this.PurchaseService.getPurchaseDetailsForPDF(invoiceId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.generatePDF(res.data)
+      },
+      error: (err: any) => {
+        console.error('Error fetching invoices:', err);
       }
     });
   }
@@ -105,7 +119,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
       this.getPurchases();
     });
   }
-  
+
   openChangeStatus(data: number): void {
     const dialogRef = this.dialog.open(ChangePurchaseStatusComponent, {
       data: data,
@@ -163,6 +177,156 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
+  async generatePDF(data: any) {
+    const invoiceDetails = JSON.parse(data.invoice_details); // Parse invoice_details JSON string
+
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+            [
+              {
+                text: 'Purchase',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+              {
+                text: `Purchase No: ${data.reference_no || 'N/A'}\nPurchase Date: ${formatDate(data.purchase_date) || 'Not Available'}\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
+                fontSize: 10,
+                alignment: 'right',
+                margin: [0, 10, 0, 0],
+              },
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader', margin: [0, 20, 0, 10] },
+        {
+          columns: [
+            [
+              { text: 'Vendor Details:', bold: true },
+              { text: data.vendor_name || 'Not Available' },
+              { text: `Payment Status: ${data.status}`, color: data.status === 'paid' ? 'green' : 'red' },
+            ],
+          ],
+        },
+        { text: ' ', margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [30, 190, 60, 60, 60, 60],
+            body: [
+              [
+                { text: '#', bold: true, alignment: 'center' },
+                { text: 'Item', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Amt.', bold: true, alignment: 'center' },
+              ],
+              // Dynamically add rows here
+              ...invoiceDetails.map((item: any, index: number) => [
+                { text: index + 1, alignment: 'center' },
+                { text: `${item.category_name || ''} - ${item.product_name || ''}`, alignment: 'left' },
+                { text: item.quantity || 0, alignment: 'center' },
+                { text: item.unit || 'N/A', alignment: 'center' },
+                { text: item.rate || 0, alignment: 'center' },
+                { text: item.subtotal_amount || 0, alignment: 'center' },
+              ]),
+            ],
+          },
+        },
+        {
+          columns: [
+            {
+              width: '50%',
+              table: {
+                body: [
+                  [
+                    { text: 'Opening Balance:', alignment: 'left', bold: true },
+                    { text: `${data.opening_balance}`, alignment: 'left', bold: true }
+                  ],
+                  [
+                    { text: 'Closing Balance:', alignment: 'left', bold: true },
+                    { text: `${data.closing_balance}`, alignment: 'left', bold: true }
+                  ]
+                ]
+              },
+              layout: 'noBorders',
+            },
+            {
+              width: '50%',
+              table: {
+                widths: ['*', 'auto'], // Makes the second column align to the left of this section
+                body: [
+                  [
+                    { text: 'Total Amount:', alignment: 'right', bold: true },
+                    { text: `${data.subtotal_amount}`, alignment: 'right', bold: true }
+                  ],
+                  data.adjustmentValue ? [
+                    { text: `${data.adjustmentType} :`, alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue}`, alignment: 'right', bold: true }
+                  ] : '',
+                  data.adjustmentValue2 ? [
+                    { text: `${data.adjustmentType2} :`, alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue2}`, alignment: 'right', bold: true }
+                  ] : '',
+                  [
+                    { text: 'Grand Total:', alignment: 'right', bold: true },
+                    { text: `${data.total_amount}`, alignment: 'right', bold: true }
+                  ]
+                ]
+              },
+              layout: 'noBorders',
+            }
+          ],
+          margin: [0, 10, 0, 10]
+        },
+        {
+          columns: [
+            [
+              { text: 'Terms & Conditions:', bold: true },
+              { text: data.terms_conditions || 'Not Available' },
+            ],
+            [
+              {
+                text: 'Signature:', bold: true, alignment: 'right',
+              },
+              {
+                text: `${data.signature_name || 'Not Available'}`, alignment: 'right',
+              },
+            ],
+          ],
+          margin: [0, 20, 0, 0],
+        },
+        { text: 'Thanks for your Business', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
+
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds
@@ -170,4 +334,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD-MMM-YYYY') : null;
 }

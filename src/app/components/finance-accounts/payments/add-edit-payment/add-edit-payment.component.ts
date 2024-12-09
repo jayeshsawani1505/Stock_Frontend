@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { map, Observable, startWith } from 'rxjs';
-import { InvoiceService } from '../../../../services/invoice.service';
+import { CustomerService } from '../../../../services/Customer.service';
 import { PaymentService } from '../../../../services/payments.service';
 
 @Component({
@@ -20,13 +20,13 @@ import { PaymentService } from '../../../../services/payments.service';
 })
 export class AddEditPaymentComponent implements OnInit {
   paymentForm: FormGroup;
-  invoiceList: any[] = [];
+  customerList: any[] = [];
   customerControl = new FormControl('');
   filteredCustomers!: Observable<any[]>;
 
   constructor(private fb: FormBuilder,
-    private invoiceService: InvoiceService,
     private PaymentService: PaymentService,
+    private CustomerService: CustomerService,
     public dialogRef: MatDialogRef<AddEditPaymentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private snackBar: MatSnackBar,
@@ -35,7 +35,7 @@ export class AddEditPaymentComponent implements OnInit {
 
     this.paymentForm = this.fb.group({
       payment_id: [''], // For edit scenarios
-      invoice_id: ['', Validators.required],
+      customer_id: ['', Validators.required],
       total_amount: [''],
       receiveAmount: ['', [Validators.required, Validators.min(0)]],
       pendingAmount: ['', [Validators.required, Validators.min(0)]],
@@ -47,7 +47,7 @@ export class AddEditPaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.GetInvoices();
+    this.GetCustomers();
     if (this.data?.payment_id) {
       this.fetchData(this.data)
     }
@@ -58,24 +58,24 @@ export class AddEditPaymentComponent implements OnInit {
     );
   }
 
-  GetInvoices(): void {
-    this.invoiceService.GetInvoices().subscribe({
+  GetCustomers() {
+    this.CustomerService.GetCustomers().subscribe({
       next: (res: any) => {
         console.log(res);
-        if (res && res.data) {
-          this.invoiceList = res.data; // Assign invoices data to invoiceList
+        if (res && res.customers) {
+          this.customerList = res.customers;
           if (this.data?.payment_id) {
-            const selectedInvoice = this.invoiceList.find(invoice => invoice.id === this.data?.invoice_id);
-            if (selectedInvoice) {
-              this.customerControl.setValue(`${selectedInvoice.customer_name} (${selectedInvoice.invoice_number})`);
-              this.paymentForm.get('invoice_id')?.setValue(selectedInvoice.id); // Set the invoice_id
-              this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.total_amount)
+            const selectedData = this.customerList.find(data => data.customer_id === this.data?.customer_id);
+            if (selectedData) {
+              this.customerControl.setValue(`${selectedData.name}`);
+              this.paymentForm.get('customer_id')?.setValue(selectedData.customer_id); // Set the invoice_id
+              this.paymentForm.get('total_amount')?.setValue(selectedData?.opening_balance)
             }
           }
         }
       },
       error: (err) => {
-        this.snackBar.open('Failed to fetch invoices', 'Close', { duration: 3000 });
+        this.snackBar.open('Failed to fetch customer', 'Close', { duration: 3000 });
       }
     });
   }
@@ -83,19 +83,19 @@ export class AddEditPaymentComponent implements OnInit {
   // Filter the customers based on the search input
   private _filterCustomers(value: string | null): any[] {
     const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
-    return this.invoiceList.filter(invoice =>
-      `${invoice.customer_name} ${invoice.invoice_number}`.toLowerCase().includes(filterValue)
+    return this.customerList.filter(invoice =>
+      `${invoice.name}`.toLowerCase().includes(filterValue)
     );
   }
 
   onOptionSelected(event: any): void {
     const selectedInvoice = event.option.value; // This will give the full invoice object
     console.log(selectedInvoice);
-    this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.total_amount)
-    this.paymentForm.get('invoice_id')?.setValue(selectedInvoice.id); // Set the invoice_id to the selected invoice's id
-    this.customerControl.setValue(selectedInvoice.customer_name); // Update the customer name field
+    this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.closing_balance)
+    this.paymentForm.get('customer_id')?.setValue(selectedInvoice.customer_id); // Set the customer_id to the selected invoice's id
+    this.customerControl.setValue(selectedInvoice.name); // Update the customer name field
   }
-  calculateTotal(){
+  calculateTotal() {
     const total = this.paymentForm.get('total_amount')?.value - this.paymentForm.get('receiveAmount')?.value;
     console.log(total);
     this.paymentForm.get('pendingAmount')?.setValue(total)
@@ -107,7 +107,7 @@ export class AddEditPaymentComponent implements OnInit {
       : '';
     this.paymentForm.patchValue({
       payment_id: payment.payment_id || '',
-      invoice_id: payment.invoice_id || '',
+      customer_id: payment.customer_id || '',
       receiveAmount: payment.receiveAmount || '',
       pendingAmount: payment.pendingAmount || '',
       payment_mode: payment.payment_mode || '',

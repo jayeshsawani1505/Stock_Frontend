@@ -41,6 +41,26 @@ export class PurchasePaymentsService {
             .pipe(catchError(this.handleError));
     }
 
+    // Get filtered purchase payments
+    getFilteredTransactionLogs(filters: { startDate?: string; endDate?: string; vendorId?: number }): Observable<any> {
+        const params: any = {};
+
+        // Add query parameters only if they exist
+        if (filters.startDate) {
+            params.startDate = filters.startDate;
+        }
+        if (filters.endDate) {
+            params.endDate = filters.endDate;
+        }
+        if (filters.vendorId) {
+            params.vendorId = filters.vendorId;
+        }
+
+        return this.httpClient
+            .get(environment.baseURL + `/purchase-payments/transaction/report/filter`, { params })
+            .pipe(catchError(this.handleError));
+    }
+
     // Add a new purchase payment
     addPurchasePayment(paymentData: any): Observable<any> {
         return this.httpClient

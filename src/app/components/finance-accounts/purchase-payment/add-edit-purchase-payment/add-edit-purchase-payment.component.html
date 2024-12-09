@@ -12,7 +12,7 @@
 
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
                                 <mat-option *ngFor="let purchase of filteredVendors | async" [value]="purchase">
-                                    {{ purchase.vendor_name }} ({{ purchase.supplier_invoice_serial_no }})
+                                    {{ purchase.vendor_name }}
                                 </mat-option>
                             </mat-autocomplete>
 

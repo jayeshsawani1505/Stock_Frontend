@@ -47,6 +47,12 @@ export class PurchaseService {
             .pipe(catchError(this.handleError));
     }
 
+    getPurchaseDetailsForPDF(id: any): Observable<any> {
+        return this.httpClient
+            .get(`${environment.baseURL}/purchases/pdf/${id}`)
+            .pipe(catchError(this.handleError));
+    }
+
     // Update a purchase
     updatePurchase(purchaseId: any, purchaseData: any): Observable<any> {
         return this.httpClient

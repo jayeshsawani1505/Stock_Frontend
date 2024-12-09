@@ -63,14 +63,21 @@
 
                             <!-- Balance Column -->
                             <ng-container matColumnDef="balance">
-                                <th mat-header-cell *matHeaderCellDef>Balance</th>
-                                <td mat-cell *matCellDef="let vendor">₹{{ vendor.closing_balance | number: '1.2-2'
+                                <th mat-header-cell *matHeaderCellDef> Opening Balance</th>
+                                <td mat-cell *matCellDef="let vendor">₹{{ vendor.opening_balance | number: '1.2-2'
                                     }}</td>
                             </ng-container>
 
                             <ng-container matColumnDef="total_amount">
                                 <th mat-header-cell *matHeaderCellDef>Total Amount</th>
                                 <td mat-cell *matCellDef="let vendor">₹{{ vendor.total_amount | number: '1.2-2'
+                                    }}</td>
+                            </ng-container>
+
+                            <ng-container matColumnDef="closing_balance">
+                                <th mat-header-cell *matHeaderCellDef> Closing_balance</th>
+                                <td mat-cell *matCellDef="let vendor">₹{{ vendor.closing_balance | number:
+                                    '1.2-2'
                                     }}</td>
                             </ng-container>
 

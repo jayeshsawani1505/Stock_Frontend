@@ -7,9 +7,12 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-import p-2" title="Export to Excel"
+                        <!-- <a class="btn btn-import p-2" title="Export to Excel"
                             (click)="excelDownload('customer-ledger')">
                             <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a> -->
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="generatePDF()">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To PDF
                         </a>
                     </li>
                 </ul>
@@ -52,13 +55,6 @@
                             </mat-select>
                         </mat-form-field>
                     </div>
-                    <div class="col-xl-3 col-md-6 col-sm-12">
-                        <!-- Search Input -->
-                        <mat-form-field class="w-100" appearance="outline">
-                            <mat-label>Search</mat-label>
-                            <input matInput (keyup)="applyFilter($event)" placeholder="Search purchases" />
-                        </mat-form-field>
-                    </div>
                     <div class="col-xl-3 col-md-6 col-sm-12 mt-2">
                         <button mat-stroked-button color="primary" style="margin-right: 10px;"
                             (click)="applyDateFilter()">
@@ -74,63 +70,34 @@
                     <div class="table-responsive">
                         <div class="mat-elevation-z8">
                             <table mat-table [dataSource]="dataSource" class="table table-center table-hover datatable">
-                                <!-- Payment ID Column -->
-                                <ng-container matColumnDef="payment_id">
-                                    <th mat-header-cell *matHeaderCellDef>Payment ID</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.payment_id }}</td>
+                                <!-- Log ID Column -->
+                                <ng-container matColumnDef="log_id">
+                                    <th mat-header-cell *matHeaderCellDef>Log ID</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.log_id }}</td>
                                 </ng-container>
 
-                                <ng-container matColumnDef="invoice_number">
-                                    <th mat-header-cell *matHeaderCellDef>Invoice Number</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.invoice_number }}</td>
-                                </ng-container>
-
+                                <!-- Customer Name Column -->
                                 <ng-container matColumnDef="customer_name">
                                     <th mat-header-cell *matHeaderCellDef>Customer Name</th>
                                     <td mat-cell *matCellDef="let element">{{ element.customer_name }}</td>
                                 </ng-container>
 
+                                <!-- Transaction Type Column -->
+                                <ng-container matColumnDef="transaction_type">
+                                    <th mat-header-cell *matHeaderCellDef>Transaction Type</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.transaction_type }}</td>
+                                </ng-container>
+
                                 <!-- Amount Column -->
                                 <ng-container matColumnDef="amount">
-                                    <th mat-header-cell *matHeaderCellDef>Total Amount</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.total_amount }}</td>
+                                    <th mat-header-cell *matHeaderCellDef>Amount</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.amount }}</td>
                                 </ng-container>
 
-                                <ng-container matColumnDef="receiveAmount">
-                                    <th mat-header-cell *matHeaderCellDef>Receive Amount</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.receiveAmount }}</td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="pendingAmount">
-                                    <th mat-header-cell *matHeaderCellDef>Pending Amount</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.pendingAmount }}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="customer_opening_balance">
-                                    <th mat-header-cell *matHeaderCellDef>Opening Balance</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.customer_opening_balance }}</td>
-                                </ng-container>
-
-                                <ng-container matColumnDef="customer_closing_balance">
-                                    <th mat-header-cell *matHeaderCellDef>Closing Balance</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.customer_closing_balance }}</td>
-                                </ng-container>
-
-                                <!-- Payment Mode Column -->
-                                <ng-container matColumnDef="payment_mode">
-                                    <th mat-header-cell *matHeaderCellDef>Payment Mode</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.payment_mode || 'N/A' }}</td>
-                                </ng-container>
-
-                                <!-- Payment Date Column -->
-                                <ng-container matColumnDef="payment_date">
-                                    <th mat-header-cell *matHeaderCellDef>Payment Date</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.payment_date | date }}</td>
-                                </ng-container>
-
-                                <!-- Payment Status Column -->
-                                <ng-container matColumnDef="payment_status">
-                                    <th mat-header-cell *matHeaderCellDef>Status</th>
-                                    <td mat-cell *matCellDef="let element">{{ element.payment_status }}</td>
+                                <!-- Balance After Column -->
+                                <ng-container matColumnDef="balance_after">
+                                    <th mat-header-cell *matHeaderCellDef>Balance After</th>
+                                    <td mat-cell *matCellDef="let element">{{ element.balance_after }}</td>
                                 </ng-container>
 
                                 <!-- Created At Column -->
@@ -143,6 +110,7 @@
                                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                             </table>
+
                             <!-- MatPaginator for Pagination -->
                             <mat-paginator [length]="paymentsList.length" [pageSize]="5" [pageSizeOptions]="[5, 10, 20]"
                                 showFirstLastButtons></mat-paginator>

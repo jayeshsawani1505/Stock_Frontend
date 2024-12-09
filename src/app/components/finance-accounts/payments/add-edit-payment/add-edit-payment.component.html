@@ -12,12 +12,12 @@
 
                             <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onOptionSelected($event)">
                                 <mat-option *ngFor="let invoice of filteredCustomers | async" [value]="invoice">
-                                    {{ invoice.customer_name }} ({{ invoice.invoice_number }})
+                                    {{ invoice.name }}
                                 </mat-option>
                             </mat-autocomplete>
 
                             <mat-error
-                                *ngIf="paymentForm.get('invoice_id')?.invalid && paymentForm.get('invoice_id')?.touched">
+                                *ngIf="paymentForm.get('customer_id')?.invalid && paymentForm.get('customer_id')?.touched">
                                 Customer ID is required.
                             </mat-error>
                         </mat-form-field>
@@ -26,14 +26,15 @@
                 <div class="col-md-6">
                     <div class="input-block mb-3">
                         <label>Payable Amount <span class="text-danger">*</span></label>
-                        <input formControlName="total_amount" type="number" class="form-control" placeholder="Payable Amonut" readonly>
+                        <input formControlName="total_amount" type="number" class="form-control"
+                            placeholder="Payable Amonut" readonly>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="input-block mb-3">
                         <label>Receive Amount <span class="text-danger">*</span></label>
-                        <input formControlName="receiveAmount" type="number" class="form-control" placeholder="Enter Amount"
-                            min="0" (keyup)="calculateTotal()">
+                        <input formControlName="receiveAmount" type="number" class="form-control"
+                            placeholder="Enter Amount" min="0" (keyup)="calculateTotal()">
                         <div *ngIf="paymentForm.get('receiveAmount')?.invalid && paymentForm.get('receiveAmount')?.touched"
                             class="text-danger">
                             Amount is required.
@@ -43,8 +44,8 @@
                 <div class="col-md-6">
                     <div class="input-block mb-3">
                         <label>Pending Amount <span class="text-danger">*</span></label>
-                        <input formControlName="pendingAmount" type="number" class="form-control" placeholder="Enter Amount"
-                            min="0">
+                        <input formControlName="pendingAmount" type="number" class="form-control"
+                            placeholder="Enter Amount" min="0">
                         <div *ngIf="paymentForm.get('pendingAmount')?.invalid && paymentForm.get('pendingAmount')?.touched"
                             class="text-danger">
                             Amount is required.

@@ -40,6 +40,25 @@ export class PaymentService {
             .pipe(catchError(this.handleError));
     }
 
+    getFilteredTransactionLogs(filters: { startDate?: string; endDate?: string; customerId?: number }): Observable<any> {
+        const params: any = {};
+
+        // Add query parameters only if they exist
+        if (filters.startDate) {
+            params.startDate = filters.startDate;
+        }
+        if (filters.endDate) {
+            params.endDate = filters.endDate;
+        }
+        if (filters.customerId) {
+            params.customerId = filters.customerId;
+        }
+
+        return this.httpClient
+            .get(environment.baseURL + `/payments/transaction/report/filter`, { params })
+            .pipe(catchError(this.handleError));
+    }
+
     // Add a new payment
     AddPayment(paymentData: any): Observable<any> {
         return this.httpClient

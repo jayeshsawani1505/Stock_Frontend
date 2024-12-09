@@ -143,120 +143,137 @@ export class PaymentsComponent implements OnInit, AfterViewInit {
     this.dataForExcel = [];
   }
 
-  async generatePDF(data: any) {
-    console.log(data);
-
-    const invoiceDetails = data.invoice_details || [];
-
-    let docDefinition: any = {
+  generatePDF(data: any) {
+    const docDefinition: any = {
       content: [
+        // Header Section
         {
           columns: [
-            [
-              {
-                text: 'PEC Trading Pvt Ltd',
-                fontSize: 16,
-                bold: true,
-                color: '#4e50d3',
-                margin: [0, 0, 0, 10],
-              },
-            ],
-            [
-              {
-                text: 'PAYMENT SLIP',
-                fontSize: 24,
-                bold: true,
-                alignment: 'right',
-                color: '#4e50d3',
-              },
-              {
-                text: `Invoice No: ${data.invoice_number || 'Not Available'}\nPayment Date: ${data.payment_date || 'Not Available'
-                  }`,
-                fontSize: 10,
-                alignment: 'right',
-                margin: [0, 10, 0, 0],
-              },
-            ],
-          ],
-        },
-        {
-          columns: [
-            [
-              { text: 'Payment Details:', bold: true, margin: [0, 0, 0, 5] },
-              { text: `Payment Mode: ${data.payment_mode || 'Not Available'}`, margin: [0, 0, 0, 5] },
-              { text: `Payment Date: ${data.payment_date || 'Not Available'}`, margin: [0, 0, 0, 5] },
-              { text: `Amount Paid: INR ${data.amount || 0}`, margin: [0, 0, 0, 5] },
-            ],
-          ],
-          columnGap: 20,
-          margin: [0, 20, 0, 10],
-        },
-        {
-          text: 'Invoice Details',
-          style: 'sectionHeader',
-          margin: [0, 20, 0, 10],
-        },
-        {
-          style: 'tableExample',
-          table: {
-            widths: [20, '*', 60, 50, 60],
-            body: [
-              [
-                { text: '#', bold: true, alignment: 'center' },
-                { text: 'Item', bold: true },
-                { text: 'Quantity', bold: true },
-                { text: 'Unit Price', bold: true },
-                { text: 'Amount', bold: true },
-              ],
-              ...invoiceDetails.map((item: any, index: number) => [
-                { text: index + 1, alignment: 'center' },
-                { text: `${item.product_name || 'Product'} ${item.subproduct_name ? `- ${item.subproduct_name}` : ''}` },
-                { text: item.quantity || 'N/A' },
-                { text: `INR ${item.rate || 0}`, alignment: 'right' },
-                { text: `INR ${item.total_amount || 0}`, alignment: 'right' },
-              ]),
-            ],
-          },
-        },
-        {
-          columns: [
-            { width: '*', text: '' },
             {
-              width: 'auto',
-              table: {
-                body: [
-                  [{ text: 'Total Amount:', alignment: 'right', bold: true }, { text: `INR ${data.total_amount}`, alignment: 'right', bold: true }],
-                ],
-              },
-              layout: 'noBorders',
+              text: 'PEC Trading Pvt Ltd',
+              fontSize: 20,
+              bold: true,
+              color: '#4e50d3',
+            },
+            {
+              text: 'PAYMENT SLIP',
+              fontSize: 24,
+              bold: true,
+              color: '#4e50d3',
+              alignment: 'right',
             },
           ],
+          margin: [0, 0, 0, 20],
+        },
+
+        // Divider Line
+        {
+          canvas: [{ type: 'line', x1: 0, y1: 0, x2: 515, y2: 0, lineWidth: 1, color: '#4e50d3' }],
+          margin: [0, 0, 0, 10],
+        },
+
+        // Payment Details Section
+        {
+          text: 'Payment Details',
+          style: 'sectionHeader',
           margin: [0, 10, 0, 10],
         },
         {
-          columns: [
-            [
-              { text: 'Payment Info:', bold: true },
-              { text: `Amount: INR ${data.amount || 0}` },
-              { text: `Payment Status: ${data.payment_status || 'Not Available'}`, color: data.payment_status === 'paid' ? 'green' : 'red' },
+          table: {
+            widths: ['35%', '65%'],
+            body: [
+              [
+                { text: 'Payment ID:', bold: true, margin: [0, 5, 0, 5] },
+                { text: data.payment_id || 'Not Available', margin: [0, 5, 0, 5] },
+              ],
+              [
+                { text: 'Customer Name:', bold: true, margin: [0, 5, 0, 5] },
+                { text: data.customer_name || 'Not Available', margin: [0, 5, 0, 5] },
+              ],
+              [
+                { text: 'Payment Date:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: data.payment_date
+                    ? new Date(data.payment_date).toLocaleDateString()
+                    : 'Not Available',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
+              [
+                { text: 'Payment Status:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: data.payment_status || 'Not Available',
+                  color: data.payment_status === 'paid' ? 'green' : 'red',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
             ],
-            [
-              { text: 'Terms & Conditions:', bold: true },
-              { text: data.terms_conditions || 'Not Available' },
-            ],
-          ],
-          margin: [0, 20, 0, 0],
+          },
+          layout: 'lightHorizontalLines',
+          margin: [0, 0, 0, 20],
         },
-        { text: 'Thanks for your Payment!', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
+
+        // Invoice Details Section
+        {
+          text: 'Invoice Details',
+          style: 'sectionHeader',
+          margin: [0, 10, 0, 10],
+        },
+        {
+          table: {
+            widths: ['50%', '50%'],
+            body: [
+              [
+                { text: 'Received Amount:', bold: true, margin: [0, 5, 0, 5] },
+                {
+                  text: `INR ${data.receiveAmount || 0}`,
+                  alignment: 'right',
+                  margin: [0, 5, 0, 5],
+                },
+              ],
+            ],
+          },
+          layout: {
+            hLineColor: () => '#4e50d3',
+            vLineColor: () => '#4e50d3',
+          },
+          margin: [0, 0, 0, 20],
+        },
+
+        // Description Section
+        {
+          text: 'Payment Description',
+          style: 'sectionHeader',
+          margin: [0, 10, 0, 10],
+        },
+        {
+          text: data.description || 'No Description Provided',
+          margin: [0, 0, 0, 10],
+          italics: true,
+        },
+
+        // Footer Section
+        {
+          text: 'Thank you for your payment!',
+          alignment: 'center',
+          margin: [0, 30, 0, 0],
+          fontSize: 14,
+          bold: true,
+          color: '#4e50d3',
+        },
+        {
+          text: 'For any queries, please contact us at support@pec-trading.com',
+          alignment: 'center',
+          fontSize: 10,
+          margin: [0, 5, 0, 0],
+        },
       ],
       styles: {
         sectionHeader: {
-          fontSize: 14,
+          fontSize: 16,
           bold: true,
+          color: '#4e50d3',
           margin: [0, 10, 0, 5],
-        },
-        tableExample: {
-          margin: [0, 5, 0, 15],
         },
       },
     };

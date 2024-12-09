@@ -8,7 +8,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { RouterModule } from '@angular/router';
 import { debounceTime, map, Observable, startWith } from 'rxjs';
 import { PurchasePaymentsService } from '../../../../services/PurchasePayment.service';
-import { PurchaseService } from '../../../../services/purchases.service';
+import { VendorService } from '../../../../services/vendors.service';
 
 @Component({
   selector: 'app-add-edit-purchase-payment',
@@ -20,12 +20,12 @@ import { PurchaseService } from '../../../../services/purchases.service';
 })
 export class AddEditPurchasePaymentComponent implements OnInit {
   paymentForm: FormGroup;
-  PurchaseList: any[] = [];
+  vendorList: any[] = [];
   vendorControl = new FormControl();
   filteredVendors!: Observable<any[]>;
 
   constructor(private fb: FormBuilder,
-    private PurchaseService: PurchaseService,
+    private VendorService: VendorService,
     private PurchasePaymentsService: PurchasePaymentsService,
     public dialogRef: MatDialogRef<AddEditPurchasePaymentComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,7 +35,7 @@ export class AddEditPurchasePaymentComponent implements OnInit {
 
     this.paymentForm = this.fb.group({
       payment_id: [''], // For edit scenarios
-      purchase_id: ['', Validators.required],
+      vendor_id: ['', Validators.required],
       total_amount: [''],
       receiveAmount: ['', [Validators.required, Validators.min(0)]],
       pendingAmount: ['', [Validators.required, Validators.min(0)]],
@@ -47,7 +47,7 @@ export class AddEditPurchasePaymentComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.getPurchases();
+    this.GetVendors();
     if (this.data?.payment_id) {
       this.fetchData(this.data)
     }
@@ -59,15 +59,16 @@ export class AddEditPurchasePaymentComponent implements OnInit {
     );
   }
 
-  getPurchases(): void {
-    this.PurchaseService.getPurchases().subscribe({
+  GetVendors(): void {
+    this.VendorService.GetVendors().subscribe({
       next: (res: any) => {
-        if (res && res.data) {
-          this.PurchaseList = res.data;
-          const selectedInvoice = this.PurchaseList.find(data => data.vendor_id === this.data?.vendor_id);
+        console.log(res);
+        if (res && res.vendors) {
+          this.vendorList = res.vendors;
+          const selectedInvoice = this.vendorList.find(data => data.vendor_id === this.data?.vendor_id);
           if (selectedInvoice) {
             this.vendorControl.setValue(`${selectedInvoice.vendor_name} (${selectedInvoice.supplier_invoice_serial_no})`);
-            this.paymentForm.get('purchase_id')?.setValue(selectedInvoice.id); // Set the purchase_id
+            this.paymentForm.get('vendor_id')?.setValue(selectedInvoice.vendor_id); // Set the vendor_id
             this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.total_amount)
           }
         }
@@ -82,7 +83,7 @@ export class AddEditPurchasePaymentComponent implements OnInit {
   // Filter the customers based on the search input
   private _filterVendors(value: string): any[] {
     const filterValue = value.toLowerCase();
-    return this.PurchaseList.filter(vendor =>
+    return this.vendorList.filter(vendor =>
       vendor.vendor_name.toLowerCase().includes(filterValue)
     );
   }
@@ -90,8 +91,8 @@ export class AddEditPurchasePaymentComponent implements OnInit {
   onOptionSelected(event: any): void {
     const selectedInvoice = event.option.value; // This will give the full invoice object
     console.log(selectedInvoice);
-    this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.total_amount)
-    this.paymentForm.get('purchase_id')?.setValue(selectedInvoice.id); // Set the purchase_id to the selected invoice's id
+    this.paymentForm.get('total_amount')?.setValue(selectedInvoice?.closing_balance)
+    this.paymentForm.get('vendor_id')?.setValue(selectedInvoice.vendor_id); // Set the vendor_id to the selected invoice's id
     this.vendorControl.setValue(selectedInvoice.vendor_name); // Update the customer name field
   }
 
@@ -107,7 +108,7 @@ export class AddEditPurchasePaymentComponent implements OnInit {
       : '';
     this.paymentForm.patchValue({
       payment_id: payment.payment_id || '',
-      purchase_id: payment.purchase_id || '',
+      vendor_id: payment.vendor_id || '',
       receiveAmount: payment.receiveAmount || '',
       pendingAmount: payment.pendingAmount || '',
       payment_mode: payment.payment_mode || '',

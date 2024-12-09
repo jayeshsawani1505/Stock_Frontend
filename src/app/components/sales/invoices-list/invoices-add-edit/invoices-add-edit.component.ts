@@ -40,6 +40,7 @@ export class InvoicesAddEditComponent implements OnInit {
   filteredCategories: any[] = [];
   filteredProducts: any[] = [];
   selectedProducts: { quantity: number; product_name: string }[] = []; // Stores selected product details per row
+  selectedCustomer: any = null;
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -62,9 +63,13 @@ export class InvoicesAddEditComponent implements OnInit {
       subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      adjustmentType: ['add'],
+      adjustmentType: [''],
       adjustmentValue: [0],
+      adjustmentType2: [''],
+      adjustmentValue2: [0],
       subtotal_amount: [''],
+      opening_balance: [0],
+      closing_balance: [0],
       total_amount: [0],
       signature_id: [0],
       invoice_details: this.fb.array([]), // FormArray for the table rows
@@ -86,18 +91,32 @@ export class InvoicesAddEditComponent implements OnInit {
   }
   calculateAdjustedTotal(): number {
     const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
-    const adjustmentType = this.invoiceForm.get('adjustmentType')?.value;
     const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
-
+    const opening_balance = this.invoiceForm.get('opening_balance')?.value || 0;
     // Calculate the adjusted total
-    const totalAmount =
-      adjustmentType === 'add'
-        ? subtotalAmount + adjustmentValue
-        : subtotalAmount - adjustmentValue;
-
+    const totalAmount = subtotalAmount +  adjustmentValue
+    const totalAmount2 = subtotalAmount + opening_balance + adjustmentValue
     // Set the total_amount in the form
-    this.invoiceForm.patchValue({ total_amount: totalAmount });
+    this.invoiceForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
+    return totalAmount;
+  }
 
+  calculateAdjustedTotal2(): number {
+    const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
+    const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
+    const adjustmentValue2 = this.invoiceForm.get('adjustmentValue2')?.value || 0;
+    const opening_balance = this.invoiceForm.get('opening_balance')?.value || 0;
+    // Calculate the adjusted total
+    const totalAmount = subtotalAmount + adjustmentValue  + adjustmentValue2
+    const totalAmount2 = subtotalAmount + adjustmentValue + opening_balance + adjustmentValue2
+    // Set the total_amount in the form
+    this.invoiceForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
     return totalAmount;
   }
 
@@ -106,6 +125,9 @@ export class InvoicesAddEditComponent implements OnInit {
       return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
     this.invoiceForm.get('subtotal_amount')?.setValue(total)
+    this.invoiceForm.get('total_amount')?.setValue(total)
+    const dd = total + this.invoiceForm.value?.opening_balance
+    this.invoiceForm.get('closing_balance')?.setValue(dd)
     console.log('Total Amount:', total);
   }
 
@@ -357,6 +379,16 @@ export class InvoicesAddEditComponent implements OnInit {
       console.log('Signature Photo:', this.signature_photo);
     }
   }
+
+  onCustomerChange(event: Event): void {
+    const selectedId = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.selectedCustomer = this.customerList.find(customer => customer.customer_id === selectedId) || null;
+    console.log('Filtered Customer:', this.selectedCustomer);
+    this.invoiceForm.patchValue({
+      opening_balance: this.selectedCustomer.closing_balance,
+    })
+  }
+
   onSubmit(): void {
     if (this.invoiceForm.valid) {
       // Check if history state has invoice data for update

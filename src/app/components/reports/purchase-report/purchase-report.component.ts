@@ -12,10 +12,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import moment from 'moment';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ExcelService } from '../../../services/excel.service';
-import { PurchaseService } from '../../../services/purchases.service';
-import { VendorService } from '../../../services/vendors.service';
 import { PurchasePaymentsService } from '../../../services/PurchasePayment.service';
+import { VendorService } from '../../../services/vendors.service';
 
 @Component({
   selector: 'app-purchase-report',
@@ -34,7 +34,7 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
   PurchaseList: any[] = []; // Define PurchaseList to store Purchase data
   PurchaseIdToDelete: number | null = null;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['vendor_id', 'vendor_name', 'total_amount', 'payment_mode', 'status', 'created_at'];
+  displayedColumns: string[] = ['log_id', 'vendor_name', 'transaction_type', 'amount', 'balance_after', 'created_at'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};
@@ -77,11 +77,11 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
   getPurchases(): void {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PurchasePaymentsService.getFilteredPurchasePayments(filters).subscribe({
+    this.PurchasePaymentsService.getFilteredTransactionLogs(filters).subscribe({
       next: (res: any) => {
-        if (res && res) {
+        if (res && res.data) {
           console.log(res);
-          this.PurchaseList = res;
+          this.PurchaseList = res.data;
           this.dataSource.data = this.PurchaseList;
         }
       },
@@ -90,15 +90,6 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
         this.openSnackBar('error', 'Close');
       }
     });
-  }
-
-  // Apply filter based on search input
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
   }
 
   getFormattedDateRange(): string {
@@ -179,6 +170,103 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
 
     // Clear the data after exporting
     this.dataForExcel = [];
+  }
+
+  async generatePDF() {
+    // Calculate totals for amount and balance_after
+    const totalAmount = this.PurchaseList.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const finalBalance = this.PurchaseList.length > 0 ? this.PurchaseList[this.PurchaseList.length - 1].balance_after : 0;
+
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+            [
+              {
+                text: 'VENDOR STATEMENT',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+            ],
+          ],
+        },
+        { text: 'Vendor Information', style: 'sectionHeader' },
+        { text: `Vendor Name: ${this.PurchaseList[0].vendor_name}`, margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [50, 100, 110, 110, 110, 110, 110],
+
+            body: [
+              // Header row
+              [
+                { text: '#', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Transaction Type', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Amount', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Payable Balance', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Date', bold: true, alignment: 'center', style: 'tableHeader' },
+              ],
+              // Dynamically add rows from paymentsList
+              ...this.PurchaseList.map((item, index) => [
+                { text: index + 1, alignment: 'center', style: 'tableCell' },
+                { text: item.transaction_type, alignment: 'center', style: 'tableCell' },
+                { text: item.amount, alignment: 'center', style: 'tableCell' },
+                { text: item.balance_after, alignment: 'center', style: 'tableCell' },
+                { text: moment(item.created_at).format('MM/DD/YYYY'), alignment: 'center', style: 'tableCell' },
+              ]),
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex: number) {
+              return rowIndex === 0 ? null : rowIndex % 2 === 0 ? '#F7F7F7' : null; // Alternate row colors
+            },
+          },
+        },
+        {
+          text: `Total Receive Amount: ${totalAmount}`,
+          margin: [0, 5], alignment: 'right'
+        },
+        {
+          text: `Total Pending Balance: ${finalBalance}`,
+          margin: [0, 5], alignment: 'right'
+        },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+          fontSize: 10,
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'white',
+          fillColor: '#B0B0B0', // Gray background for header
+          alignment: 'center',
+        },
+        tableCell: {
+          margin: [2, 2, 2, 2],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
   }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {

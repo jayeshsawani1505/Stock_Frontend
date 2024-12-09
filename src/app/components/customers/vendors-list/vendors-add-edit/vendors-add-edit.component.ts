@@ -29,7 +29,7 @@ export class VendorsAddEditComponent implements OnInit {
       vendor_name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       phone_number: ['', [Validators.required]],
-      closing_balance: ['', Validators.required],
+      opening_balance: ['', Validators.required],
       vendor_id: ['']
     });
   }
@@ -47,7 +47,7 @@ export class VendorsAddEditComponent implements OnInit {
       vendor_name: vendor.vendor_name,
       email: vendor.email,
       phone_number: vendor.phone_number,
-      closing_balance: vendor.closing_balance
+      opening_balance: vendor.opening_balance
     });
   }
 

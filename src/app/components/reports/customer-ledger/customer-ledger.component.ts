@@ -15,6 +15,7 @@ import moment from 'moment';
 import { ExcelService } from '../../../services/excel.service';
 import { PaymentService } from '../../../services/payments.service';
 import { CustomerService } from '../../../services/Customer.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-customer-ledger',
@@ -32,7 +33,14 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
   range: FormGroup;
   paymentsList: any[] = [];
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['payment_id', 'invoice_number', 'customer_name', 'amount', 'receiveAmount', 'pendingAmount', 'customer_opening_balance', 'customer_closing_balance', 'payment_mode', 'payment_date', 'payment_status', 'created_at'];
+  displayedColumns: string[] = [
+    'log_id',
+    'customer_name',
+    'transaction_type',
+    'amount',
+    'balance_after',
+    'created_at',
+  ];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
   filters = {};
@@ -72,7 +80,7 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
   GetPayments(): void {
     const filters = this.filters || {}; // Default to an empty object if no filters provided
 
-    this.PaymentService.getFilteredPayments(filters).subscribe({
+    this.PaymentService.getFilteredTransactionLogs(filters).subscribe({
       next: (res: any) => {
         console.log(res);
         if (res && res.data) {
@@ -85,16 +93,6 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
         this.openSnackBar('error', 'Close');
       }
     });
-  }
-
-  // Apply filter to search
-  applyFilter(event: Event): void {
-    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
-    this.dataSource.filter = filterValue;
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage(); // Reset to the first page after applying the filter
-    }
   }
 
 
@@ -168,7 +166,102 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
+  async generatePDF() {
+    // Calculate totals for amount and balance_after
+    const totalAmount = this.paymentsList.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const finalBalance = this.paymentsList.length > 0 ? this.paymentsList[this.paymentsList.length - 1].balance_after : 0;
 
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+            [
+              {
+                text: 'PARTY STATEMENT',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader' },
+        { text: `Customer Name: ${this.paymentsList[0].customer_name}`, margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [50, 100, 110, 110, 110, 110, 110],
+
+            body: [
+              // Header row
+              [
+                { text: '#', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Transaction Type', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Amount', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Payable Balance', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Date', bold: true, alignment: 'center', style: 'tableHeader' },
+              ],
+              // Dynamically add rows from paymentsList
+              ...this.paymentsList.map((item, index) => [
+                { text: index + 1, alignment: 'center', style: 'tableCell' },
+                { text: item.transaction_type, alignment: 'center', style: 'tableCell' },
+                { text: item.amount, alignment: 'center', style: 'tableCell' },
+                { text: item.balance_after, alignment: 'center', style: 'tableCell' },
+                { text: moment(item.created_at).format('MM/DD/YYYY'), alignment: 'center', style: 'tableCell' },
+              ]),
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex: number) {
+              return rowIndex === 0 ? null : rowIndex % 2 === 0 ? '#F7F7F7' : null; // Alternate row colors
+            },
+          },
+        },
+        {
+          text: `Total Receive Amount: ${totalAmount}`,
+          margin: [0, 5], alignment: 'right'
+        },
+        {
+          text: `Total Pending Balance: ${finalBalance}`,
+          margin: [0, 5], alignment: 'right'
+        },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+          fontSize: 10,
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'white',
+          fillColor: '#B0B0B0', // Gray background for header
+          alignment: 'center',
+        },
+        tableCell: {
+          margin: [2, 2, 2, 2],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds
@@ -176,4 +269,8 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD-MMM-YYYY') : null;
 }

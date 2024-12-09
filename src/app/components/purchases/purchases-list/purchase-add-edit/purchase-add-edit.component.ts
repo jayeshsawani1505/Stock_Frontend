@@ -38,6 +38,7 @@ export class PurchaseAddEditComponent implements OnInit {
   signature_photo: any
   filteredCategories: any[] = [];
   filteredProducts: any[] = [];
+  selectedVendor: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -61,10 +62,14 @@ export class PurchaseAddEditComponent implements OnInit {
       subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      adjustmentType: ['add'],
+      adjustmentType: [''],
       adjustmentValue: [0],
+      adjustmentType2: [''],
+      adjustmentValue2: [0],
       subtotal_amount: [''],
       total_amount: [0],
+      opening_balance: [0],
+      closing_balance: [0],
       signature_id: [0],
       invoice_details: this.fb.array([]), // FormArray for the table rows
     })
@@ -84,18 +89,31 @@ export class PurchaseAddEditComponent implements OnInit {
 
   calculateAdjustedTotal(): number {
     const subtotalAmount = this.purchaseForm.get('subtotal_amount')?.value || 0;
-    const adjustmentType = this.purchaseForm.get('adjustmentType')?.value;
     const adjustmentValue = this.purchaseForm.get('adjustmentValue')?.value || 0;
-
+    const opening_balance = this.purchaseForm.get('opening_balance')?.value || 0;
     // Calculate the adjusted total
-    const totalAmount =
-      adjustmentType === 'add'
-        ? subtotalAmount + adjustmentValue
-        : subtotalAmount - adjustmentValue;
-
+    const totalAmount = subtotalAmount + adjustmentValue
+    const totalAmount2 = subtotalAmount + opening_balance + adjustmentValue
     // Set the total_amount in the form
-    this.purchaseForm.patchValue({ total_amount: totalAmount });
-
+    this.purchaseForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
+    return totalAmount;
+  }
+  calculateAdjustedTotal2(): number {
+    const subtotalAmount = this.purchaseForm.get('subtotal_amount')?.value || 0;
+    const adjustmentValue = this.purchaseForm.get('adjustmentValue')?.value || 0;
+    const adjustmentValue2 = this.purchaseForm.get('adjustmentValue2')?.value || 0;
+    const opening_balance = this.purchaseForm.get('opening_balance')?.value || 0;
+    // Calculate the adjusted total
+    const totalAmount = subtotalAmount + adjustmentValue + adjustmentValue2
+    const totalAmount2 = subtotalAmount + adjustmentValue + opening_balance + adjustmentValue2
+    // Set the total_amount in the form
+    this.purchaseForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
     return totalAmount;
   }
 
@@ -104,6 +122,9 @@ export class PurchaseAddEditComponent implements OnInit {
       return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
     this.purchaseForm.get('subtotal_amount')?.setValue(total)
+    this.purchaseForm.get('total_amount')?.setValue(total)
+    const dd = total + this.purchaseForm.value?.opening_balance
+    this.purchaseForm.get('closing_balance')?.setValue(dd)
     console.log('Total Amount:', total);
   }
 
@@ -298,6 +319,15 @@ export class PurchaseAddEditComponent implements OnInit {
       this.signature_photo = environment.ImageUrl + selectedSignature.signature_photo
       console.log('Signature Photo:', this.signature_photo);
     }
+  }
+
+  onVendorChange(event: Event): void {
+    const selectedId = parseInt((event.target as HTMLSelectElement).value, 10);
+    this.selectedVendor = this.vendorList.find(customer => customer.vendor_id === selectedId) || null;
+    console.log('Filtered Customer:', this.selectedVendor);
+    this.purchaseForm.patchValue({
+      opening_balance: this.selectedVendor.closing_balance,
+    })
   }
 
   onSubmit(): void {

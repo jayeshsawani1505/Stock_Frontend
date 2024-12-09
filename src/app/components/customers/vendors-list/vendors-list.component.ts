@@ -2,13 +2,13 @@ import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { ExcelService } from '../../../services/excel.service';
 import { VendorService } from '../../../services/vendors.service';
 import { DeleteVendorComponent } from './delete-vendor/delete-vendor.component';
 import { VendorsAddEditComponent } from './vendors-add-edit/vendors-add-edit.component';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-vendors-list',
@@ -24,7 +24,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
   vendorList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'total_amount', 'created', 'actions'];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'closing_balance', 'total_amount', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
