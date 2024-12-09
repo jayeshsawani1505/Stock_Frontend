@@ -7,9 +7,12 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-import p-2" title="Export to Excel"
+                        <!-- <a class="btn btn-import p-2" title="Export to Excel"
                             (click)="excelDownload('customer-ledger')">
                             <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        </a> -->
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="generatePDF()">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To PDF
                         </a>
                     </li>
                 </ul>

@@ -238,18 +238,21 @@ export class InvoicesListComponent implements OnInit {
             [
               { text: 'Customer Details:', bold: true },
               { text: data.name },
-              { text: `GSTIN: ${data.gstin || 'Not Available'}` },
               { text: `Payment Status: ${data.status}`, color: data.status === 'paid' ? 'green' : 'red' },
             ],
             [
-              { text: 'Billing Address:', bold: true },
-              { text: `${data.billing_name}` },
-              { text: `${data.billing_address_line1}, ${data.billing_address_line2}, ${data.billing_city}, ${data.billing_state}, ${data.billing_country} - ${data.billing_pincode}` },
-            ],
-            [
-              { text: 'Shipping Address:', bold: true },
-              { text: `${data.shipping_name}` },
-              { text: `${data.shipping_address_line1}, ${data.shipping_address_line2}, ${data.shipping_city}, ${data.shipping_state}, ${data.shipping_country} - ${data.shipping_pincode}` },
+              {
+                text: 'Billing Address:', bold: true, alignment: 'right',
+              },
+              {
+                text: `${data.billing_name},`, alignment: 'right',
+              },
+              {
+                text: `${data.billing_address_line1}, ${data.billing_address_line2},
+                        ${data.billing_city},  ${data.billing_state},
+                        ${data.billing_country} - ${data.billing_pincode}`,
+                alignment: 'right',
+              },
             ],
           ]
         },
@@ -308,10 +311,14 @@ export class InvoicesListComponent implements OnInit {
                     { text: 'Total Amount:', alignment: 'right', bold: true },
                     { text: `${data.subtotal_amount}`, alignment: 'right', bold: true }
                   ],
-                  [
-                    { text: 'Adjustment Value:', alignment: 'right', bold: true },
+                  data.adjustmentValue ? [
+                    { text: `${data.adjustmentType} :`, alignment: 'right', bold: true },
                     { text: `${data.adjustmentValue}`, alignment: 'right', bold: true }
-                  ],
+                  ] : '',
+                  data.adjustmentValue2 ? [
+                    { text: `${data.adjustmentType2} :`, alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue2}`, alignment: 'right', bold: true }
+                  ] : '',
                   [
                     { text: 'Grand Total:', alignment: 'right', bold: true },
                     { text: `${data.total_amount}`, alignment: 'right', bold: true }

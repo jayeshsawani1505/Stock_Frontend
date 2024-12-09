@@ -15,6 +15,7 @@ import moment from 'moment';
 import { ExcelService } from '../../../services/excel.service';
 import { PaymentService } from '../../../services/payments.service';
 import { CustomerService } from '../../../services/Customer.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-customer-ledger',
@@ -168,7 +169,111 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
+  async generatePDF() {
+    // Calculate totals for receiveAmount and pendingAmount
+    const totalReceiveAmount = this.paymentsList.reduce((sum, item) => sum + parseFloat(item.receiveAmount || 0), 0);
+    const totalPendingAmount = this.paymentsList.reduce((sum, item) => sum + parseFloat(item.pendingAmount || 0), 0);
+    const totalAmount = this.paymentsList.reduce((sum, item) => sum + parseFloat(item.total_amount || 0), 0);
 
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: 'PEC Trading Pvt Ltd',
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+            [
+              {
+                text: 'INVOICE',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader' },
+        { text: `Customer Name : ${this.paymentsList[0].customer_name}`, margin: [0, 10] },
+        {
+          text: `Duration : ${moment(this.range.value.start).isValid() ? moment(this.range.value.start).format('MM/DD/YYYY') : ''} To ${moment(this.range.value.end).isValid() ? moment(this.range.value.end).format('MM/DD/YYYY') : ''}`,
+          margin: [0, 10]
+        },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [20, 50, 80, 80, 70, 70, 80],
+
+            body: [
+              // Header row
+              [
+                { text: '#', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'INV No', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Amt', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Received Amt', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Pending Amt', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Payment Mode', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Payment Date', bold: true, alignment: 'center', style: 'tableHeader' },
+              ],
+              // Dynamically add rows from paymentsList
+              ...this.paymentsList.map((item, index) => [
+                { text: index + 1, alignment: 'center', style: 'tableCell' }, // Serial number
+                { text: item.invoice_number, alignment: 'center', style: 'tableCell' },
+                { text: item.total_amount, alignment: 'center', style: 'tableCell' },
+                { text: item.receiveAmount, alignment: 'center', style: 'tableCell' },
+                { text: item.pendingAmount, alignment: 'center', style: 'tableCell' },
+                { text: item.payment_mode, alignment: 'center', style: 'tableCell' },
+                { text: formatDate(item.payment_date), alignment: 'center', style: 'tableCell' },
+              ]),
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex: number) {
+              return rowIndex === 0 ? null : rowIndex % 2 === 0 ? '#F7F7F7' : null; // Alternate row colors
+            },
+          },
+        },
+        {
+          text: `Total Receice Balance : ${totalReceiveAmount}`,
+          margin: [0, 5], alignment: 'right'
+        },
+        {
+          text: `Total Pending Balance : ${totalPendingAmount}`,
+          margin: [0, 5], alignment: 'right'
+        },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+          fontSize: 10,
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 12,
+          color: 'white',
+          fillColor: '#B0B0B0', // Gray background for header
+          alignment: 'center',
+        },
+        tableCell: {
+          margin: [2, 2, 2, 2],
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds
@@ -176,4 +281,8 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD-MMM-YYYY') : null;
 }

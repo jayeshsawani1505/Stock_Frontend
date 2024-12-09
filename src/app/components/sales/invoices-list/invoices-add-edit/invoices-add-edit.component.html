@@ -204,11 +204,8 @@
                                                 <div class="col-md-6">
                                                     <label for="adjustmentType" class="form-label">Adjustment
                                                         Type:</label>
-                                                    <select id="adjustmentType" class="form-select"
-                                                        formControlName="adjustmentType">
-                                                        <option value="add">Add</option>
-                                                        <option value="subtract">Subtract</option>
-                                                    </select>
+                                                    <input type="text" formControlName="adjustmentType"
+                                                        class="form-control">
                                                 </div>
 
                                                 <!-- Adjustment Value -->
@@ -220,6 +217,23 @@
                                                         placeholder="Enter adjustment value"
                                                         (keyup)="calculateAdjustedTotal()" />
 
+                                                </div>
+                                                <!-- Adjustment Type -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentType2" class="form-label">Adjustment
+                                                        Type 2:</label>
+                                                    <input type="text" formControlName="adjustmentType2"
+                                                        class="form-control">
+                                                </div>
+
+                                                <!-- Adjustment Value -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentValue2" class="form-label">Adjustment
+                                                        Value:</label>
+                                                    <input id="adjustmentValue2" type="number" class="form-control"
+                                                        formControlName="adjustmentValue2"
+                                                        placeholder="Enter adjustment value"
+                                                        (keyup)="calculateAdjustedTotal2()" />
                                                 </div>
                                             </div>
 

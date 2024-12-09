@@ -62,8 +62,10 @@ export class InvoicesAddEditComponent implements OnInit {
       subproduct_id: [[]],
       notes: ['', Validators.required],
       terms_conditions: ['', Validators.required],
-      adjustmentType: ['add'],
+      adjustmentType: [''],
       adjustmentValue: [0],
+      adjustmentType2: [''],
+      adjustmentValue2: [0],
       subtotal_amount: [''],
       total_amount: [0],
       signature_id: [0],
@@ -86,18 +88,21 @@ export class InvoicesAddEditComponent implements OnInit {
   }
   calculateAdjustedTotal(): number {
     const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
-    const adjustmentType = this.invoiceForm.get('adjustmentType')?.value;
     const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
-
     // Calculate the adjusted total
-    const totalAmount =
-      adjustmentType === 'add'
-        ? subtotalAmount + adjustmentValue
-        : subtotalAmount - adjustmentValue;
-
+    const totalAmount = subtotalAmount + adjustmentValue
     // Set the total_amount in the form
     this.invoiceForm.patchValue({ total_amount: totalAmount });
-
+    return totalAmount;
+  }
+  calculateAdjustedTotal2(): number {
+    const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
+    const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
+    const adjustmentValue2 = this.invoiceForm.get('adjustmentValue2')?.value || 0;
+    // Calculate the adjusted total
+    const totalAmount = subtotalAmount + adjustmentValue + adjustmentValue2
+    // Set the total_amount in the form
+    this.invoiceForm.patchValue({ total_amount: totalAmount });
     return totalAmount;
   }
 
@@ -106,6 +111,7 @@ export class InvoicesAddEditComponent implements OnInit {
       return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
     this.invoiceForm.get('subtotal_amount')?.setValue(total)
+    this.invoiceForm.get('total_amount')?.setValue(total)
     console.log('Total Amount:', total);
   }
 
