@@ -224,7 +224,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
         {
           style: 'tableExample',
           table: {
-            widths: [30, 190, 60, 60, 60, 60],
+            widths: [20, 250, 50, 50, 50, 50, 50],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
@@ -319,6 +319,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
         },
         tableExample: {
           margin: [0, 5, 0, 15],
+          fontSize: 10,
         },
       },
     };

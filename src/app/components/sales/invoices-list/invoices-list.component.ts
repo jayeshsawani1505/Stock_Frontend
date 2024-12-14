@@ -255,7 +255,7 @@ export class InvoicesListComponent implements OnInit {
         {
           style: 'tableExample',
           table: {
-            widths: [20, 180, 50, 50, 50, 50, 50],
+            widths: [20, 250, 40, 40, 40, 40, 40],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
@@ -344,6 +344,7 @@ export class InvoicesListComponent implements OnInit {
         },
         tableExample: {
           margin: [0, 5, 0, 15],
+          fontSize: 10,
         },
       }
     };

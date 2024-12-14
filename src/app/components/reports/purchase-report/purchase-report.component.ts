@@ -174,7 +174,9 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
 
   async generatePDF() {
     // Calculate totals for amount and balance_after
-    const totalAmount = this.PurchaseList.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const totalAmount = this.PurchaseList
+      .filter(item => item.transaction_type === 'payment-in') // Filter by transaction type
+      .reduce((sum, item) => sum + parseFloat(item.amount || 0), 0); // Sum the amounts
     const finalBalance = this.PurchaseList.length > 0 ? this.PurchaseList[this.PurchaseList.length - 1].balance_after : 0;
 
     let docDefinition: any = {

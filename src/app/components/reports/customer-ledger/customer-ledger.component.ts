@@ -168,7 +168,9 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
   }
   async generatePDF() {
     // Calculate totals for amount and balance_after
-    const totalAmount = this.paymentsList.reduce((sum, item) => sum + parseFloat(item.amount || 0), 0);
+    const totalAmount = this.paymentsList
+      .filter(item => item.transaction_type === 'payment-in') // Filter by transaction type
+      .reduce((sum, item) => sum + parseFloat(item.amount || 0), 0); // Sum the amounts
     const finalBalance = this.paymentsList.length > 0 ? this.paymentsList[this.paymentsList.length - 1].balance_after : 0;
 
     let docDefinition: any = {
