@@ -254,11 +254,11 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
                 body: [
                   [
                     { text: 'Opening Balance:', alignment: 'left', bold: true },
-                    { text: `${data.opening_balance}`, alignment: 'left', bold: true }
+                    { text: `${data.purchases_opening_balance}`, alignment: 'left', bold: true }
                   ],
                   [
                     { text: 'Closing Balance:', alignment: 'left', bold: true },
-                    { text: `${data.closing_balance}`, alignment: 'left', bold: true }
+                    { text: `${data.purchases_closing_balance}`, alignment: 'left', bold: true }
                   ]
                 ]
               },

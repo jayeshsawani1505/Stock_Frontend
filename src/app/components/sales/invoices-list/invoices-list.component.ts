@@ -287,11 +287,11 @@ export class InvoicesListComponent implements OnInit {
                 body: [
                   [
                     { text: 'Opening Balance:', alignment: 'left', bold: true },
-                    { text: `${data.opening_balance}`, alignment: 'left', bold: true }
+                    { text: `${data.invoice_opening_balance}`, alignment: 'left', bold: true }
                   ],
                   [
                     { text: 'Closing Balance:', alignment: 'left', bold: true },
-                    { text: `${data.closing_balance}`, alignment: 'left', bold: true }
+                    { text: `${data.invoice_closing_balance}`, alignment: 'left', bold: true }
                   ]
                 ]
               },
