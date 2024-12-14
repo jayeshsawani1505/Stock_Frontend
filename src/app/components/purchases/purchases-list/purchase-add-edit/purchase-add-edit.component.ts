@@ -326,7 +326,7 @@ export class PurchaseAddEditComponent implements OnInit {
     this.selectedVendor = this.vendorList.find(customer => customer.vendor_id === selectedId) || null;
     console.log('Filtered Customer:', this.selectedVendor);
     this.purchaseForm.patchValue({
-      opening_balance: this.selectedVendor.closing_balance,
+      opening_balance: this.selectedVendor.closing_balance > 0 ? this.selectedVendor.closing_balance : this.selectedVendor.opening_balance,
     })
   }
 

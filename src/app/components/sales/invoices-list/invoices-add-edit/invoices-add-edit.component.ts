@@ -94,7 +94,7 @@ export class InvoicesAddEditComponent implements OnInit {
     const adjustmentValue = this.invoiceForm.get('adjustmentValue')?.value || 0;
     const opening_balance = this.invoiceForm.get('opening_balance')?.value || 0;
     // Calculate the adjusted total
-    const totalAmount = subtotalAmount +  adjustmentValue
+    const totalAmount = subtotalAmount + adjustmentValue
     const totalAmount2 = subtotalAmount + opening_balance + adjustmentValue
     // Set the total_amount in the form
     this.invoiceForm.patchValue({
@@ -110,7 +110,7 @@ export class InvoicesAddEditComponent implements OnInit {
     const adjustmentValue2 = this.invoiceForm.get('adjustmentValue2')?.value || 0;
     const opening_balance = this.invoiceForm.get('opening_balance')?.value || 0;
     // Calculate the adjusted total
-    const totalAmount = subtotalAmount + adjustmentValue  + adjustmentValue2
+    const totalAmount = subtotalAmount + adjustmentValue + adjustmentValue2
     const totalAmount2 = subtotalAmount + adjustmentValue + opening_balance + adjustmentValue2
     // Set the total_amount in the form
     this.invoiceForm.patchValue({
@@ -385,7 +385,7 @@ export class InvoicesAddEditComponent implements OnInit {
     this.selectedCustomer = this.customerList.find(customer => customer.customer_id === selectedId) || null;
     console.log('Filtered Customer:', this.selectedCustomer);
     this.invoiceForm.patchValue({
-      opening_balance: this.selectedCustomer.closing_balance,
+      opening_balance: this.selectedCustomer.closing_balance > 0 ? this.selectedCustomer.closing_balance : this.selectedCustomer.opening_balance,
     })
   }
 
