@@ -219,7 +219,7 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
                 { text: item.transaction_type, alignment: 'center', style: 'tableCell' },
                 { text: item.amount, alignment: 'center', style: 'tableCell' },
                 { text: item.balance_after, alignment: 'center', style: 'tableCell' },
-                { text: moment(item.created_at).format('MM/DD/YYYY'), alignment: 'center', style: 'tableCell' },
+                { text: formatDate(item.created_at), alignment: 'center', style: 'tableCell' },
               ]),
             ],
           },
@@ -274,5 +274,5 @@ export class CustomerLedgerComponent implements OnInit, AfterViewInit {
 }
 
 function formatDate(date: moment.MomentInput) {
-  return date ? moment(date).format('DD-MMM-YYYY') : null;
+  return date ? moment(date).format('DD/MM/YYYY') : null;
 }

@@ -63,7 +63,7 @@
                             <!-- Expense Date Column -->
                             <ng-container matColumnDef="expense_date">
                                 <th mat-header-cell *matHeaderCellDef> Expense Date </th>
-                                <td mat-cell *matCellDef="let element"> {{ element.expense_date | date }} </td>
+                                <td mat-cell *matCellDef="let element"> {{ element.expense_date | date: 'dd/MM/yyyy' }} </td>
                             </ng-container>
 
                             <!-- Payment Status Column -->

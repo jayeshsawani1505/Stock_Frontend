@@ -58,7 +58,7 @@
 
                             <ng-container matColumnDef="due_date">
                                 <th mat-header-cell *matHeaderCellDef> Due Date </th>
-                                <td mat-cell *matCellDef="let element"> {{ element.due_date | date:'d MMM y' }} </td>
+                                <td mat-cell *matCellDef="let element"> {{ element.due_date | date: 'dd/MM/yyyy' }} </td>
                             </ng-container>
                             <!-- Status -->
                             <ng-container matColumnDef="status">
@@ -74,7 +74,7 @@
                             </ng-container>
                             <ng-container matColumnDef="created_at">
                                 <th mat-header-cell *matHeaderCellDef> Created Date </th>
-                                <td mat-cell *matCellDef="let element"> {{ element.created_at | date:'d MMM y' }} </td>
+                                <td mat-cell *matCellDef="let element"> {{ element.created_at | date: 'dd/MM/yyyy' }} </td>
                             </ng-container>
 
 

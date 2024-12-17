@@ -85,7 +85,7 @@
                             <ng-container matColumnDef="created">
                                 <th mat-header-cell *matHeaderCellDef>Created</th>
                                 <td mat-cell *matCellDef="let vendor">
-                                    {{ vendor.created_at | date:'dd MMM yyyy, hh:mm a' }}</td>
+                                    {{ vendor.created_at | date: 'dd/MM/yyyy' }}</td>
                             </ng-container>
 
                             <!-- Actions Column -->
@@ -135,7 +135,7 @@
 
             <td>{{ vendor.phone_number }}</td>
             <td>₹{{ vendor.closing_balance | number: '1.2-2' }}</td>
-            <td>{{ vendor.created_at | date:'dd MMM yyyy, hh:mm a' }}</td>
+            <td>{{ vendor.created_at | date: 'dd/MM/yyyy' }}</td>
             <td class="d-flex">
                 <a class="btn-action-icon me-2" (click)="openEditvendor(vendor)">
                     <i class="far fa-edit me-2"></i>

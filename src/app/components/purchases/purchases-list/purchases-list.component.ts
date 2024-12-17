@@ -337,5 +337,5 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
   }
 }
 function formatDate(date: moment.MomentInput) {
-  return date ? moment(date).format('DD-MMM-YYYY') : null;
+  return date ? moment(date).format('DD/MM/YYYY') : null;
 }
