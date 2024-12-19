@@ -23,7 +23,7 @@ import { DeletePurchasePaymentComponent } from './delete-purchase-payment/delete
 export class PurchasePaymentComponent implements OnInit, AfterViewInit {
   paymentsList: any[] = [];
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'vendor_name', 'amount', 'pendingAmount', 'receiveAmount', 'payment_mode', 'payment_date', 'payment_status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['index', 'payment_id', 'vendor_name', 'amount', 'pendingAmount', 'receiveAmount', 'payment_mode', 'payment_status', 'payment_date', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 

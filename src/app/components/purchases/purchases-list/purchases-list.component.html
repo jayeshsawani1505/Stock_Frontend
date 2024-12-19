@@ -87,9 +87,9 @@
 
                             <!-- Date -->
                             <ng-container matColumnDef="created_at">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchase Date</th>
                                 <td mat-cell *matCellDef="let purchase">
-                                    {{ purchase.created_at | date: 'dd/MM/yyyy' }}</td>
+                                    {{ purchase.purchase_date | date: 'dd/MM/yyyy' }}</td>
                             </ng-container>
 
                             <!-- Actions -->

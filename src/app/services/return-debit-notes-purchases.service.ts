@@ -21,6 +21,11 @@ export class ReturnDebitNotesPurchaseService {
             .pipe(catchError(this.handleError));
     }
 
+    getReturnForPDF(id: any): Observable<any> {
+        return this.httpClient
+            .get(`${environment.baseURL}/return-debit-notes-purchases/pdf/${id}`)
+            .pipe(catchError(this.handleError));
+    }
     // Add a new return debit note for a purchase
     addReturnDebitNotePurchase(debitNoteData: any): Observable<any> {
         return this.httpClient

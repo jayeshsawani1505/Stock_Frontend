@@ -47,14 +47,21 @@
 
                                 <!-- Category -->
                                 <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <label>Category <span class="text-danger"> *</span></label>
-                                    <select class="form-control" formControlName="category_id">
-                                        <option *ngFor="let category of categoryList" [value]="category.category_id">
-                                            {{ category.category_name }}
-                                        </option>
-                                    </select>
-                                </div>
+                                    <label>Category<span class="text-danger"> *</span></label>
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Select Category</mat-label>
+                                        <input matInput placeholder="Search Customer" [formControl]="customerControl"
+                                            [matAutocomplete]="auto">
 
+                                        <mat-autocomplete #auto="matAutocomplete"
+                                            (optionSelected)="onOptionSelected($event)">
+                                            <mat-option *ngFor="let invoice of filteredCustomers | async"
+                                                [value]="invoice">
+                                                {{ invoice.category_name }}
+                                            </mat-option>
+                                        </mat-autocomplete>
+                                    </mat-form-field>
+                                </div>
 
                                 <!-- Selling Price -->
                                 <div class="col-lg-4 col-md-6 col-sm-12">

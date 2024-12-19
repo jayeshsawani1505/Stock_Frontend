@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatOptionSelectionChange, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -14,13 +14,14 @@ import { ReturnDebitNotesPurchaseService } from '../../../../services/return-deb
 import { SignatureService } from '../../../../services/signature.srvice';
 import { VendorService } from '../../../../services/vendors.service';
 import { CategoryService } from '../../../../services/Category.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 @Component({
   selector: 'app-debit-notes-add-edit',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, FormsModule, MatInputModule,
     RouterModule, MatFormFieldModule, MatDatepickerModule, MatSnackBarModule,
-    MatSelectModule],
+    MatSelectModule, MatAutocompleteModule],
   providers: [provideNativeDateAdapter()],
   templateUrl: './debit-notes-add-edit.component.html',
   styleUrl: './debit-notes-add-edit.component.css'
@@ -35,6 +36,10 @@ export class DebitNotesAddEditComponent implements OnInit {
   product_name: any;
   isAddMode: boolean = true;
   signature_photo: any
+  filteredCategories: any[] = [];
+  filteredProducts: any[] = [];
+  selectedProducts: { quantity: number; product_name: string }[] = []; // Stores selected product details per row
+  selectedCustomer: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -55,9 +60,16 @@ export class DebitNotesAddEditComponent implements OnInit {
       payment_mode: ['', Validators.required],
       product_id: [[]],
       subproduct_id: [[]],
-      notes: ['', Validators.required],
-      terms_conditions: ['', Validators.required],
-      total_amount: ['',],
+      notes: [''],
+      terms_conditions: [''],
+      adjustmentType: [''],
+      adjustmentValue: [0],
+      adjustmentType2: [''],
+      adjustmentValue2: [0],
+      subtotal_amount: [''],
+      opening_balance: [0],
+      closing_balance: [0],
+      total_amount: [0],
       signature_id: [0],
       invoice_details: this.fb.array([]),
     })
@@ -74,13 +86,45 @@ export class DebitNotesAddEditComponent implements OnInit {
     });
   }
 
+  calculateAdjustedTotal(): number {
+    const subtotalAmount = this.purchaseForm.get('subtotal_amount')?.value || 0;
+    const adjustmentValue = this.purchaseForm.get('adjustmentValue')?.value || 0;
+    const opening_balance = this.purchaseForm.get('opening_balance')?.value || 0;
+    // Calculate the adjusted total
+    const totalAmount = subtotalAmount + adjustmentValue
+    const totalAmount2 = subtotalAmount + opening_balance + adjustmentValue
+    // Set the total_amount in the form
+    this.purchaseForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
+    return totalAmount;
+  }
+
+  calculateAdjustedTotal2(): number {
+    const subtotalAmount = this.purchaseForm.get('subtotal_amount')?.value || 0;
+    const adjustmentValue = this.purchaseForm.get('adjustmentValue')?.value || 0;
+    const adjustmentValue2 = this.purchaseForm.get('adjustmentValue2')?.value || 0;
+    const opening_balance = this.purchaseForm.get('opening_balance')?.value || 0;
+    // Calculate the adjusted total
+    const totalAmount = subtotalAmount + adjustmentValue + adjustmentValue2
+    const totalAmount2 = subtotalAmount + adjustmentValue + opening_balance + adjustmentValue2
+    // Set the total_amount in the form
+    this.purchaseForm.patchValue({
+      total_amount: totalAmount,
+      closing_balance: totalAmount2
+    });
+    return totalAmount;
+  }
+
   calculateTotalAmount() {
-    // Sum up the total_amount from the FormArray
     const total = this.productFormArray.controls.reduce((sum, control) => {
-      return sum + (control.get('total_amount')?.value || 0);
+      return sum + (control.get('subtotal_amount')?.value || 0);
     }, 0);
+    this.purchaseForm.get('subtotal_amount')?.setValue(total)
     this.purchaseForm.get('total_amount')?.setValue(total)
-    // Log the total to the console
+    const dd = total + this.purchaseForm.value?.opening_balance
+    this.purchaseForm.get('closing_balance')?.setValue(dd)
     console.log('Total Amount:', total);
   }
 
@@ -220,26 +264,93 @@ export class DebitNotesAddEditComponent implements OnInit {
 
   addRow(): void {
     const newRow = this.fb.group({
-      category_id: [null, Validators.required],
-      product_id: [null, Validators.required],
-      quantity: [0, [Validators.required, Validators.min(1)]],
-      unit: ['piece', Validators.required],
-      rate: [0, [Validators.required, Validators.min(0)]],
-      total_amount: [0],
+      category_name: [null],
+      product_name: [null],
+      quantity: [0],
+      unit: ['piece'],
+      rate: [0],
+      subtotal_amount: [0],
     });
     this.productFormArray.push(newRow);
+    this.filteredCategories.push(this.categoryList);
+    this.filteredProducts.push([]);
+    this.selectedProducts.push({ quantity: 0, product_name: '' }); // Add placeholder for selected product
   }
 
+
+  filterCategory(i: number): void {
+    const categoryControl = this.productFormArray.at(i).get('category_name');
+    const searchTerm = categoryControl?.value;
+    this.filteredCategories[i] = this.categoryList.filter(category =>
+      category.category_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '')
+    );
+
+    // Reset product_name field when category changes
+    this.productFormArray.at(i).get('product_name')?.reset();
+    this.filteredProducts[i] = [];
+  }
+
+  filterProduct(i: number): void {
+    const productControl = this.productFormArray.at(i).get('product_name');
+    const searchTerm = productControl?.value;
+
+    const categoryName = this.productFormArray.at(i).get('category_name')?.value;
+    const selectedCategory = this.categoryList.find(category => category.category_name === categoryName);
+
+    if (selectedCategory) {
+      this.filteredProducts[i] = this.productList.filter(product =>
+        product.product_name.toLowerCase().includes(searchTerm ? searchTerm.toLowerCase() : '') &&
+        product.category_id === selectedCategory.category_id
+      );
+    } else {
+      this.filteredProducts[i] = [];
+    }
+  }
+
+  onProductChange(product: any, event: MatOptionSelectionChange, index: number): void {
+    if (event.isUserInput) {
+      const productDetails = this.productList.find(p => p.product_id === product.product_id);
+
+      if (productDetails) {
+        // Store the selected product's details
+        this.selectedProducts[index] = {
+          quantity: productDetails.quantity,
+          product_name: productDetails.product_name
+        };
+
+        // Optionally reset the quantity to 0 when the product is changed
+        this.productFormArray.at(index).get('quantity')?.setValue(0);
+      }
+    }
+  }
+
+  // Validate the entered quantity
+  validateQuantity(index: number): void {
+    const selectedProduct = this.selectedProducts[index]; // Get the selected product for the row
+    const quantityControl = this.productFormArray.at(index).get('quantity');
+
+    if (quantityControl && selectedProduct) {
+      const enteredQuantity = quantityControl.value;
+
+      if (enteredQuantity > selectedProduct.quantity) {
+        // If the entered quantity exceeds the available quantity
+        quantityControl.setValue(selectedProduct.quantity); // Reset to the maximum available quantity
+        alert(`Maximum available quantity for ${selectedProduct.product_name} is ${selectedProduct.quantity}`);
+      } else if (enteredQuantity < 0) {
+        // Prevent negative quantities
+        quantityControl.setValue(0);
+      }
+    }
+  }
   updateAmount(index: number): void {
     const row = this.productFormArray.at(index);
     const quantity = row.get('quantity')?.value || 0;
     const rate = row.get('rate')?.value || 0;
+    const discount = row.get('discount')?.value || 0;
     const totalAmount = quantity * rate;
-
-    // Update total_amount and trigger total calculation
-    row.get('total_amount')?.setValue(totalAmount, { emitEvent: false });
-
-    // Manually recalculate the total after updating the row
+    const discountedAmount = (totalAmount * discount) / 100;
+    const finalAmount = totalAmount - discountedAmount;
+    row.get('subtotal_amount')?.setValue(finalAmount, { emitEvent: false });
     this.calculateTotalAmount();
   }
 

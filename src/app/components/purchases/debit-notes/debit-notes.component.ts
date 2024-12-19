@@ -8,6 +8,8 @@ import { ExcelService } from '../../../services/excel.service';
 import { ReturnDebitNotesPurchaseService } from '../../../services/return-debit-notes-purchases.service';
 import { DeleteDebitComponent } from './delete-debit/delete-debit.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import moment from 'moment';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-debit-notes',
@@ -54,7 +56,17 @@ export class DebitNotesComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+  getReturnForPDF(invoiceId: number) {
+    this.ReturnDebitNotesPurchaseService.getReturnForPDF(invoiceId).subscribe({
+      next: (res: any) => {
+        console.log(res);
+        this.generatePDF(res.data)
+      },
+      error: (err: any) => {
+        console.error('Error fetching invoices:', err);
+      }
+    });
+  }
   // Apply filter based on search input
   applyFilter(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
@@ -151,6 +163,157 @@ export class DebitNotesComponent implements OnInit, AfterViewInit {
     // Clear the data after exporting
     this.dataForExcel = [];
   }
+
+  async generatePDF(data: any) {
+    const invoiceDetails = data.invoice_details
+      ? JSON.parse(data.invoice_details) // Parse the stringified JSON safely
+      : [];
+
+    // Helper function to format currency
+
+
+    let docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              {
+                text: data.company_name || 'PEC Trading Pvt Ltd', // Dynamic Company Name
+                fontSize: 16,
+                bold: true,
+                color: '#4e50d3',
+                margin: [0, 0, 0, 10],
+              },
+            ],
+            [
+              {
+                text: 'Return Stock',
+                fontSize: 24,
+                bold: true,
+                alignment: 'right',
+                color: '#4e50d3',
+              },
+              {
+                text: `Return Date: ${formatDate(data.purchase_order_date) || 'Not Available'
+                  }\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
+                fontSize: 10,
+                alignment: 'right',
+                margin: [0, 10, 0, 0],
+              },
+            ],
+          ],
+        },
+        { text: 'Vendor Information', style: 'sectionHeader', margin: [0, 20, 0, 10] },
+        {
+          columns: [
+            [
+              { text: 'Vendor Details:', bold: true },
+              { text: data.vendor_name || 'Not Available' },
+              {
+                text: `Payment Status: ${data.status || 'Unknown'}`,
+                color: data.status === 'paid' ? 'green' : 'red',
+              },
+            ],
+          ],
+        },
+        { text: ' ', margin: [0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [20, 250, 80, 40, 40, 40, 60],
+            body: [
+              [
+                { text: '#', bold: true, alignment: 'center' },
+                { text: 'Item', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Amount', bold: true, alignment: 'center' },
+              ],
+              ...invoiceDetails.map((item: any, index: number) => [
+                { text: index + 1, alignment: 'center' },
+                { text: `${item.category_name} - ${item.product_name}`, alignment: 'center' },
+                { text: item.quantity || 0, alignment: 'center' },
+                { text: item.unit || 'N/A', alignment: 'center' },
+                { text: item.rate || 0, alignment: 'center' },
+                { text: item.subtotal_amount || 0, alignment: 'center' },
+              ]),
+            ],
+          },
+        },
+        {
+          columns: [
+
+            {
+              width: '100%',
+              table: {
+                widths: ['*', 'auto'],
+                body: [
+                  [
+                    { text: 'Subtotal:', alignment: 'right', bold: true },
+                    { text: data.subtotal_amount || 0, alignment: 'right', bold: true },
+                  ],
+                  ...(data.adjustmentValue
+                    ? [
+                      [
+                        { text: `${data.adjustmentType || 'Adjustment'}:`, alignment: 'right', bold: true },
+                        { text: data.adjustmentValue, alignment: 'right', bold: true },
+                      ],
+                    ]
+                    : []),
+                  ...(data.adjustmentValue2
+                    ? [
+                      [
+                        { text: `${data.adjustmentType2 || 'Adjustment'}:`, alignment: 'right', bold: true },
+                        { text: data.adjustmentValue2, alignment: 'right', bold: true },
+                      ],
+                    ]
+                    : []),
+                  [
+                    { text: 'Grand Total:', alignment: 'right', bold: true },
+                    { text: data.total_amount || 0, alignment: 'right', bold: true },
+                  ],
+                ],
+              },
+              layout: 'noBorders',
+            },
+          ],
+          margin: [0, 10, 0, 10],
+        },
+        {
+          columns: [
+            [
+              { text: 'Terms & Conditions:', bold: true },
+              { text: data.terms_conditions || 'Not Available' },
+            ],
+          ],
+          margin: [0, 20, 0, 0],
+        },
+        {
+          text: 'Thanks for your Business',
+          alignment: 'center',
+          margin: [0, 20, 0, 0],
+          fontSize: 12,
+          bold: true,
+        },
+      ],
+      styles: {
+        sectionHeader: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 10, 0, 5],
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15],
+          fontSize: 10,
+        },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+    // Uncomment to trigger download
+    // pdfMake.createPdf(docDefinition).download('Invoice.pdf');
+  }
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds
@@ -158,4 +321,8 @@ export class DebitNotesComponent implements OnInit, AfterViewInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD/MM/YYYY') : null;
 }

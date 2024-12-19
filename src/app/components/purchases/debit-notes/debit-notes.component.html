@@ -20,7 +20,7 @@
                     </li> -->
                     <li>
                         <a class="btn btn-primary" routerLink="/admin/purchases/debit-notes-add"><i
-                                class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add debit note</a>
+                                class="fa fa-plus-circle me-2" aria-hidden="true"></i>Add Return Stock</a>
                     </li>
                 </ul>
             </div>
@@ -87,9 +87,9 @@
 
                             <!-- Date -->
                             <ng-container matColumnDef="created_at">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Purchase Date</th>
                                 <td mat-cell *matCellDef="let purchase">
-                                    {{ purchase.created_at | date: 'dd/MM/yyyy' }}</td>
+                                    {{ purchase.purchase_order_date | date: 'dd/MM/yyyy' }}</td>
                             </ng-container>
 
                             <!-- Actions -->
@@ -102,6 +102,8 @@
                                     <a class="btn-action-icon" (click)="openDeleteConfirmation(purchase.id)">
                                         <i class=" far fa-trash-alt me-2"></i>
                                     </a>
+                                    <a class="btn-action-icon" (click)="getReturnForPDF(purchase.id)"><i
+                                            class="fas fa-download "></i></a>
                                 </td>
                             </ng-container>
 

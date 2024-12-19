@@ -9,6 +9,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import { ExcelService } from '../../../services/excel.service';
 import { QuotationService } from '../../../services/quotation.service';
 import { DeleteChallanComponent } from './delete-challan/delete-challan.component';
+import moment from 'moment';
 
 @Component({
   selector: 'app-delivery-challans',
@@ -154,7 +155,7 @@ export class DeliveryChallansComponent implements OnInit {
   }
 
   async generateDeliveryChallanPDF(data: any) {
-    const invoiceDetails = data.invoice_details;
+    const invoiceDetails = JSON.parse(data.invoice_details || '[]');
     let docDefinition: any = {
       content: [
         {
@@ -177,7 +178,7 @@ export class DeliveryChallansComponent implements OnInit {
                 color: '#4e50d3',
               },
               {
-                text: `Challan No: ${data.delivery_number}\nChallan Date: ${data.delivery_date || 'Not Available'}`,
+                text: `Challan No: ${data.delivery_number}\nChallan Date: ${formatDate(data.delivery_date) || 'Not Available'}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -191,7 +192,6 @@ export class DeliveryChallansComponent implements OnInit {
             [
               { text: 'Customer Details:', bold: true },
               { text: data.name },
-              { text: `GSTIN: ${data.gstin || 'Not Available'}` },
               { text: `Payment Status: ${data.status}`, color: data.status === 'paid' ? 'green' : 'red' },
             ],
             [
@@ -199,47 +199,57 @@ export class DeliveryChallansComponent implements OnInit {
               { text: `${data.billing_name}` },
               { text: `${data.billing_address_line1}, ${data.billing_address_line2}, ${data.billing_city}, ${data.billing_state}, ${data.billing_country} - ${data.billing_pincode}` },
             ],
-            [
-              { text: 'Shipping Address:', bold: true },
-              { text: `${data.shipping_name}` },
-              { text: `${data.shipping_address_line1}, ${data.shipping_address_line2}, ${data.shipping_city}, ${data.shipping_state}, ${data.shipping_country} - ${data.shipping_pincode}` },
-            ],
           ]
         },
         { text: ' ', margin: [0, 10] },
         {
           style: 'tableExample',
           table: {
-            widths: [20, '*', 60, 60, 60, 60],
+            widths: [20, 250, 80, 40, 40, 40, 40],
             body: [
               [
                 { text: '#', bold: true, alignment: 'center' },
-                { text: 'Item', bold: true },
-                { text: 'Quantity', bold: true },
-                { text: 'Unit', bold: true },
-                { text: 'Unit Price', bold: true },
-                { text: 'Amount', bold: true },
+                { text: 'Item', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Amt.', bold: true, alignment: 'center' },
               ],
               // Dynamically add rows here
               ...invoiceDetails.map((item: any, index: number) => [
                 { text: index + 1, alignment: 'center' },
-                { text: `${item.category_name} - ${item.product_name}` },
-                { text: item.quantity },
-                { text: item.unit },
-                { text: ` ${item.rate}`, alignment: 'right' },
-                { text: ` ${item.total_amount}`, alignment: 'right' },
+                { text: `${item.category_name} - ${item.product_name}`, alignment: 'center' },
+                { text: item.quantity, alignment: 'center' },
+                { text: item.unit, alignment: 'center' },
+                { text: ` ${item.rate}`, alignment: 'center' },
+                { text: ` ${item.subtotal_amount}`, alignment: 'center' },
               ]),
             ],
           },
         },
         {
           columns: [
-            { width: '*', text: '' },
             {
-              width: 'auto',
+              width: '100%',
               table: {
+                widths: ['*', 'auto'], // Makes the second column align to the left of this section
                 body: [
-                  [{ text: 'Total Amount:', alignment: 'right', bold: true }, { text: `INR ${data.total_amount}`, alignment: 'right', bold: true }],
+                  [
+                    { text: 'Total Amount:', alignment: 'right', bold: true },
+                    { text: `${data.subtotal_amount}`, alignment: 'right', bold: true }
+                  ],
+                  data.adjustmentValue ? [
+                    { text: `${data.adjustmentType} :`, alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue}`, alignment: 'right', bold: true }
+                  ] : '',
+                  data.adjustmentValue2 ? [
+                    { text: `${data.adjustmentType2} :`, alignment: 'right', bold: true },
+                    { text: `${data.adjustmentValue2}`, alignment: 'right', bold: true }
+                  ] : '',
+                  [
+                    { text: 'Grand Total:', alignment: 'right', bold: true },
+                    { text: `${data.total_amount}`, alignment: 'right', bold: true }
+                  ]
                 ]
               },
               layout: 'noBorders',
@@ -250,19 +260,13 @@ export class DeliveryChallansComponent implements OnInit {
         {
           columns: [
             [
-              { text: 'Delivery Info:', bold: true },
-              { text: `Total Amount: INR ${data.total_amount}` },
-              { text: 'Signature:', bold: true, margin: [0, 20, 0, 0], },
-              { text: `${data.signature_name}` },
-            ],
-            [
               { text: 'Terms & Conditions:', bold: true },
               { text: data.terms_conditions || 'Not Available' },
             ]
           ],
           margin: [0, 20, 0, 0]
         },
-        { text: 'Thanks for trusting our service!', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
+        { text: 'Thanks for your Business', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
       ],
       styles: {
         sectionHeader: {
@@ -272,6 +276,7 @@ export class DeliveryChallansComponent implements OnInit {
         },
         tableExample: {
           margin: [0, 5, 0, 15],
+          fontSize: 10,
         },
       }
     };
@@ -287,4 +292,8 @@ export class DeliveryChallansComponent implements OnInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD/MM/YYYY') : null;
 }

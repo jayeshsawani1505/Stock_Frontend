@@ -26,6 +26,12 @@ export class QuotationService {
             .pipe(catchError(this.handleError));
     }
 
+    getQuotationsForPDF(id: any): Observable<any> {
+        return this.httpClient
+            .get(`${environment.baseURL}/quotations/pdf/${id}`)
+            .pipe(catchError(this.handleError));
+    }
+
     getFilteredQuotations(filters: { startDate?: string; endDate?: string; customerId?: number }): Observable<any> {
         const params: any = {};
 

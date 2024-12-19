@@ -104,33 +104,36 @@
                                                         [formGroupName]="i">
                                                         <td>
                                                             <mat-form-field appearance="outline" class="w-100">
-                                                                <mat-select formControlName="category_id"
-                                                                    (selectionChange)="onCategoryChange($event)">
-                                                                    <mat-option value="" disabled>Select
-                                                                        category</mat-option>
-                                                                    <mat-option *ngFor="let category of categoryList"
-                                                                        [value]="category.category_id">
+                                                                <input matInput [matAutocomplete]="autoCategory"
+                                                                    formControlName="category_name"
+                                                                    placeholder="Category" (input)="filterCategory(i)">
+                                                                <mat-autocomplete #autoCategory="matAutocomplete">
+                                                                    <mat-option
+                                                                        *ngFor="let category of filteredCategories[i]"
+                                                                        [value]="category.category_name">
                                                                         {{ category.category_name }}
                                                                     </mat-option>
-                                                                </mat-select>
+                                                                </mat-autocomplete>
                                                             </mat-form-field>
                                                         </td>
                                                         <td>
                                                             <mat-form-field appearance="outline" class="w-100">
-                                                                <mat-select formControlName="product_id">
-                                                                    <mat-option value="" disabled>Select
-                                                                        Product</mat-option>
-                                                                    <mat-option *ngFor="let product of productList"
-                                                                        [value]="product.product_id">
-                                                                        {{ product.product_name }} - (AVL: {{
-                                                                        product.quantity }})
+                                                                <input matInput [matAutocomplete]="autoProduct"
+                                                                    formControlName="product_name" placeholder="Product"
+                                                                    (input)="filterProduct(i)">
+                                                                <mat-autocomplete #autoProduct="matAutocomplete">
+                                                                    <mat-option
+                                                                        *ngFor="let product of filteredProducts[i]"
+                                                                        [value]="product.product_name"
+                                                                        (onSelectionChange)="onProductChange(product, $event, i)">
+                                                                        {{ product.product_name }}
                                                                     </mat-option>
-                                                                </mat-select>
+                                                                </mat-autocomplete>
                                                             </mat-form-field>
                                                         </td>
                                                         <td>
                                                             <input type="number" formControlName="quantity"
-                                                                class="form-control" (input)="updateAmount(i)">
+                                                                class="form-control" (input)="validateQuantity(i)" />
                                                         </td>
                                                         <td>
                                                             <select formControlName="unit" class="form-control">
@@ -143,11 +146,11 @@
                                                         </td>
                                                         <td>
                                                             <input type="number" formControlName="rate"
-                                                                class="form-control" (input)="updateAmount(i)">
+                                                                class="form-control" (input)="updateAmount(i)" />
                                                         </td>
                                                         <td>
-                                                            <input type="number" formControlName="total_amount"
-                                                                class="form-control" readonly>
+                                                            <input type="number" formControlName="subtotal_amount"
+                                                                class="form-control" readonly />
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -159,49 +162,88 @@
                             <div class="form-group-item border-0 p-0">
                                 <div class="row">
                                     <div class="col-xl-6 col-lg-12">
-                                        <div class="form-group-bank">
-                                            <div class="input-block mb-3 notes-form-group-info">
-                                                <label>Notes</label>
-                                                <textarea formControlName="notes" class="form-control"
-                                                    placeholder="Enter Notes"></textarea>
+                                        <div class="invoice-total-box p-3 border rounded bg-light">
+
+                                            <!-- Total Amount Display -->
+                                            <div class="invoice-total-footer mb-4 text-center">
+                                                <h4>Total Amount</h4>
+                                                <span class="fw-bold fs-5 text-primary">₹{{
+                                                    QuotationForm.get('subtotal_amount')?.value }}</span>
                                             </div>
-                                            <div class="input-block mb-3 notes-form-group-info mb-0">
-                                                <label>Terms and Conditions</label>
-                                                <textarea class="form-control" formControlName="terms_conditions"
-                                                    placeholder="Enter Terms and Conditions"></textarea>
+
+                                            <!-- Adjustment Section -->
+                                            <div class="invoice-adjustment row g-3 align-items-center">
+
+                                                <!-- Adjustment Type -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentType" class="form-label">Adjustment
+                                                        Type:</label>
+                                                    <input type="text" formControlName="adjustmentType"
+                                                        class="form-control">
+                                                </div>
+
+                                                <!-- Adjustment Value -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentValue" class="form-label">Adjustment
+                                                        Value:</label>
+                                                    <input id="adjustmentValue" type="number" class="form-control"
+                                                        formControlName="adjustmentValue"
+                                                        placeholder="Enter adjustment value"
+                                                        (keyup)="calculateAdjustedTotal()" />
+
+                                                </div>
+                                                <!-- Adjustment Type -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentType2" class="form-label">Adjustment
+                                                        Type 2:</label>
+                                                    <input type="text" formControlName="adjustmentType2"
+                                                        class="form-control">
+                                                </div>
+
+                                                <!-- Adjustment Value -->
+                                                <div class="col-md-6">
+                                                    <label for="adjustmentValue2" class="form-label">Adjustment
+                                                        Value:</label>
+                                                    <input id="adjustmentValue2" type="number" class="form-control"
+                                                        formControlName="adjustmentValue2"
+                                                        placeholder="Enter adjustment value"
+                                                        (keyup)="calculateAdjustedTotal2()" />
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-xl-6 col-lg-12">
                                         <div class="form-group-bank">
-                                            <div class="invoice-total-box">
 
-                                                <div class="invoice-total-footer">
-                                                    <h4>Total Amount <span>₹{{QuotationForm.value?.total_amount}}</span>
-                                                    </h4>
-                                                </div>
+                                            <!-- Adjusted Total Display -->
+                                            <div class="adjusted-total mt-4 text-center">
+                                                <h4>Grand Total:</h4>
+                                                <span class="fw-bold fs-5 text-success">
+                                                    ₹{{ QuotationForm.get('total_amount')?.value }}
+                                                </span>
                                             </div>
+
+                                        </div>
+                                        <div class="input-block mb-3">
+                                            <label for="signature">Signature Name</label>
                                             <div class="input-block mb-3">
-                                                <label for="signature">Signature Name</label>
-                                                <div class="input-block mb-3">
-                                                    <select class="form-control" id="signature"
-                                                        formControlName="signature_id"
-                                                        (change)="onSignatureSelect($event)">
-                                                        <option *ngFor="let signature of signatureList"
-                                                            [value]="signature.signature_id">
-                                                            {{ signature.signature_name }}
-                                                        </option>
-                                                    </select>
-                                                </div>
+                                                <select class="form-control" id="signature"
+                                                    formControlName="signature_id" (change)="onSignatureSelect($event)">
+                                                    <option *ngFor="let signature of signatureList"
+                                                        [value]="signature.signature_id">
+                                                        {{ signature.signature_name }}
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="input-block mb-0" *ngIf="signature_photo">
+                                            <label>Signature Image</label>
+                                            <div class="input-block mb-3 service-upload service-upload-info mb-0">
+                                                <img src="{{signature_photo}}" width="250" height="150">
+                                                <div id="frames"></div>
                                             </div>
 
-                                            <div class="input-block mb-0" *ngIf="signature_photo">
-                                                <label>Signature Image</label>
-                                                <div class="input-block mb-3 service-upload service-upload-info mb-0">
-                                                    <img src="{{signature_photo}}" width="250" height="150">
-                                                    <div id="frames"></div>
-                                                </div>
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -214,5 +256,4 @@
             </form>
         </div>
     </div>
-
 </div>

@@ -1,16 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CategoryService } from '../../../../services/Category.service';
 import { ProductService } from '../../../../services/products.service';
 import { environment } from '../../../../../environments/environment';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
+import { map, Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-product-add-edit',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, FormsModule, RouterModule, MatSnackBarModule],
+  imports: [RouterModule, CommonModule, ReactiveFormsModule, FormsModule,
+    MatSnackBarModule, MatAutocompleteModule, MatInputModule],
   providers: [CategoryService, ProductService],
   templateUrl: './product-add-edit.component.html',
   styleUrl: './product-add-edit.component.css'
@@ -24,6 +28,8 @@ export class ProductAddEditComponent implements OnInit {
   selectedFile: File | null = null;
   isAddMode: boolean = true;
   imgURL = environment.ImageUrl
+  customerControl = new FormControl('');
+  filteredCustomers!: Observable<any[]>;
 
   constructor(private fb: FormBuilder,
     private router: Router,
@@ -44,6 +50,11 @@ export class ProductAddEditComponent implements OnInit {
       description: ['', Validators.required],
       product_image: [''],
     });
+    // Initialize filteredCustomers based on customerControl input changes
+    this.filteredCustomers = this.customerControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCustomers(value))
+    );
   }
 
   ngOnInit(): void {
@@ -58,6 +69,12 @@ export class ProductAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.data) {
           this.categoryList = res.data;
+          if (this.productData?.category_id) {
+            const selectedData = this.categoryList.find(data => data.category_id === this.productData?.category_id);
+            if (selectedData) {
+              this.customerControl.setValue(`${selectedData.category_name}`);
+            }
+          }
         }
       },
       error: (err: any) => {
@@ -65,7 +82,20 @@ export class ProductAddEditComponent implements OnInit {
       }
     });
   }
+  // Filter the customers based on the search input
+  private _filterCustomers(value: string | null): any[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return this.categoryList.filter(invoice =>
+      `${invoice.category_name}`.toLowerCase().includes(filterValue)
+    );
+  }
 
+  onOptionSelected(event: any): void {
+    const selectedInvoice = event.option.value; // This will give the full invoice object
+    console.log(selectedInvoice);
+    this.productForm.get('category_id')?.setValue(selectedInvoice.category_id); // Set the category_id to the selected invoice's id
+    this.customerControl.setValue(selectedInvoice.category_name); // Update the customer name field
+  }
   fetchCustomerData() {
     this.productData = history.state.productData;
     if (this.productData) {

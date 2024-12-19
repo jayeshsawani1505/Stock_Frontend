@@ -24,7 +24,7 @@ import { DeletePaymentComponent } from './delete-payment/delete-payment.componen
 export class PaymentsComponent implements OnInit, AfterViewInit {
   paymentsList: any[] = [];
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'payment_id', 'customer_name', 'amount', 'pendingAmount', 'receiveAmount', 'payment_mode', 'payment_date', 'payment_status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['index', 'payment_id', 'customer_name', 'amount', 'pendingAmount', 'receiveAmount', 'payment_mode', 'payment_status', 'payment_date', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
