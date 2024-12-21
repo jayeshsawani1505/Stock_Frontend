@@ -24,7 +24,7 @@ export class VendorsListComponent implements OnInit, AfterViewInit {
   vendorList: any[] = [];
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'closing_balance', 'total_amount', 'created', 'actions'];
+  displayedColumns: string[] = ['index', 'name', 'phone', 'balance', 'total_amount', 'closing_balance', 'created', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 

@@ -7,8 +7,8 @@
             <div class="list-btn">
                 <ul class="filter-list">
                     <li>
-                        <a class="btn btn-import p-2" title="Export to Excel" (click)="excelDownload('quotations')">
-                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To Excel
+                        <a class="btn btn-import p-2" title="Export to Excel" (click)="generatePDF()">
+                            <i class="fas fa-print" style="margin-right: 8px;"></i> Export To PDF
                         </a>
                     </li>
                 </ul>
@@ -49,13 +49,6 @@
                                     {{ customer.name }}
                                 </mat-option>
                             </mat-select>
-                        </mat-form-field>
-                    </div>
-                    <div class="col-xl-3 col-md-6 col-sm-12">
-                        <!-- Search Input -->
-                        <mat-form-field class="w-100" appearance="outline">
-                            <mat-label>Search</mat-label>
-                            <input matInput (keyup)="applyFilter($event)" placeholder="Search purchases" />
                         </mat-form-field>
                     </div>
                     <div class="col-xl-3 col-md-6 col-sm-12 mt-2">

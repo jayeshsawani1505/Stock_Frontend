@@ -54,7 +54,7 @@ export class DebitNotesAddEditComponent implements OnInit {
     this.purchaseForm = this.fb.group({
       vendor_id: ['', Validators.required],
       purchase_order_date: ['', Validators.required],
-      due_date: ['', Validators.required],
+      due_date: [new Date()],
       reference_no: ['00', Validators.required],
       status: ['Pending', Validators.required],
       payment_mode: ['', Validators.required],

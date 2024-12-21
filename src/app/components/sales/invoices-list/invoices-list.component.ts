@@ -325,15 +325,6 @@ export class InvoicesListComponent implements OnInit {
           ],
           margin: [0, 10, 0, 10]
         },
-        {
-          columns: [
-            [
-              { text: 'Terms & Conditions:', bold: true },
-              { text: data.terms_conditions || 'Not Available' },
-            ]
-          ],
-          margin: [0, 20, 0, 0]
-        },
         { text: 'Thanks for your Business', alignment: 'center', margin: [0, 20, 0, 0], fontSize: 12, bold: true },
       ],
       styles: {

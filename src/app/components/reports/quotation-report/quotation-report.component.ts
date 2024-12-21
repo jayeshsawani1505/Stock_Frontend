@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import moment from 'moment';
 import { CustomerService } from '../../../services/Customer.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
 
 @Component({
   selector: 'app-quotation-report',
@@ -184,6 +185,63 @@ export class QuotationReportComponent implements OnInit {
     // Clear data after export
     this.dataForExcel = [];
   }
+  async generatePDF() {
+    const docDefinition: any = {
+      content: [
+        {
+          columns: [
+            [
+              { text: 'PEC Trading Pvt Ltd', fontSize: 16, bold: true, color: '#4e50d3', margin: [0, 0, 0, 10] },
+            ],
+            [
+              { text: 'QUOTATION REPORT', fontSize: 24, bold: true, alignment: 'right', color: '#4e50d3' },
+            ],
+          ],
+        },
+        { text: 'Customer Information', style: 'sectionHeader' },
+        { text: `Customer Name: ${this.quotationsList[0].customer_name}`, margin: [0, 10] },
+        { text: `Customer Phone: ${this.quotationsList[0].customer_phone}`, margin: [0, 0, 0, 10] },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [50, 120, 100, 100, 100],
+            body: [
+              // Header row
+              [
+                { text: '#', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Quotation #', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Status', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Quotation Date', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Total Amount', bold: true, alignment: 'center', style: 'tableHeader' },
+              ],
+              // Dynamically add rows for quotations
+              ...this.quotationsList.map((item, index) => [
+                { text: index + 1, alignment: 'center', style: 'tableCell' },
+                { text: item.quotation_number, alignment: 'center', style: 'tableCell' },
+                { text: item.status, alignment: 'center', style: 'tableCell' },
+                { text: formatDate(item.quotation_date), alignment: 'center', style: 'tableCell' },
+                { text: item.total_amount, alignment: 'center', style: 'tableCell' },
+              ]),
+            ],
+          },
+          layout: {
+            fillColor: function (rowIndex: number) {
+              return rowIndex === 0 ? null : rowIndex % 2 === 0 ? '#F7F7F7' : null;
+            },
+          },
+        },
+      ],
+      styles: {
+        sectionHeader: { fontSize: 14, bold: true, margin: [0, 10, 0, 5] },
+        tableExample: { margin: [0, 5, 0, 15], fontSize: 10 },
+        tableHeader: { bold: true, fontSize: 12, color: 'white', fillColor: '#B0B0B0', alignment: 'center' },
+        tableCell: { margin: [2, 2, 2, 2] },
+      },
+    };
+
+    pdfMake.createPdf(docDefinition).open();
+  }
+
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
       duration: 3000, // Snackbar will auto-dismiss after 3 seconds
@@ -191,4 +249,8 @@ export class QuotationReportComponent implements OnInit {
       verticalPosition: 'bottom' // Show on top
     });
   }
+}
+
+function formatDate(date: moment.MomentInput) {
+  return date ? moment(date).format('DD/MM/YYYY') : null;
 }

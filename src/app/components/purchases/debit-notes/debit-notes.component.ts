@@ -194,8 +194,7 @@ export class DebitNotesComponent implements OnInit, AfterViewInit {
                 color: '#4e50d3',
               },
               {
-                text: `Return Date: ${formatDate(data.purchase_order_date) || 'Not Available'
-                  }\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
+                text: `Return Date: ${formatDate(data.purchase_order_date) || ''}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -279,15 +278,6 @@ export class DebitNotesComponent implements OnInit, AfterViewInit {
             },
           ],
           margin: [0, 10, 0, 10],
-        },
-        {
-          columns: [
-            [
-              { text: 'Terms & Conditions:', bold: true },
-              { text: data.terms_conditions || 'Not Available' },
-            ],
-          ],
-          margin: [0, 20, 0, 0],
         },
         {
           text: 'Thanks for your Business',

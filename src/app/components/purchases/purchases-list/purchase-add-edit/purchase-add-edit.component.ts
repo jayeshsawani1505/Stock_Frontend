@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -15,6 +15,7 @@ import { PurchaseService } from '../../../../services/purchases.service';
 import { SignatureService } from '../../../../services/signature.srvice';
 import { VendorService } from '../../../../services/vendors.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { debounceTime, map, Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-purchase-add-edit',
@@ -39,6 +40,8 @@ export class PurchaseAddEditComponent implements OnInit {
   filteredCategories: any[] = [];
   filteredProducts: any[] = [];
   selectedVendor: any = null;
+  vendorControl = new FormControl();
+  filteredVendors!: Observable<any[]>;
 
   constructor(
     private fb: FormBuilder,
@@ -57,11 +60,11 @@ export class PurchaseAddEditComponent implements OnInit {
       reference_no: ['00', Validators.required],
       status: ['Pending', Validators.required],
       supplier_invoice_serial_no: ['', Validators.required],
-      payment_mode: ['', Validators.required],
+      payment_mode: ['no'],
       product_id: [[]],
       subproduct_id: [[]],
-      notes: ['', Validators.required],
-      terms_conditions: ['', Validators.required],
+      notes: [''],
+      terms_conditions: [''],
       adjustmentType: [''],
       adjustmentValue: [0],
       adjustmentType2: [''],
@@ -85,6 +88,12 @@ export class PurchaseAddEditComponent implements OnInit {
       this.calculateTotalAmount();
     });
     this.addRow();
+    // Initialize filteredCustomers based on customerControl input changes
+    this.filteredVendors = this.vendorControl.valueChanges.pipe(
+      startWith(''),
+      debounceTime(300),
+      map(value => this._filterVendors(value))
+    );
   }
 
   calculateAdjustedTotal(): number {
@@ -139,7 +148,26 @@ export class PurchaseAddEditComponent implements OnInit {
       },
     });
   }
-
+  // Filter the customers based on the search input
+  private _filterVendors(value: string): any[] {
+    const filterValue = value.toLowerCase();
+    return this.vendorList.filter(vendor =>
+      vendor.vendor_name.toLowerCase().includes(filterValue)
+    );
+  }
+  onOptionSelected(event: any): void {
+    const selectedInvoice = event.option.value; // This will give the full invoice object
+    console.log('Selected Invoice:', selectedInvoice);
+    this.selectedVendor = this.vendorList.find(vendor => vendor.vendor_id === selectedInvoice.vendor_id) || null;
+    console.log('Filtered Vendor:', this.selectedVendor);
+    this.purchaseForm.patchValue({
+      vendor_id: selectedInvoice.vendor_id, // Set the vendor_id to the selected invoice's id
+      opening_balance: this.selectedVendor?.closing_balance > 0
+        ? this.selectedVendor.closing_balance
+        : this.selectedVendor?.opening_balance || 0,
+    });
+    this.vendorControl.setValue(selectedInvoice.vendor_name); // Update the vendor name field
+  }
   GetCategories(): void {
     this.categoryService.GetCategories().subscribe({
       next: (res: any) => {

@@ -183,8 +183,7 @@ export class QuotationsComponent implements OnInit {
                 color: '#4e50d3',
               },
               {
-                text: `Quotation No: ${data.quotation_number}\nQuotation Date: ${formatDate(data.quotation_date) || 'Not Available'
-                  }\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
+                text: `Quotation No: ${data.quotation_number}\nQuotation Date: ${formatDate(data.quotation_date) || ''}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -276,15 +275,6 @@ export class QuotationsComponent implements OnInit {
             },
           ],
           margin: [0, 10, 0, 10],
-        },
-        {
-          columns: [
-            [
-              { text: 'Terms & Conditions:', bold: true },
-              { text: data.terms_conditions || 'Not Available' },
-            ],
-          ],
-          margin: [0, 20, 0, 0],
         },
         {
           text: 'Thanks for your Business',

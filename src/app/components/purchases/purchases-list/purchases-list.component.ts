@@ -26,7 +26,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
   PurchaseIdToDelete: number | null = null;
   @ViewChild('fileInput') fileInput!: ElementRef;
   dataForExcel: any[] = [];
-  displayedColumns: string[] = ['vendor_id', 'vendor_name', 'total_amount', 'payment_mode', 'status', 'created_at', 'actions'];
+  displayedColumns: string[] = ['vendor_id', 'vendor_name', 'total_amount', 'status', 'created_at', 'actions'];
   dataSource = new MatTableDataSource<any>();
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -202,7 +202,7 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
                 color: '#4e50d3',
               },
               {
-                text: `Purchase No: ${data.reference_no || 'N/A'}\nPurchase Date: ${formatDate(data.purchase_date) || 'Not Available'}\nDue Date: ${formatDate(data.due_date) || 'Not Available'}`,
+                text: `Purchase Date: ${formatDate(data.purchase_date) || ''}`,
                 fontSize: 10,
                 alignment: 'right',
                 margin: [0, 10, 0, 0],
@@ -294,10 +294,6 @@ export class PurchasesListComponent implements OnInit, AfterViewInit {
         },
         {
           columns: [
-            [
-              { text: 'Terms & Conditions:', bold: true },
-              { text: data.terms_conditions || 'Not Available' },
-            ],
             [
               {
                 text: 'Signature:', bold: true, alignment: 'right',

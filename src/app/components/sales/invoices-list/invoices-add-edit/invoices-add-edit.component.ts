@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatOptionSelectionChange, provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -15,6 +15,7 @@ import { CustomerService } from '../../../../services/Customer.service';
 import { InvoiceService } from '../../../../services/invoice.service';
 import { ProductService } from '../../../../services/products.service';
 import { SignatureService } from '../../../../services/signature.srvice';
+import { map, Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-invoices-add-edit',
@@ -41,6 +42,8 @@ export class InvoicesAddEditComponent implements OnInit {
   filteredProducts: any[] = [];
   selectedProducts: { quantity: number; product_name: string }[] = []; // Stores selected product details per row
   selectedCustomer: any = null;
+  customerControl = new FormControl('');
+  filteredCustomers!: Observable<any[]>;
 
   constructor(private fb: FormBuilder,
     private CustomerService: CustomerService,
@@ -88,6 +91,11 @@ export class InvoicesAddEditComponent implements OnInit {
     this.productFormArray.valueChanges.subscribe(() => {
       this.calculateTotalAmount();
     });
+    // Initialize filteredCustomers based on customerControl input changes
+    this.filteredCustomers = this.customerControl.valueChanges.pipe(
+      startWith(''),
+      map(value => this._filterCustomers(value))
+    );
   }
   calculateAdjustedTotal(): number {
     const subtotalAmount = this.invoiceForm.get('subtotal_amount')?.value || 0;
@@ -137,9 +145,37 @@ export class InvoicesAddEditComponent implements OnInit {
         console.log(res);
         if (res && res.customers) {
           this.customerList = res.customers; // Assign customers data to customerList
+          if (this.invoiceData?.payment_id) {
+            const selectedData = this.customerList.find(data => data.customer_id === this.invoiceData?.customer_id);
+            if (selectedData) {
+              this.customerControl.setValue(`${selectedData.name}`);
+              this.invoiceForm.get('customer_id')?.setValue(selectedData.customer_id); // Set the invoice_id
+            }
+          }
         }
       },
     });
+  }
+  // Filter the customers based on the search input
+  private _filterCustomers(value: string | null): any[] {
+    const filterValue = typeof value === 'string' ? value.toLowerCase() : '';
+    return this.customerList.filter(invoice =>
+      `${invoice.name}`.toLowerCase().includes(filterValue)
+    );
+  }
+  
+  onOptionSelected(event: any): void {
+    const selectedInvoice = event.option.value; // This will give the full invoice object
+    console.log('Selected Invoice:', selectedInvoice);
+    this.selectedCustomer = this.customerList.find(customer => customer.customer_id === selectedInvoice.customer_id) || null;
+    console.log('Filtered Customer:', this.selectedCustomer);
+    this.invoiceForm.patchValue({
+      customer_id: selectedInvoice.customer_id, // Set the customer_id to the selected invoice's id
+      opening_balance: this.selectedCustomer?.closing_balance > 0
+        ? this.selectedCustomer.closing_balance
+        : this.selectedCustomer?.opening_balance || 0,
+    });
+    this.customerControl.setValue(selectedInvoice.name); // Update the customer name field
   }
 
   GetCategories(): void {

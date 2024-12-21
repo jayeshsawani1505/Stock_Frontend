@@ -9,17 +9,23 @@
                     <div class="col-md-12">
                         <div class="form-group-item border-0 mb-0">
                             <div class="row align-item-center">
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label for="vendorSelect">Select Vendor</label>
                                         <div class="d-flex align-items-center">
-                                            <select formControlName="vendor_id" class="form-control me-2"
-                                                (change)="onVendorChange($event)">
-                                                <option value="" disabled selected>Choose Vendor</option>
-                                                <option *ngFor="let vendor of vendorList" [value]="vendor.vendor_id">
-                                                    {{ vendor.vendor_name }}
-                                                </option>
-                                            </select>
+                                            <mat-form-field appearance="outline" class="w-100">
+                                                <mat-label>Select Vendor</mat-label>
+                                                <input matInput placeholder="Search Vendor"
+                                                    [formControl]="vendorControl" [matAutocomplete]="auto">
+
+                                                <mat-autocomplete #auto="matAutocomplete"
+                                                    (optionSelected)="onOptionSelected($event)">
+                                                    <mat-option *ngFor="let purchase of filteredVendors | async"
+                                                        [value]="purchase">
+                                                        {{ purchase.vendor_name }}
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                            </mat-form-field>
                                             <a class="btn btn-primary form-plus-btn"
                                                 routerLink="/admin/customers/vendors-list"><i
                                                     class="fas fa-plus-circle"></i></a>
@@ -27,7 +33,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Purchases Date</label>
                                         <mat-form-field appearance="outline" class="w-100">
@@ -38,7 +44,7 @@
                                         </mat-form-field>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label for="statusSelect">Status</label>
                                         <select id="statusSelect" formControlName="status" class="form-control">
@@ -53,25 +59,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                <div class="col-lg-3 col-md-6 col-sm-12">
                                     <div class="input-block mb-3">
                                         <label>Supplier Invoice Serial No</label>
                                         <input type="text" formControlName="supplier_invoice_serial_no"
                                             class="form-control" placeholder="Enter Supplier Invoice Serial No">
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 col-sm-12">
-                                    <div class="input-block mb-3">
-                                        <label>Payment Method</label>
-                                        <select formControlName="payment_mode" class="form-control">
-                                            <option value="" disabled selected>Select Payment Method</option>
-                                            <option value="credit_card">Credit Card</option>
-                                            <option value="debit_card">Debit Card</option>
-                                            <option value="upi">UPI</option>
-                                            <option value="bank_transfer">Bank Transfer</option>
-                                            <option value="cash">Cash</option>
-                                            <option value="other">Other</option>
-                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -153,102 +145,92 @@
                         <div class="form-group-item border-0 p-0">
                             <div class="row">
                                 <div class="col-xl-6 col-lg-12">
-                                    <div class="form-group-bank">
-                                        <div class="input-block mb-3 notes-form-group-info">
-                                            <label>Notes</label>
-                                            <textarea formControlName="notes" class="form-control"
-                                                placeholder="Enter Notes"></textarea>
+                                    <div class="invoice-total-box p-3 border rounded bg-light">
+
+                                        <!-- Total Amount Display -->
+                                        <div class="invoice-total-footer mb-4 text-center">
+                                            <h4>Total Amount</h4>
+                                            <span class="fw-bold fs-5 text-primary">₹{{
+                                                purchaseForm.get('subtotal_amount')?.value }}</span>
                                         </div>
-                                        <div class="input-block mb-3 notes-form-group-info mb-0">
-                                            <label>Terms and Conditions</label>
-                                            <textarea class="form-control" formControlName="terms_conditions"
-                                                placeholder="Enter Terms and Conditions"></textarea>
+
+                                        <!-- Adjustment Section -->
+                                        <div class="invoice-adjustment row g-3 align-items-center">
+
+                                            <!-- Adjustment Type -->
+                                            <div class="col-md-6">
+                                                <label for="adjustmentType" class="form-label">Adjustment
+                                                    Type:</label>
+                                                <input type="text" formControlName="adjustmentType"
+                                                    class="form-control">
+                                            </div>
+
+                                            <!-- Adjustment Value -->
+                                            <div class="col-md-6">
+                                                <label for="adjustmentValue" class="form-label">Adjustment
+                                                    Value:</label>
+                                                <input id="adjustmentValue" type="number" class="form-control"
+                                                    formControlName="adjustmentValue"
+                                                    placeholder="Enter adjustment value"
+                                                    (keyup)="calculateAdjustedTotal()" />
+
+                                            </div>
+                                            <!-- Adjustment Type -->
+                                            <div class="col-md-6">
+                                                <label for="adjustmentType2" class="form-label">Adjustment
+                                                    Type 2:</label>
+                                                <input type="text" formControlName="adjustmentType2"
+                                                    class="form-control">
+                                            </div>
+
+                                            <!-- Adjustment Value -->
+                                            <div class="col-md-6">
+                                                <label for="adjustmentValue2" class="form-label">Adjustment
+                                                    Value:</label>
+                                                <input id="adjustmentValue2" type="number" class="form-control"
+                                                    formControlName="adjustmentValue2"
+                                                    placeholder="Enter adjustment value"
+                                                    (keyup)="calculateAdjustedTotal2()" />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-12">
                                     <div class="form-group-bank">
-                                        <div class="invoice-total-box p-3 border rounded bg-light">
 
-                                            <!-- Total Amount Display -->
-                                            <div class="invoice-total-footer mb-4 text-center">
-                                                <h4>Total Amount</h4>
-                                                <span class="fw-bold fs-5 text-primary">₹{{
-                                                    purchaseForm.get('subtotal_amount')?.value }}</span>
-                                            </div>
-
-                                            <!-- Adjustment Section -->
-                                            <div class="invoice-adjustment row g-3 align-items-center">
-
-                                                <!-- Adjustment Type -->
-                                                <div class="col-md-6">
-                                                    <label for="adjustmentType" class="form-label">Adjustment
-                                                        Type:</label>
-                                                    <input type="text" formControlName="adjustmentType"
-                                                        class="form-control">
-                                                </div>
-
-                                                <!-- Adjustment Value -->
-                                                <div class="col-md-6">
-                                                    <label for="adjustmentValue" class="form-label">Adjustment
-                                                        Value:</label>
-                                                    <input id="adjustmentValue" type="number" class="form-control"
-                                                        formControlName="adjustmentValue"
-                                                        placeholder="Enter adjustment value"
-                                                        (keyup)="calculateAdjustedTotal()" />
-                                                </div>
-                                                <!-- Adjustment Type -->
-                                                <div class="col-md-6">
-                                                    <label for="adjustmentType2" class="form-label">Adjustment
-                                                        Type 2:</label>
-                                                    <input type="text" formControlName="adjustmentType2"
-                                                        class="form-control">
-                                                </div>
-
-                                                <!-- Adjustment Value -->
-                                                <div class="col-md-6">
-                                                    <label for="adjustmentValue2" class="form-label">Adjustment
-                                                        Value:</label>
-                                                    <input id="adjustmentValue2" type="number" class="form-control"
-                                                        formControlName="adjustmentValue2"
-                                                        placeholder="Enter adjustment value"
-                                                        (keyup)="calculateAdjustedTotal2()" />
-                                                </div>
-                                            </div>
-
-                                            <!-- Adjusted Total Display -->
-                                            <div class="adjusted-total mt-4 text-center">
-                                                <p class="m-0">Opening Balance : {{purchaseForm.value?.opening_balance}}
-                                                </p>
-                                                <p class="m-0">Closing Balance : {{purchaseForm.value?.closing_balance}}
-                                                </p>
-                                                <h4>Grand Total:</h4>
-                                                <span class="fw-bold fs-5 text-success">
-                                                    ₹{{ purchaseForm.get('total_amount')?.value }}
-                                                </span>
-                                            </div>
-
+                                        <!-- Adjusted Total Display -->
+                                        <div class="adjusted-total mt-4 text-center">
+                                            <p class="m-0">Opening Balance : {{purchaseForm.value?.opening_balance}}
+                                            </p>
+                                            <p class="m-0">Closing Balance : {{purchaseForm.value?.closing_balance}}
+                                            </p>
+                                            <h4>Grand Total:</h4>
+                                            <span class="fw-bold fs-5 text-success">
+                                                ₹{{ purchaseForm.get('total_amount')?.value }}
+                                            </span>
                                         </div>
+
+                                    </div>
+                                    <div class="input-block mb-3">
+                                        <label for="signature">Signature Name</label>
                                         <div class="input-block mb-3">
-                                            <label for="signature">Signature Name</label>
-                                            <div class="input-block mb-3">
-                                                <select class="form-control" id="signature"
-                                                    formControlName="signature_id" (change)="onSignatureSelect($event)">
-                                                    <option *ngFor="let signature of signatureList"
-                                                        [value]="signature.signature_id">
-                                                        {{ signature.signature_name }}
-                                                    </option>
-                                                </select>
-                                            </div>
+                                            <select class="form-control" id="signature" formControlName="signature_id"
+                                                (change)="onSignatureSelect($event)">
+                                                <option *ngFor="let signature of signatureList"
+                                                    [value]="signature.signature_id">
+                                                    {{ signature.signature_name }}
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="input-block mb-0" *ngIf="signature_photo">
+                                        <label>Signature Image</label>
+                                        <div class="input-block mb-3 service-upload service-upload-info mb-0">
+                                            <img src="{{signature_photo}}" width="250" height="150">
+                                            <div id="frames"></div>
                                         </div>
 
-                                        <div class="input-block mb-0" *ngIf="signature_photo">
-                                            <label>Signature Image</label>
-                                            <div class="input-block mb-3 service-upload service-upload-info mb-0">
-                                                <img src="{{signature_photo}}" width="250" height="150">
-                                                <div id="frames"></div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </div>
                             </div>

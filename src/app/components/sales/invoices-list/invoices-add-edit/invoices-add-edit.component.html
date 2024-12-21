@@ -23,15 +23,19 @@
                                         <label for="customerSelect">Customer Name</label>
                                         <div class="form-group">
                                             <div class="d-flex align-items-center">
-                                                <select id="customerSelect" class="form-control me-2"
-                                                    formControlName="customer_id" (change)="onCustomerChange($event)">
-                                                    <option value="" disabled selected>Select Customer</option>
-                                                    <!-- Loop through customerList to dynamically populate the options -->
-                                                    <option *ngFor="let customer of customerList"
-                                                        [value]="customer.customer_id">
-                                                        {{ customer.name }}
-                                                    </option>
-                                                </select>
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>Select Customer</mat-label>
+                                                    <input matInput placeholder="Search Customer"
+                                                        [formControl]="customerControl" [matAutocomplete]="auto">
+
+                                                    <mat-autocomplete #auto="matAutocomplete"
+                                                        (optionSelected)="onOptionSelected($event)">
+                                                        <mat-option *ngFor="let customer of filteredCustomers | async"
+                                                            [value]="customer">
+                                                            {{ customer.name }}
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+                                                </mat-form-field>
                                                 <a class="btn btn-primary form-plus-btn"
                                                     routerLink="/admin/customers/customers-list"><i
                                                         class="fas fa-plus-circle"></i></a>
