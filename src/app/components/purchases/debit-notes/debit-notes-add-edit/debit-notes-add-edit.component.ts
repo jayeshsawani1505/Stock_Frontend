@@ -57,7 +57,7 @@ export class DebitNotesAddEditComponent implements OnInit {
       due_date: [new Date()],
       reference_no: ['00', Validators.required],
       status: ['Pending', Validators.required],
-      payment_mode: ['', Validators.required],
+      payment_mode: ['no'],
       product_id: [[]],
       subproduct_id: [[]],
       notes: [''],

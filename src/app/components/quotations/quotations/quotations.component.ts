@@ -28,8 +28,6 @@ export class QuotationsComponent implements OnInit {
     'quotation_number',
     'customer_id',
     'total_amount',
-    'due_date',
-    'status',
     'created_at',
     'actions'
   ];
