@@ -30,6 +30,7 @@
     "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "file-saver": "^2.0.5",
+    "firebase": "^11.1.0",
     "moment": "^2.30.1",
     "pdfmake": "^0.2.15",
     "pdfmake-unicode": "^0.0.1",
