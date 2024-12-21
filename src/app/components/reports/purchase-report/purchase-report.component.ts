@@ -217,7 +217,7 @@ export class PurchaseReportComponent implements OnInit, AfterViewInit {
                 { text: 'Transaction Type', bold: true, alignment: 'center', style: 'tableHeader' },
                 { text: 'Amount', bold: true, alignment: 'center', style: 'tableHeader' },
                 { text: 'Payable Balance', bold: true, alignment: 'center', style: 'tableHeader' },
-                { text: 'Payment Date', bold: true, alignment: 'center', style: 'tableHeader' },
+                { text: 'Date', bold: true, alignment: 'center', style: 'tableHeader' },
               ],
               // Dynamically add rows from paymentsList
               ...this.PurchaseList.map((item, index) => [
